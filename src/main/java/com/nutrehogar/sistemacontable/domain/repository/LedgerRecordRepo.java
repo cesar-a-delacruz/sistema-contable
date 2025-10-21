@@ -17,14 +17,15 @@ public class LedgerRecordRepo extends CRUDRepositoryImpl<LedgerRecord, Integer> 
     }
 
     @Override
-    public List<LedgerRecord> findByDateRangeAndAccount(Account account, LocalDate startDate, LocalDate endDate) throws RepositoryException {
+    public List<LedgerRecord> findByDateRangeAndAccount(Account account, LocalDate startDate, LocalDate endDate)
+            throws RepositoryException {
         return TransactionManager.executeInTransaction(session -> session.createQuery(
-                        "SELECT lr FROM LedgerRecord lr " +
-                                "JOIN FETCH lr.journalEntry " +  // 🔹 Forzar la carga de journalEntry
-                                "WHERE lr.account = :account " +
-                                "AND lr.journalEntry.date BETWEEN :startDate AND :endDate " +
-                                "ORDER BY lr.journalEntry.date DESC", LedgerRecord.class
-                )
+                "SELECT lr FROM LedgerRecord lr " +
+                        "JOIN FETCH lr.journalEntry " + // 🔹 Forzar la carga de journalEntry
+                        "WHERE lr.account = :account " +
+                        "AND lr.journalEntry.date BETWEEN :startDate AND :endDate " +
+                        "ORDER BY lr.journalEntry.date DESC",
+                LedgerRecord.class)
                 .setParameter("account", account)
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)

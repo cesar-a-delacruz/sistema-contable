@@ -35,7 +35,10 @@ public class TrialBalanceTableDTO extends AuditableDTO {
     @Setter
     BigDecimal balance;
 
-    public TrialBalanceTableDTO(String createdBy, String updatedBy, LocalDateTime createdAt, LocalDateTime updatedAt, JournalEntryPK journalId, LocalDate journalDate, DocumentType documentType, Integer accountId, String accountName, AccountType accountType, Integer voucher, String reference, BigDecimal debit, BigDecimal credit, BigDecimal balance) {
+    public TrialBalanceTableDTO(String createdBy, String updatedBy, LocalDateTime createdAt, LocalDateTime updatedAt,
+            JournalEntryPK journalId, LocalDate journalDate, DocumentType documentType, Integer accountId,
+            String accountName, AccountType accountType, Integer voucher, String reference, BigDecimal debit,
+            BigDecimal credit, BigDecimal balance) {
         super(createdBy, updatedBy, createdAt, updatedAt);
         this.journalId = journalId;
         this.journalDate = journalDate;

@@ -1,6 +1,8 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
+ * to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit
+ * this template
  */
 package com.nutrehogar.sistemacontable.ui.JComponents;
 
@@ -80,7 +82,8 @@ public class PanelDegradado extends JPanel {
         Point2D pt1 = new Point2D.Double(((double) getWidth() / 2), 0);
         Point2D pt2 = new Point2D.Double(((double) getWidth() / 2), height);
         // Dibuja el fondo con opacidad
-        GradientPaint gradien = new GradientPaint(pt1, new Color(0, 0, 0, getOpacidadInical()), pt2, new Color(0, 0, 0, getOpacidadFinal()));
+        GradientPaint gradien = new GradientPaint(pt1, new Color(0, 0, 0, getOpacidadInical()), pt2,
+                new Color(0, 0, 0, getOpacidadFinal()));
         g2.setPaint(gradien);
         g2.fillRoundRect(0, 0, width, height, getBorderRedondeado(), getBorderRedondeado());
 
@@ -88,7 +91,8 @@ public class PanelDegradado extends JPanel {
         if (getGrosorBorde() > 0) {
             g2.setColor(new Color(250, 250, 250, getOpacidadBorder()));
             g2.setStroke(new java.awt.BasicStroke(getGrosorBorde()));
-            g2.draw(new RoundRectangle2D.Double(getGrosorBorde() / 2.0, getGrosorBorde() / 2.0, width - getGrosorBorde(), height - getGrosorBorde(), getBorderRedondeado(), getBorderRedondeado()));
+            g2.draw(new RoundRectangle2D.Double(getGrosorBorde() / 2.0, getGrosorBorde() / 2.0,
+                    width - getGrosorBorde(), height - getGrosorBorde(), getBorderRedondeado(), getBorderRedondeado()));
         }
         super.paintComponent(grphcs);
     }

@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
-
 public class UIConstants {
     private UIConstants() {
         throw new AssertionError("This class cannot be instantiated");
@@ -38,8 +37,7 @@ public class UIConstants {
     // Bordes
     public static final Border BORDER_TEXT_FIELD = BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.GRAY),
-            BorderFactory.createEmptyBorder(PADDING_SMALL, PADDING_SMALL, PADDING_SMALL, PADDING_SMALL)
-    );
+            BorderFactory.createEmptyBorder(PADDING_SMALL, PADDING_SMALL, PADDING_SMALL, PADDING_SMALL));
 
     // Otros
     public static final int TABLE_ROW_HEIGHT = 25;

@@ -27,12 +27,13 @@ public class SplashScreen extends JWindow {
 
     public String getRandomSplashScreenTitle() {
         Random random = new Random();
-        int randomIndex = random.nextInt(SPLASH_SCREEN_TITLE.length); // Genera un índice aleatorio dentro del rango del array
+        int randomIndex = random.nextInt(SPLASH_SCREEN_TITLE.length); // Genera un índice aleatorio dentro del rango del
+                                                                      // array
         return SPLASH_SCREEN_TITLE[randomIndex]; // Devuelve el valor aleatorio seleccionado
     }
 
     public SplashScreen() {
-        String img = "svgs/splashScreen/"+getRandomSplashScreenTitle();
+        String img = "svgs/splashScreen/" + getRandomSplashScreenTitle();
         FlatSVGIcon banner = new FlatSVGIcon(img); // Carga la imagen
         System.out.println(img);
         System.out.println(banner.getName());

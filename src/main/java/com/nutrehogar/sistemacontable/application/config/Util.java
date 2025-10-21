@@ -9,7 +9,6 @@ public class Util {
     public static final LocalDate CURRENT_DATE = LocalDate.now();
     public static final String NA = "N/A";
 
-
     // Convierte cualquier objeto a String de forma segura
     public static String toStringSafe(Object obj) {
         return (obj != null) ? obj.toString() : "";

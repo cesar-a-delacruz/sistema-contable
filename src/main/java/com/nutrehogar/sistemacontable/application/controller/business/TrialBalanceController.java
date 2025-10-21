@@ -30,13 +30,15 @@ import static com.nutrehogar.sistemacontable.application.config.Util.*;
 @Slf4j
 public class TrialBalanceController extends BusinessController<TrialBalanceTableDTO, JournalEntry> {
 
-    public TrialBalanceController(JournalEntryRepository repository, TrialBalanceView view, Consumer<JournalEntryPK> editJournalEntry, ReportService reportService, User user) {
+    public TrialBalanceController(JournalEntryRepository repository, TrialBalanceView view,
+            Consumer<JournalEntryPK> editJournalEntry, ReportService reportService, User user) {
         super(repository, view, editJournalEntry, reportService, user);
     }
 
     @Override
     protected void initialize() {
-        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo Documento", "Cuenta", "Referencia", "Debíto", "Crédito", "Saldo") {
+        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo Documento", "Cuenta", "Referencia", "Debíto",
+                "Crédito", "Saldo") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var dto = getData().get(rowIndex);
@@ -76,7 +78,8 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
             try {
                 var dtos = new ArrayList<TrialBalanceReportDTO>();
                 data.forEach(t -> dtos.add(toDTO(t)));
-                var simpleReportDTO = new SimpleReportDTO<>(spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue(), dtos);
+                var simpleReportDTO = new SimpleReportDTO<>(spnModelStartPeriod.getValue(),
+                        spnModelEndPeriod.getValue(), dtos);
                 reportService.generateReport(TrialBalance.class, simpleReportDTO);
                 showMessage("Reporte generado!");
             } catch (RepositoryException ex) {
@@ -86,10 +89,14 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
     }
 
     public TrialBalanceReportDTO toDTO(TrialBalanceTableDTO t) {
-        if (t == null) t = new TrialBalanceTableDTO();
-        return new TrialBalanceReportDTO(toStringSafe(t.getJournalDate()), toStringSafe(t.getDocumentType(), DocumentType::getName), toStringSafe(t.getAccountId(), Account::getCellRenderer), toStringSafe(t.getVoucher()), toStringSafe(t.getReference()), formatDecimalSafe(t.getDebit()), formatDecimalSafe(t.getCredit()), formatDecimalSafe(t.getBalance()));
+        if (t == null)
+            t = new TrialBalanceTableDTO();
+        return new TrialBalanceReportDTO(toStringSafe(t.getJournalDate()),
+                toStringSafe(t.getDocumentType(), DocumentType::getName),
+                toStringSafe(t.getAccountId(), Account::getCellRenderer), toStringSafe(t.getVoucher()),
+                toStringSafe(t.getReference()), formatDecimalSafe(t.getDebit()), formatDecimalSafe(t.getCredit()),
+                formatDecimalSafe(t.getBalance()));
     }
-
 
     @Override
     public void loadData() {
@@ -100,11 +107,31 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
 
         @Override
         protected List<TrialBalanceTableDTO> doInBackground() {
-            var trialBalanceList = getRepository().findAllByDateRange(spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue()).stream().flatMap(journalEntry -> journalEntry.getLedgerRecords().stream().map(ledgerRecord -> new TrialBalanceTableDTO(ledgerRecord.getCreatedBy(), ledgerRecord.getUpdatedBy(), ledgerRecord.getCreatedAt(), ledgerRecord.getUpdatedAt(), journalEntry.getId(), journalEntry.getDate(), journalEntry.getId().getDocumentType(), ledgerRecord.getAccount().getId(), ledgerRecord.getAccount().getName(), ledgerRecord.getAccount().getAccountSubtype().getAccountType(), journalEntry.getId().getDocumentNumber(), ledgerRecord.getReference(), ledgerRecord.getDebit(), ledgerRecord.getCredit(), BigDecimal.ZERO))).toList();
+            var trialBalanceList = getRepository()
+                    .findAllByDateRange(spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue()).stream()
+                    .flatMap(journalEntry -> journalEntry.getLedgerRecords().stream()
+                            .map(ledgerRecord -> new TrialBalanceTableDTO(ledgerRecord.getCreatedBy(),
+                                    ledgerRecord.getUpdatedBy(), ledgerRecord.getCreatedAt(),
+                                    ledgerRecord.getUpdatedAt(), journalEntry.getId(), journalEntry.getDate(),
+                                    journalEntry.getId().getDocumentType(), ledgerRecord.getAccount().getId(),
+                                    ledgerRecord.getAccount().getName(),
+                                    ledgerRecord.getAccount().getAccountSubtype().getAccountType(),
+                                    journalEntry.getId().getDocumentNumber(), ledgerRecord.getReference(),
+                                    ledgerRecord.getDebit(), ledgerRecord.getCredit(), BigDecimal.ZERO)))
+                    .toList();
 
-            Map<Integer, List<TrialBalanceTableDTO>> groupedByAccount = trialBalanceList.stream().collect(Collectors.groupingBy(TrialBalanceTableDTO::getAccountId, TreeMap::new, // Usa un TreeMap para que las claves (accountId) estén ordenadas
-                    Collectors.collectingAndThen(Collectors.toList(), list -> list.stream().sorted(Comparator.comparing(TrialBalanceTableDTO::getJournalDate)) // Ordenar por fecha
-                            .toList())));
+            Map<Integer, List<TrialBalanceTableDTO>> groupedByAccount = trialBalanceList.stream()
+                    .collect(Collectors.groupingBy(TrialBalanceTableDTO::getAccountId, TreeMap::new, // Usa un TreeMap
+                                                                                                     // para que las
+                                                                                                     // claves
+                                                                                                     // (accountId)
+                                                                                                     // estén ordenadas
+                            Collectors.collectingAndThen(Collectors.toList(),
+                                    list -> list.stream()
+                                            .sorted(Comparator.comparing(TrialBalanceTableDTO::getJournalDate)) // Ordenar
+                                                                                                                // por
+                                                                                                                // fecha
+                                            .toList())));
 
             var list = new ArrayList<TrialBalanceTableDTO>();
 
@@ -120,7 +147,8 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
 
                     // Acumular débitos y créditos
                     debitSum = debitSum.add(dto.getDebit(), MathContext.DECIMAL128).setScale(2, RoundingMode.HALF_UP);
-                    creditSum = creditSum.add(dto.getCredit(), MathContext.DECIMAL128).setScale(2, RoundingMode.HALF_UP);
+                    creditSum = creditSum.add(dto.getCredit(), MathContext.DECIMAL128).setScale(2,
+                            RoundingMode.HALF_UP);
 
                     // Actualizar balance en el DTO y agregar a la lista procesada
                     dto.setBalance(balance);
@@ -136,7 +164,7 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
                 processedList.add(totalDTO);
 
                 // Agregar una línea en blanco para separación visual
-//            processedList.add(new TrialBalanceDTO("", null, null, null));
+                // processedList.add(new TrialBalanceDTO("", null, null, null));
 
                 // 3️⃣ Agregar la lista procesada al mapa final
                 list.addAll(processedList);
@@ -165,7 +193,6 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
             setJournalEntryId(selected.getJournalId());
         }
     }
-
 
     @Override
     public TrialBalanceView getView() {

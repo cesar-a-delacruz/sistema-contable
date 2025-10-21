@@ -1,5 +1,3 @@
 package com.nutrehogar.sistemacontable.application.view;
 
-
-public interface View {
-}
+public interface View {}

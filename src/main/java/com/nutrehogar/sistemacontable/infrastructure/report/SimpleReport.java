@@ -25,7 +25,8 @@ public abstract class SimpleReport<D> extends Report<SimpleReportDTO<D>> {
 
     @Override
     protected String getDirReportPath(SimpleReportDTO<D> dto) {
-        var fileName = String.format("%s-%s-%s.pdf", name, dto.startDate().format(FILE_DATE_FORMATTER), dto.endDate().format(FILE_DATE_FORMATTER));
+        var fileName = String.format("%s-%s-%s.pdf", name, dto.startDate().format(FILE_DATE_FORMATTER),
+                dto.endDate().format(FILE_DATE_FORMATTER));
         return dirPath + File.separator + fileName;
     }
 }

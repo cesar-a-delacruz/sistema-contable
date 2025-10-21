@@ -19,9 +19,8 @@ public class AccountSubtypeRepo extends CRUDRepositoryImpl<AccountSubtype, Integ
     @Override
     public List<AccountSubtype> findAllByAccountType(AccountType accountType) throws RepositoryException {
         return TransactionManager.executeInTransaction(session -> session.createQuery(
-                        "FROM AccountSubtype WHERE accountType = :accountType ORDER BY id",
-                        AccountSubtype.class
-                )
+                "FROM AccountSubtype WHERE accountType = :accountType ORDER BY id",
+                AccountSubtype.class)
                 .setParameter("accountType", accountType)
                 .list());
     }

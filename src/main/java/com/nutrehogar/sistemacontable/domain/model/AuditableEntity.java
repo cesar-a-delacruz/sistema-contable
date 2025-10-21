@@ -29,7 +29,6 @@ public abstract class AuditableEntity {
     @Column(name = "updated_at")
     LocalDateTime updatedAt;
 
-
     public AuditableEntity(User user) {
         this.user = user;
     }

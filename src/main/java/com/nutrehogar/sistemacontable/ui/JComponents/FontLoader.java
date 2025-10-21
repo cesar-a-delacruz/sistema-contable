@@ -10,11 +10,15 @@ public class FontLoader {
 
     /**
      * Carga una fuente desde un archivo.
+     * <p>
+     * Como usar:
+     * {@code Font customFont = FontLoader.loadFont("/fonts/MiFuente.ttf", 24f);}
      *
-     * <p>Como usar: {@code Font customFont = FontLoader.loadFont("/fonts/MiFuente.ttf", 24f);}
-     *
-     * @param path Ruta relativa al archivo de la fuente (por ejemplo, "/fonts/MiFuente.ttf").
-     * @param size Tamaño de la fuente.
+     * @param path
+     *            Ruta relativa al archivo de la fuente (por ejemplo,
+     *            "/fonts/MiFuente.ttf").
+     * @param size
+     *            Tamaño de la fuente.
      * @return La fuente cargada, o una fuente por defecto si hay un error.
      */
     public static @NotNull Font loadFont(String path, float size) {

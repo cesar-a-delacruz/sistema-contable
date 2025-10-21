@@ -15,7 +15,6 @@ import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
 import javax.swing.*;
 import java.awt.*;
 
-
 public class DashboardController extends Controller {
     private final ApplicationContext context;
 
@@ -32,16 +31,17 @@ public class DashboardController extends Controller {
             getPnlContent().setOpaque(false);
         });
         Thread.startVirtualThread(this::setupViewListeners);
-        //            prepareToEditJournalEntry = (Integer JournalEntryId) -> {
-//                setContent(getAccountingEntryFormController().getView());
-//                getAccountingEntryFormController().prepareToEditEntry(JournalEntryId);
-//            };
+        // prepareToEditJournalEntry = (Integer JournalEntryId) -> {
+        // setContent(getAccountingEntryFormController().getView());
+        // getAccountingEntryFormController().prepareToEditEntry(JournalEntryId);
+        // };
     }
 
     protected void setupViewListeners() {
-        getBtnShowFormView().addActionListener(e ->
-                setContent(context.getBean(AccountingEntryFormController.class).getView()));
-        getBtnShowAccountSubtypeView().addActionListener(e -> setContent(context.getBean(AccountSubtypeController.class).getView()));
+        getBtnShowFormView()
+                .addActionListener(e -> setContent(context.getBean(AccountingEntryFormController.class).getView()));
+        getBtnShowAccountSubtypeView()
+                .addActionListener(e -> setContent(context.getBean(AccountSubtypeController.class).getView()));
         getBtnShowAccountView().addActionListener(e -> {
             setContent(context.getBean(AccountController.class).getView());
             context.getBean(AccountController.class).loadData();
@@ -124,7 +124,6 @@ public class DashboardController extends Controller {
     public JButton getBtnShowUserView() {
         return getView().getBtnShowUserView();
     }
-
 
     public JPanel getPnlContent() {
         return getView().getPnlContent();

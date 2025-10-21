@@ -6,13 +6,14 @@ import lombok.Setter;
 import javax.swing.border.AbstractBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+
 @Getter
 @Setter
 public class ShadowBorder extends AbstractBorder {
 
     private int shadowSize; // Tamaño de la sombra
-    private int arcWidth;   // Ancho del borde redondeado de la sombra
-    private int arcHeight;  // Alto del borde redondeado de la sombra
+    private int arcWidth; // Ancho del borde redondeado de la sombra
+    private int arcHeight; // Alto del borde redondeado de la sombra
     private Color shadowColor; // Color de la sombra
     private int shadowOpacity; // Opacidad de la sombra
 
@@ -39,7 +40,8 @@ public class ShadowBorder extends AbstractBorder {
 
         // Dibujar la sombra
         if (shadowSize > 0 && shadowOpacity > 0) {
-            Color shadow = new Color(shadowColor.getRed(), shadowColor.getGreen(), shadowColor.getBlue(), shadowOpacity);
+            Color shadow = new Color(shadowColor.getRed(), shadowColor.getGreen(), shadowColor.getBlue(),
+                    shadowOpacity);
             g2.setColor(shadow);
 
             for (int i = 0; i < shadowSize; i++) {
@@ -47,8 +49,7 @@ public class ShadowBorder extends AbstractBorder {
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity * 0.5f));
 
                 g2.fill(new RoundRectangle2D.Double(
-                        x + i, y + i, width - 2 * i, height - 2 * i, arcWidth, arcHeight
-                ));
+                        x + i, y + i, width - 2 * i, height - 2 * i, arcWidth, arcHeight));
             }
         }
 

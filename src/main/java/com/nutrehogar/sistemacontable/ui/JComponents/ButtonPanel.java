@@ -29,8 +29,7 @@ public class ButtonPanel extends JButton {
         });
     }
 
-    public ButtonPanel() {
-    }
+    public ButtonPanel() {}
 
     public ButtonPanel(String text) {
         super(text);

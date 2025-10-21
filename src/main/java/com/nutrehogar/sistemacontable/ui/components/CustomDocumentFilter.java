@@ -13,7 +13,8 @@ public class CustomDocumentFilter extends DocumentFilter {
     }
 
     @Override
-    public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+    public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+            throws BadLocationException {
         StringBuilder sb = new StringBuilder();
         sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
         sb.insert(offset, string);
@@ -24,7 +25,8 @@ public class CustomDocumentFilter extends DocumentFilter {
     }
 
     @Override
-    public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+    public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+            throws BadLocationException {
         StringBuilder sb = new StringBuilder();
         sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
         sb.replace(offset, offset + length, text);
@@ -40,7 +42,8 @@ public class CustomDocumentFilter extends DocumentFilter {
             protected boolean isValid(String text) {
                 return text.matches("\\d*");
             }
-        }, DECIMAL {
+        },
+        DECIMAL {
             @Override
             protected boolean isValid(String text) {
                 return text.matches("^\\d*\\.?\\d*$");

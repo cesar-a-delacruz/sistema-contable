@@ -9,7 +9,6 @@ import java.time.temporal.ChronoUnit;
 
 import static com.nutrehogar.sistemacontable.application.config.Util.CURRENT_DATE;
 
-
 /**
  * Modelo de un spinner que tiene como valor un {@link LocalDate}
  *
@@ -49,7 +48,8 @@ public class LocalDateSpinnerModel extends AbstractSpinnerModel {
         this.incrementUnit = ChronoUnit.DAYS;
     }
 
-    public LocalDateSpinnerModel(LocalDate initialDate, LocalDate minDate, LocalDate maxDate, ChronoUnit incrementUnit) {
+    public LocalDateSpinnerModel(LocalDate initialDate, LocalDate minDate, LocalDate maxDate,
+            ChronoUnit incrementUnit) {
         this.currentDate = ifDateNull(initialDate);
         this.minDate = ifDateNull(minDate);
         this.maxDate = ifDateNull(maxDate);
@@ -102,7 +102,8 @@ public class LocalDateSpinnerModel extends AbstractSpinnerModel {
     /**
      * Verifica si la fecha es valida
      *
-     * @param date fecha a verifica
+     * @param date
+     *            fecha a verifica
      * @return
      */
     private boolean isWithinBounds(LocalDate date) {
@@ -112,4 +113,3 @@ public class LocalDateSpinnerModel extends AbstractSpinnerModel {
     }
 
 }
-

@@ -10,8 +10,10 @@ public interface AccountSubtypeRepository extends CRUDRepository<AccountSubtype,
     /**
      * Busca todos los subtipos de cuenta por tipo de cuenta.
      *
-     * @param accountType El tipo de cuenta.
-     * @return Una lista de subtipos de cuenta que pertenecen al tipo de cuenta especificado.
+     * @param accountType
+     *            El tipo de cuenta.
+     * @return Una lista de subtipos de cuenta que pertenecen al tipo de cuenta
+     *         especificado.
      */
     List<AccountSubtype> findAllByAccountType(AccountType accountType) throws RepositoryException;
 }

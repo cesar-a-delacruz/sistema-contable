@@ -11,8 +11,8 @@ import java.awt.geom.RoundRectangle2D;
 @Setter
 public class RoundedPanel extends JPanel {
 
-    private int arcWidth;   // Ancho del borde redondeado
-    private int arcHeight;  // Alto del borde redondeado
+    private int arcWidth; // Ancho del borde redondeado
+    private int arcHeight; // Alto del borde redondeado
     private Color borderColor; // Color del borde
     private int borderThickness; // Grosor del borde
     private int borderOpacity; // Opacidad de la sombra
@@ -60,8 +60,7 @@ public class RoundedPanel extends JPanel {
                     borderThickness / 2.0,
                     width - borderThickness,
                     height - borderThickness,
-                    arcWidth, arcHeight
-            ));
+                    arcWidth, arcHeight));
             addBorderForBorderThickness(borderThickness);
         }
 

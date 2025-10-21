@@ -18,8 +18,7 @@ public class ScrollPanel extends JScrollPane {
         setBorder(null);
     }
 
-    public ScrollPanel() {
-    }
+    public ScrollPanel() {}
 
     public ScrollPanel(Component view) {
         super(view);

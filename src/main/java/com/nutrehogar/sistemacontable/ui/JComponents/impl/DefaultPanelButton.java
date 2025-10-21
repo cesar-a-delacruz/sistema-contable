@@ -30,8 +30,7 @@ public class DefaultPanelButton extends JButton {
         });
     }
 
-    public DefaultPanelButton() {
-    }
+    public DefaultPanelButton() {}
 
     public DefaultPanelButton(String text) {
         super(text);

@@ -30,13 +30,15 @@ import static com.nutrehogar.sistemacontable.application.config.Util.*;
 
 @Slf4j
 public class JournalController extends BusinessController<JournalTableDTO, JournalEntry> {
-    public JournalController(JournalEntryRepository repository, JournalView view, Consumer<JournalEntryPK> editJournalEntry, ReportService reportService, User user) {
+    public JournalController(JournalEntryRepository repository, JournalView view,
+            Consumer<JournalEntryPK> editJournalEntry, ReportService reportService, User user) {
         super(repository, view, editJournalEntry, reportService, user);
     }
 
     @Override
     protected void initialize() {
-        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo Documento", "Cuenta", "Referencia", "Debíto", "Crédito") {
+        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo Documento", "Cuenta", "Referencia", "Debíto",
+                "Crédito") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var dto = getData().get(rowIndex);
@@ -85,8 +87,7 @@ public class JournalController extends BusinessController<JournalTableDTO, Journ
                 var simpleReportDTO = new SimpleReportDTO<>(
                         spnModelStartPeriod.getValue(),
                         spnModelEndPeriod.getValue(),
-                        journalReportDTOs
-                );
+                        journalReportDTOs);
                 reportService.generateReport(Journal.class, simpleReportDTO);
                 showMessage("Reporte generado!");
             } catch (RepositoryException ex) {
@@ -99,6 +100,7 @@ public class JournalController extends BusinessController<JournalTableDTO, Journ
     public void loadData() {
         new JournalDataLoader().execute();
     }
+
     public class JournalDataLoader extends DataLoader {
         @Override
         protected List<JournalTableDTO> doInBackground() {
@@ -117,14 +119,11 @@ public class JournalController extends BusinessController<JournalTableDTO, Journ
                                     ledgerRecord.getJournalEntry().getId().getDocumentNumber(),
                                     ledgerRecord.getReference(),
                                     ledgerRecord.getDebit(),
-                                    ledgerRecord.getCredit()
-                            ))
-                    )
+                                    ledgerRecord.getCredit())))
                     .sorted(Comparator.comparing(JournalTableDTO::getEntryDate))
                     .toList();
         }
     }
-
 
     @Override
     protected void setElementSelected(@NotNull MouseEvent e) {

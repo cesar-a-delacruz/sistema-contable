@@ -35,104 +35,97 @@ import java.util.function.Consumer;
 
 public class AppConfig {
 
-    private AppConfig() {
-        throw new IllegalStateException("Utility class");
-    }
+        private AppConfig() {
+                throw new IllegalStateException("Utility class");
+        }
 
-    static Consumer<JournalEntryPK> editJournalEntry;
+        static Consumer<JournalEntryPK> editJournalEntry;
 
-    public static void setup(@NotNull ApplicationContext context) {
-        context.registerBean(User.class, User.builder()
-                .username("Root")
-                .permissions(Permissions.CREATE)
-                .isEnable(true)
-                .password("0922")
-                .build());
-        context.registerBean(UserRepository.class, new UserRepo());
-        context.registerBean(AuthView.class, new LoginForm());
-        context.registerBean(AuthController.class, new AuthController(context.getBean(AuthView.class), context.getBean(UserRepository.class), context.getBean(User.class)));
-        context.registerBean(DashboardView.class, new DefaultDashboardView());
-        var dashboard = new DashboardController(context.getBean(DashboardView.class), context);
-        context.registerBean(DashboardController.class, dashboard);
-        editJournalEntry = (JournalEntryPK JournalEntryId) -> {
-            dashboard.setContent(context.getBean(AccountingEntryFormController.class).getView());
-            context.getBean(AccountingEntryFormController.class).prepareToEditEntry(JournalEntryId);
-        };
-        ReportService.initializeReports();
-    }
+        public static void setup(@NotNull ApplicationContext context) {
+                context.registerBean(User.class, User.builder()
+                                .username("Root")
+                                .permissions(Permissions.CREATE)
+                                .isEnable(true)
+                                .password("0922")
+                                .build());
+                context.registerBean(UserRepository.class, new UserRepo());
+                context.registerBean(AuthView.class, new LoginForm());
+                context.registerBean(AuthController.class, new AuthController(context.getBean(AuthView.class),
+                                context.getBean(UserRepository.class), context.getBean(User.class)));
+                context.registerBean(DashboardView.class, new DefaultDashboardView());
+                var dashboard = new DashboardController(context.getBean(DashboardView.class), context);
+                context.registerBean(DashboardController.class, dashboard);
+                editJournalEntry = (JournalEntryPK JournalEntryId) -> {
+                        dashboard.setContent(context.getBean(AccountingEntryFormController.class).getView());
+                        context.getBean(AccountingEntryFormController.class).prepareToEditEntry(JournalEntryId);
+                };
+                ReportService.initializeReports();
+        }
 
-    public static void init(@NotNull ApplicationContext context, Session session, User user, JFrame parent) {
+        public static void init(@NotNull ApplicationContext context, Session session, User user, JFrame parent) {
 
-        // Registro de repositorios
-        context.registerBean(AccountRepository.class, new AccountRepo());
-        context.registerBean(AccountSubtypeRepository.class, new AccountSubtypeRepo());
-        context.registerBean(JournalEntryRepository.class, new JournalEntryRepo());
-        context.registerBean(LedgerRecordRepository.class, new LedgerRecordRepo());
-        context.registerBean(UserRepository.class, new UserRepo());
+                // Registro de repositorios
+                context.registerBean(AccountRepository.class, new AccountRepo());
+                context.registerBean(AccountSubtypeRepository.class, new AccountSubtypeRepo());
+                context.registerBean(JournalEntryRepository.class, new JournalEntryRepo());
+                context.registerBean(LedgerRecordRepository.class, new LedgerRecordRepo());
+                context.registerBean(UserRepository.class, new UserRepo());
 
-        // Registro de servicios
-        context.registerBean(ReportService.class, new ReportService(user));
+                // Registro de servicios
+                context.registerBean(ReportService.class, new ReportService(user));
 
-        // Registro de controladores
-        context.registerBean(AccountingEntryFormController.class, new AccountingEntryFormController(
-                context.getBean(LedgerRecordRepository.class),
-                new DefaultAccountEntryFormView(),
-                context.getBean(JournalEntryRepository.class),
-                context.getBean(AccountRepository.class),
-                context.getBean(ReportService.class),
-                user
-        ));
-        context.registerBean(AccountController.class, new AccountController(
-                context.getBean(AccountRepository.class),
-                new DefaultAccountView(),
-                context.getBean(AccountSubtypeRepository.class),
-                context.getBean(ReportService.class),
-                user
-        ));
+                // Registro de controladores
+                context.registerBean(AccountingEntryFormController.class, new AccountingEntryFormController(
+                                context.getBean(LedgerRecordRepository.class),
+                                new DefaultAccountEntryFormView(),
+                                context.getBean(JournalEntryRepository.class),
+                                context.getBean(AccountRepository.class),
+                                context.getBean(ReportService.class),
+                                user));
+                context.registerBean(AccountController.class, new AccountController(
+                                context.getBean(AccountRepository.class),
+                                new DefaultAccountView(),
+                                context.getBean(AccountSubtypeRepository.class),
+                                context.getBean(ReportService.class),
+                                user));
 
-        context.registerBean(AccountSubtypeController.class, new AccountSubtypeController(
-                context.getBean(AccountSubtypeRepository.class),
-                new DefaultAccountSubtypeView(),
-                context.getBean(ReportService.class),
-                user
-        ));
-        context.registerBean(JournalController.class, new JournalController(
-                context.getBean(JournalEntryRepository.class),
-                new DefaultJournalView(),
-                editJournalEntry,
-                context.getBean(ReportService.class),
-                user
-        ));
-        context.registerBean(TrialBalanceController.class, new TrialBalanceController(
-                context.getBean(JournalEntryRepository.class),
-                new DefaultTrialBalanceView(),
-                editJournalEntry,
-                context.getBean(ReportService.class),
-                user
-        ));
-        context.registerBean(GeneralLedgerController.class, new GeneralLedgerController(
-                context.getBean(AccountRepository.class),
-                new DefaultGeneralLedgerView(),
-                editJournalEntry,
-                context.getBean(AccountSubtypeRepository.class),
-                context.getBean(LedgerRecordRepository.class),
-                context.getBean(ReportService.class),
-                user
-        ));
-        context.registerBean(BackupRepository.class, new BackupRepo());
-        context.registerBean(BackupController.class, new BackupController(
-                context.getBean(BackupRepository.class),
-                new DefaultBackupView(),
-                session,
-                parent
-        ));
-        context.registerBean(UserController.class, new UserController(
-                context.getBean(UserRepository.class),
-                new DefaultUserView(),
-                context.getBean(ReportService.class),
-                user
-        ));
-        // Registrar otros controladores de manera similar...
+                context.registerBean(AccountSubtypeController.class, new AccountSubtypeController(
+                                context.getBean(AccountSubtypeRepository.class),
+                                new DefaultAccountSubtypeView(),
+                                context.getBean(ReportService.class),
+                                user));
+                context.registerBean(JournalController.class, new JournalController(
+                                context.getBean(JournalEntryRepository.class),
+                                new DefaultJournalView(),
+                                editJournalEntry,
+                                context.getBean(ReportService.class),
+                                user));
+                context.registerBean(TrialBalanceController.class, new TrialBalanceController(
+                                context.getBean(JournalEntryRepository.class),
+                                new DefaultTrialBalanceView(),
+                                editJournalEntry,
+                                context.getBean(ReportService.class),
+                                user));
+                context.registerBean(GeneralLedgerController.class, new GeneralLedgerController(
+                                context.getBean(AccountRepository.class),
+                                new DefaultGeneralLedgerView(),
+                                editJournalEntry,
+                                context.getBean(AccountSubtypeRepository.class),
+                                context.getBean(LedgerRecordRepository.class),
+                                context.getBean(ReportService.class),
+                                user));
+                context.registerBean(BackupRepository.class, new BackupRepo());
+                context.registerBean(BackupController.class, new BackupController(
+                                context.getBean(BackupRepository.class),
+                                new DefaultBackupView(),
+                                session,
+                                parent));
+                context.registerBean(UserController.class, new UserController(
+                                context.getBean(UserRepository.class),
+                                new DefaultUserView(),
+                                context.getBean(ReportService.class),
+                                user));
+                // Registrar otros controladores de manera similar...
 
-    }
+        }
 }
