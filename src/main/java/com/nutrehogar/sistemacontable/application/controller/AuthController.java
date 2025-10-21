@@ -47,7 +47,8 @@ public final class AuthController extends Controller {
                         getBtnOk().setEnabled(true);
                     }
                 } catch (InterruptedException | ExecutionException e) {
-                    showError("Error al cargar datos de usuario", new ApplicationException("Failure to find all users.", e));
+                    showError("Error al cargar datos de usuario",
+                            new ApplicationException("Failure to find all users.", e));
                 }
             }
         }.execute();
@@ -57,7 +58,8 @@ public final class AuthController extends Controller {
     @Override
     protected void setupViewListeners() {
         getBtnOk().addActionListener(e -> {
-            if (userListModel.isEmpty()) return;
+            if (userListModel.isEmpty())
+                return;
             User selectedUser = getLstUser().getSelectedValue();
             if (selectedUser != null && String.valueOf(getTxtPing().getPassword()).equals(selectedUser.getPassword())) {
                 authenticatedUser = selectedUser;

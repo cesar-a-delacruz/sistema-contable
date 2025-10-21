@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-
 @Getter
 @Setter
 @ToString(exclude = "ledgerRecords")
@@ -40,7 +39,8 @@ public class Account extends AuditableEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     List<LedgerRecord> ledgerRecords;
 
-    //TODO hacer que al cambiar el id de los subtipoCuentas el id de estas cuentas tambien cambien;
+    // TODO hacer que al cambiar el id de los subtipoCuentas el id de estas cuentas
+    // tambien cambien;
 
     public void setId(Integer id) throws IllegalArgumentException, NullPointerException {
         Objects.requireNonNull(accountSubtype, "El subtipo de cuenta no puede ser nulo");
@@ -52,7 +52,8 @@ public class Account extends AuditableEntity {
 
         // Validar que el ID de la cuenta no exceda el límite de dígitos
         if (id < 0 || id.toString().length() > maxAccountIdDigits) {
-            throw new IllegalArgumentException("El ID de la cuenta debe tener hasta " + maxAccountIdDigits + " dígitos: " + id);
+            throw new IllegalArgumentException(
+                    "El ID de la cuenta debe tener hasta " + maxAccountIdDigits + " dígitos: " + id);
         }
 
         // Formatear el ID de la cuenta con el número de dígitos requeridos
@@ -72,12 +73,14 @@ public class Account extends AuditableEntity {
     }
 
     public static @NotNull String getCellRenderer(Integer id) {
-        if (id == null) return "";
+        if (id == null)
+            return "";
         return getCellRenderer(id.toString());
     }
 
     public static @NotNull String getCellRenderer(String id) {
-        if (id == null) return "";
+        if (id == null)
+            return "";
         return id.charAt(0) + "." + id.substring(1);
     }
 }

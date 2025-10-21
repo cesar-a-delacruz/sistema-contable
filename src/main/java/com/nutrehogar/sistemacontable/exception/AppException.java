@@ -4,10 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Clase base para todas las excepciones de la aplicación.
- *
- * <p>Esta clase extiende de {@link RuntimeException} y proporciona varios constructores para crear excepciones con diferentes niveles de detalle. Es la clase base de la cual todas las excepciones específicas de la aplicación deben heredar.</p>
- *
- * <p>Ejemplos de uso:</p>
+ * <p>
+ * Esta clase extiende de {@link RuntimeException} y proporciona varios
+ * constructores para crear excepciones con diferentes niveles de detalle. Es la
+ * clase base de la cual todas las excepciones específicas de la aplicación
+ * deben heredar.
+ * </p>
+ * <p>
+ * Ejemplos de uso:
+ * </p>
+ * 
  * <pre>
  * {@code
  * // Lanzar una excepción con un mensaje
@@ -28,8 +34,10 @@ public abstract class AppException extends RuntimeException {
 
     /**
      * Constructor por defecto.
-     *
-     * <p>Crea una nueva instancia de {@code AppException} sin ningún detalle adicional.</p>
+     * <p>
+     * Crea una nueva instancia de {@code AppException} sin ningún detalle
+     * adicional.
+     * </p>
      */
     public AppException() {
         super(DEFAULT_MESSAGE);
@@ -38,10 +46,13 @@ public abstract class AppException extends RuntimeException {
 
     /**
      * Constructor que acepta un mensaje de error.
+     * <p>
+     * Crea una nueva instancia de {@code AppException} con el mensaje de error
+     * especificado.
+     * </p>
      *
-     * <p>Crea una nueva instancia de {@code AppException} con el mensaje de error especificado.</p>
-     *
-     * @param message El mensaje de error que describe la excepción.
+     * @param message
+     *            El mensaje de error que describe la excepción.
      */
     public AppException(String message) {
         super(message);
@@ -50,11 +61,15 @@ public abstract class AppException extends RuntimeException {
 
     /**
      * Constructor que acepta un mensaje de error y una causa.
+     * <p>
+     * Crea una nueva instancia de {@code AppException} con el mensaje de error
+     * especificado y la causa subyacente de la excepción.
+     * </p>
      *
-     * <p>Crea una nueva instancia de {@code AppException} con el mensaje de error especificado y la causa subyacente de la excepción.</p>
-     *
-     * @param message El mensaje de error que describe la excepción.
-     * @param cause   La causa subyacente de la excepción (puede ser {@code null}).
+     * @param message
+     *            El mensaje de error que describe la excepción.
+     * @param cause
+     *            La causa subyacente de la excepción (puede ser {@code null}).
      */
     public AppException(String message, Throwable cause) {
         super(message, cause);
@@ -63,10 +78,13 @@ public abstract class AppException extends RuntimeException {
 
     /**
      * Constructor que acepta una causa.
+     * <p>
+     * Crea una nueva instancia de {@code AppException} con la causa subyacente de
+     * la excepción.
+     * </p>
      *
-     * <p>Crea una nueva instancia de {@code AppException} con la causa subyacente de la excepción.</p>
-     *
-     * @param cause La causa subyacente de la excepción (puede ser {@code null}).
+     * @param cause
+     *            La causa subyacente de la excepción (puede ser {@code null}).
      */
     public AppException(Throwable cause) {
         super(DEFAULT_MESSAGE, cause);
@@ -81,5 +99,6 @@ public abstract class AppException extends RuntimeException {
             log.error("Excepción: {}. Causa: {}", this.getMessage(), getCause().getMessage(), this);
         } else {
             log.error("Excepción: {}", this.getMessage(), this);
-        }    }
+        }
+    }
 }

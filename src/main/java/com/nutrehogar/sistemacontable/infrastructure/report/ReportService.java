@@ -10,11 +10,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Slf4j
 public class ReportService {
     private static boolean isInitialized = false;
-    private static final String IMG_DIR = ConfigLoader.Props.DIR_REPORTS_TEMPLATE_NAME.getPath().toString() + File.separator;
+    private static final String IMG_DIR = ConfigLoader.Props.DIR_REPORTS_TEMPLATE_NAME.getPath().toString()
+            + File.separator;
     private static final Map<Class<? extends Report<?>>, Report<?>> reports = new HashMap<>();
     private static final Map<String, Object> parameters = new HashMap<>();
     private final User user;

@@ -1,6 +1,5 @@
 package com.nutrehogar.sistemacontable.application.controller;
 
-
 import com.nutrehogar.sistemacontable.application.config.Util;
 import com.nutrehogar.sistemacontable.application.controller.business.dto.JournalTableDTO;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
@@ -81,7 +80,7 @@ public abstract class SimpleController<T, R> extends Controller {
         @Override
         protected void done() {
             try {
-                if (get() == null ||get().isEmpty() || get().getFirst() == null) {
+                if (get() == null || get().isEmpty() || get().getFirst() == null) {
                     setData(List.of());
                     return;
                 }
@@ -119,7 +118,6 @@ public abstract class SimpleController<T, R> extends Controller {
             return COLUMN_NAMES[column];
         }
     }
-
 
     @Override
     public SimpleView getView() {

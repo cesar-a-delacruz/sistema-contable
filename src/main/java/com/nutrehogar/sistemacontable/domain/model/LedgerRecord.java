@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "ledger_record")
-public class LedgerRecord extends AuditableEntity{
+public class LedgerRecord extends AuditableEntity {
     public LedgerRecord(User user) {
         super(user);
     }

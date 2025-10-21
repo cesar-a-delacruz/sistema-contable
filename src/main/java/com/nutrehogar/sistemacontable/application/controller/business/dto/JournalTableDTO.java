@@ -27,7 +27,9 @@ public class JournalTableDTO extends AuditableDTO {
     BigDecimal debit;
     BigDecimal credit;
 
-    public JournalTableDTO(String createdBy, String updatedBy, LocalDateTime createdAt, LocalDateTime updatedAt, JournalEntryPK entryId, LocalDate entryDate, DocumentType documentType, Integer accountId, Integer voucher, String reference, BigDecimal debit, BigDecimal credit) {
+    public JournalTableDTO(String createdBy, String updatedBy, LocalDateTime createdAt, LocalDateTime updatedAt,
+            JournalEntryPK entryId, LocalDate entryDate, DocumentType documentType, Integer accountId, Integer voucher,
+            String reference, BigDecimal debit, BigDecimal credit) {
         super(createdBy, updatedBy, createdAt, updatedAt);
         this.entryId = entryId;
         this.entryDate = entryDate;

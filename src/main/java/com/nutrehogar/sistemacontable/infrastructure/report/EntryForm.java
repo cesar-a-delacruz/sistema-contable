@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 @Slf4j
-public sealed class EntryForm extends Report<JournalEntryReportDTO> permits PaymentVoucher, RegistrationForm{
+public sealed class EntryForm extends Report<JournalEntryReportDTO> permits PaymentVoucher, RegistrationForm {
     public EntryForm(String name, String templateName, Path dirPath) throws ReportException {
         super(name, templateName, dirPath);
     }

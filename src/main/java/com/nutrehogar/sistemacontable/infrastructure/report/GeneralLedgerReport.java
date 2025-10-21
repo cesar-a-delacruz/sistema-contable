@@ -32,7 +32,8 @@ public class GeneralLedgerReport extends Report<GeneralLedgerDTOReport> {
 
     @Override
     protected String getDirReportPath(GeneralLedgerDTOReport dto) {
-        var fileName = String.format("%s-%s-%s.pdf", dto.account(), dto.startDate().format(FILE_DATE_FORMATTER), dto.endDate().format(FILE_DATE_FORMATTER));
+        var fileName = String.format("%s-%s-%s.pdf", dto.account(), dto.startDate().format(FILE_DATE_FORMATTER),
+                dto.endDate().format(FILE_DATE_FORMATTER));
         return dirPath + File.separator + fileName;
     }
 }

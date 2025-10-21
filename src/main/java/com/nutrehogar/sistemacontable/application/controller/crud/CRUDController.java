@@ -58,7 +58,8 @@ public abstract class CRUDController<T extends AuditableEntity, ID> extends Simp
     }
 
     private void save(T entity) {
-        if (entity == null) return;
+        if (entity == null)
+            return;
         try {
             entity.setUser(user);
             getRepository().save(entity);
@@ -76,7 +77,8 @@ public abstract class CRUDController<T extends AuditableEntity, ID> extends Simp
     }
 
     private void update(T entity) {
-        if (entity == null) return;
+        if (entity == null)
+            return;
         try {
             getSelected().setUser(user);
             getRepository().update(getSelected());
@@ -102,7 +104,8 @@ public abstract class CRUDController<T extends AuditableEntity, ID> extends Simp
                 "Desea eliminar? El cambio sera permanente.",
                 "Elimination",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (response != JOptionPane.OK_OPTION) return;
+        if (response != JOptionPane.OK_OPTION)
+            return;
         try {
             getRepository().deleteById(id);
             loadData(); // Recargar datos después de eliminar
@@ -119,7 +122,8 @@ public abstract class CRUDController<T extends AuditableEntity, ID> extends Simp
     }
 
     protected void select() {
-        if (!user.isAuthorized()) return;
+        if (!user.isAuthorized())
+            return;
         getBtnDelete().setEnabled(true);
         getBtnEdit().setEnabled(true);
     }
@@ -147,10 +151,14 @@ public abstract class CRUDController<T extends AuditableEntity, ID> extends Simp
     @Override
     protected void setAuditoria() {
         SwingUtilities.invokeLater(() -> {
-            getAuditablePanel().getLblCreateAt().setText(getSelected().getCreatedAt() == null ? NA : getSelected().getCreatedAt().format(DATE_FORMATTER));
-            getAuditablePanel().getLblCreateBy().setText(getSelected().getCreatedBy() == null ? NA : getSelected().getCreatedBy());
-            getAuditablePanel().getLblUpdateAt().setText(getSelected().getUpdatedAt() == null ? NA : getSelected().getUpdatedAt().format(DATE_FORMATTER));
-            getAuditablePanel().getLblUpdateBy().setText(getSelected().getUpdatedBy() == null ? NA : getSelected().getUpdatedBy());
+            getAuditablePanel().getLblCreateAt().setText(
+                    getSelected().getCreatedAt() == null ? NA : getSelected().getCreatedAt().format(DATE_FORMATTER));
+            getAuditablePanel().getLblCreateBy()
+                    .setText(getSelected().getCreatedBy() == null ? NA : getSelected().getCreatedBy());
+            getAuditablePanel().getLblUpdateAt().setText(
+                    getSelected().getUpdatedAt() == null ? NA : getSelected().getUpdatedAt().format(DATE_FORMATTER));
+            getAuditablePanel().getLblUpdateBy()
+                    .setText(getSelected().getUpdatedBy() == null ? NA : getSelected().getUpdatedBy());
             getAuditablePanel().revalidate();
             getAuditablePanel().repaint();
         });

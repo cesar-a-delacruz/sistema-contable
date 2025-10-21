@@ -1,6 +1,5 @@
 package com.nutrehogar.sistemacontable.application.controller.business.dto;
 
-
 import com.nutrehogar.sistemacontable.application.dto.AuditableDTO;
 import com.nutrehogar.sistemacontable.domain.AccountType;
 import com.nutrehogar.sistemacontable.domain.DocumentType;
@@ -29,7 +28,10 @@ public class GeneralLedgerTableDTO extends AuditableDTO {
     @Setter
     BigDecimal balance;
 
-    public GeneralLedgerTableDTO(String createdBy, String updatedBy, LocalDateTime createdAt, LocalDateTime updatedAt, JournalEntryPK entryId, LocalDate entryDate, DocumentType documentType, Integer accountId, AccountType accountType, Integer voucher, String reference, BigDecimal debit, BigDecimal credit, BigDecimal balance) {
+    public GeneralLedgerTableDTO(String createdBy, String updatedBy, LocalDateTime createdAt, LocalDateTime updatedAt,
+            JournalEntryPK entryId, LocalDate entryDate, DocumentType documentType, Integer accountId,
+            AccountType accountType, Integer voucher, String reference, BigDecimal debit, BigDecimal credit,
+            BigDecimal balance) {
         super(createdBy, updatedBy, createdAt, updatedAt);
         this.entryId = entryId;
         this.entryDate = entryDate;

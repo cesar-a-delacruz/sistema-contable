@@ -42,26 +42,26 @@ public class TransactionManager {
         }
     }
     /*
-    public class TransactionManager {
-    public static <T> T execute(Supplier<T> operation) {
-        try (Session session = SessionPool.getSession()) {
-            return session.getTransaction().execute(s -> {
-                try {
-                    return operation.get();
-                } catch (Exception e) {
-                    throw new RepositoryException(e);
-                }
-            });
-        }
-    }
-}
+     * public class TransactionManager {
+     * public static <T> T execute(Supplier<T> operation) {
+     * try (Session session = SessionPool.getSession()) {
+     * return session.getTransaction().execute(s -> {
+     * try {
+     * return operation.get();
+     * } catch (Exception e) {
+     * throw new RepositoryException(e);
+     * }
+     * });
+     * }
+     * }
+     * }
      */
 
     private static void handleException(Exception e) {
         String message = switch (e) {
             case EntityExistsException ex -> "Registro ya existe: " + ex.getMessage();
-            case ConstraintViolationException ex when Objects.equals(ex.getConstraintName(), "UK_ACCOUNT_CODE") ->
-                    "Código de cuenta duplicado";
+            case ConstraintViolationException ex when Objects.equals(ex.getConstraintName(),
+                    "UK_ACCOUNT_CODE") -> "Código de cuenta duplicado";
             case null -> "Error desconocido";
             default -> "Error: " + e.getMessage();
         };

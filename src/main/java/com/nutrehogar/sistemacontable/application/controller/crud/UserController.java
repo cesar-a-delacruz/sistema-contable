@@ -49,7 +49,6 @@ public class UserController extends CRUDController<User, Integer> {
         super.initialize();
     }
 
-
     @Override
     protected void setupViewListeners() {
         super.setupViewListeners();
@@ -80,22 +79,24 @@ public class UserController extends CRUDController<User, Integer> {
         return getSelected().getId();
     }
 
-
     @Override
     protected User prepareToSave() {
-        if (!checkFields()) return null;
+        if (!checkFields())
+            return null;
         return getByForm(new User());
     }
 
     @Override
     protected User prepareToUpdate() {
-        if (!checkFields()) return null;
+        if (!checkFields())
+            return null;
         getByForm(getSelected());
         return getSelected();
     }
 
     private @NotNull User getByForm(User user) {
-        if (user == null) user = new User();
+        if (user == null)
+            user = new User();
         user.setUser(this.user);
         user.setPermissions(cbxModelPermissions.getSelectedItem());
         user.setUsername(getTxtUsername().getText());
@@ -104,9 +105,9 @@ public class UserController extends CRUDController<User, Integer> {
         return user;
     }
 
-
     public boolean checkFields() {
-        if (cbxModelPermissions.getSelectedItem() == null || getTxtUsername().getText().isBlank() || getTxtPassword().getText().isBlank()) {
+        if (cbxModelPermissions.getSelectedItem() == null || getTxtUsername().getText().isBlank()
+                || getTxtPassword().getText().isBlank()) {
             showMessage("Ningun campo puede estar vació.");
             return false;
         }
@@ -128,7 +129,6 @@ public class UserController extends CRUDController<User, Integer> {
         }
         return true;
     }
-
 
     @Override
     public UserView getView() {

@@ -2,6 +2,7 @@ package com.nutrehogar.sistemacontable.infrastructure.report.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

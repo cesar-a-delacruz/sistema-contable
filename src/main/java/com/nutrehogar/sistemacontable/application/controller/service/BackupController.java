@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 @Getter
 @Setter
 @Slf4j
@@ -122,8 +121,7 @@ public class BackupController extends Controller {
                 contentPanel,
                 "Nueva Copia de Seguridad",
                 JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
+                JOptionPane.PLAIN_MESSAGE);
         if (response == JOptionPane.OK_OPTION) {
             if (!inputFileName.getText().isBlank()) {
                 fileName = inputFileName.getText();
@@ -148,11 +146,13 @@ public class BackupController extends Controller {
                 "Restablecer copia",
                 JOptionPane.OK_CANCEL_OPTION);
 
-        if (response != JOptionPane.OK_OPTION) return;
+        if (response != JOptionPane.OK_OPTION)
+            return;
 
         int result = createBackup("security_");
 
-        if (result != JOptionPane.OK_OPTION) return;
+        if (result != JOptionPane.OK_OPTION)
+            return;
 
         try {
             repository.restore(getSelected().toAbsolutePath().toString());
@@ -161,7 +161,7 @@ public class BackupController extends Controller {
             return;
         }
         showMessage("Para hacer efectivo los cambios se cerrara el programa.", "Se cerrara el programa.");
-        System.exit(1);//terminar proceso
+        System.exit(1);// terminar proceso
     }
 
     protected void updateView() {
@@ -201,7 +201,7 @@ public class BackupController extends Controller {
 
     public class BackupTableModel extends AbstractTableModel {
 
-        private final String[] COLUMN_NAMES = {"Nombre", "Última Modificación"};
+        private final String[] COLUMN_NAMES = { "Nombre", "Última Modificación" };
 
         @Override
         public int getRowCount() {

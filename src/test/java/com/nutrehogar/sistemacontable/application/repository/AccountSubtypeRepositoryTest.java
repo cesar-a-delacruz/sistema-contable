@@ -9,14 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class AccountSubtypeRepositoryTest {
 
     @BeforeEach
-    void setUp() {
-    }
+    void setUp() {}
 
     @AfterEach
-    void tearDown() {
-    }
+    void tearDown() {}
 
     @Test
-    void name() {
-    }
+    void name() {}
 }

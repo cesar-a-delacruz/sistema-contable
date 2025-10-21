@@ -7,7 +7,8 @@ import java.awt.*;
 public class CustomTableCellRenderer extends DefaultTableCellRenderer {
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
         // Llama al método de la clase padre para mantener el comportamiento básico
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 

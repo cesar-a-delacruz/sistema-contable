@@ -25,7 +25,8 @@ public class AccountController extends CRUDController<Account, Integer> {
     private CustomComboBoxModel<AccountSubtype> cbxModelSubtype;
     private DocumentSizeFilter documentSizeFilter;
 
-    public AccountController(AccountRepository repository, AccountView view, AccountSubtypeRepository subtypeRepository, ReportService reportService, User user) {
+    public AccountController(AccountRepository repository, AccountView view, AccountSubtypeRepository subtypeRepository,
+            ReportService reportService, User user) {
         super(repository, view, reportService, user);
         this.subtypeRepository = subtypeRepository;
         loadDataSubtype();
@@ -36,7 +37,8 @@ public class AccountController extends CRUDController<Account, Integer> {
 
     private void loadDataSubtype() {
         var accountType = cbxModelAccountType.getSelectedItem();
-        List<AccountSubtype> list = subtypeRepository.findAllByAccountType(accountType != null ? accountType : AccountType.ASSETS);
+        List<AccountSubtype> list = subtypeRepository
+                .findAllByAccountType(accountType != null ? accountType : AccountType.ASSETS);
         cbxModelSubtype.setData(list);
     }
 
@@ -48,7 +50,6 @@ public class AccountController extends CRUDController<Account, Integer> {
         documentSizeFilter = new DocumentSizeFilter(Account.MAX_CANONICAL_ID_LENGTH);
         super.initialize();
     }
-
 
     @Override
     protected void setupViewListeners() {
@@ -68,13 +69,15 @@ public class AccountController extends CRUDController<Account, Integer> {
     }
 
     private void setTextToLbAccountTypeId() {
-        if (cbxModelAccountType.getSelectedItem() == null) return;
+        if (cbxModelAccountType.getSelectedItem() == null)
+            return;
         var id = cbxModelAccountType.getSelectedItem().getId();
         getView().getLblAccountTypeId().setText(id + ".");
     }
 
     private void setTextToLbAccountSubtypeId() {
-        if (cbxModelSubtype.getSelectedItem() == null) return;
+        if (cbxModelSubtype.getSelectedItem() == null)
+            return;
         var id = cbxModelSubtype.getSelectedItem().getCanonicalId();
         getView().getLblAccountSubtypeId().setText(id);
         int size = Account.MAX_ID_LENGTH - cbxModelSubtype.getSelectedItem().getId().toString().length();
@@ -92,7 +95,8 @@ public class AccountController extends CRUDController<Account, Integer> {
         getCbxAccountSubtype().setEnabled(false);
         AccountType accountType = getSelected().getAccountSubtype().getAccountType();
         getCbxAccountType().setSelectedItem(accountType != null ? accountType : AccountType.ASSETS);
-        cbxModelSubtype.setData(subtypeRepository.findAllByAccountType(accountType != null ? accountType : AccountType.ASSETS));
+        cbxModelSubtype.setData(
+                subtypeRepository.findAllByAccountType(accountType != null ? accountType : AccountType.ASSETS));
         getCbxAccountSubtype().setSelectedItem(getSelected().getAccountSubtype());
     }
 
@@ -113,7 +117,6 @@ public class AccountController extends CRUDController<Account, Integer> {
         return getSelected().getId();
     }
 
-
     @Override
     protected Account prepareToSave() {
         int id;
@@ -123,7 +126,8 @@ public class AccountController extends CRUDController<Account, Integer> {
             showMessage("El Código tiene que ser un numero.");
             return null;
         }
-        if (cbxModelAccountType.getSelectedItem() == null || cbxModelSubtype.getSelectedItem() == null || getTxtAccountName().getText().isBlank()) {
+        if (cbxModelAccountType.getSelectedItem() == null || cbxModelSubtype.getSelectedItem() == null
+                || getTxtAccountName().getText().isBlank()) {
             showMessage("Ningun campo puede estar vacio.");
             return null;
         }
@@ -159,10 +163,9 @@ public class AccountController extends CRUDController<Account, Integer> {
 
     public class AccountTableModel extends AbstractTableModel {
 
-        private final String[] COLUMN_NAMES =
-                {
-                        "Código", "Nombre", "Tipo de Cuenta", "Subtipo de Cuenta"
-                };
+        private final String[] COLUMN_NAMES = {
+                "Código", "Nombre", "Tipo de Cuenta", "Subtipo de Cuenta"
+        };
 
         @Override
         public int getRowCount() {
@@ -199,7 +202,6 @@ public class AccountController extends CRUDController<Account, Integer> {
             };
         }
     }
-
 
     @Override
     public AccountView getView() {

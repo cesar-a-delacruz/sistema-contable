@@ -11,7 +11,6 @@ import com.nutrehogar.sistemacontable.ui.ThemeConfig;
 import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
 import lombok.extern.slf4j.Slf4j;
 
-
 import javax.swing.*;
 
 @Slf4j

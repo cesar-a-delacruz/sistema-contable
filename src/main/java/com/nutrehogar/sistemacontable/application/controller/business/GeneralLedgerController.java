@@ -47,17 +47,19 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
     private CustomComboBoxModel<Account> cbxModelAccount;
     private CustomComboBoxModel<AccountSubtype> cbxModelSubtype;
 
-    public GeneralLedgerController(AccountRepository repository, GeneralLedgerView view, Consumer<JournalEntryPK> editJournalEntry, AccountSubtypeRepository subtypeRepository, LedgerRecordRepository ledgerRecordRepository, ReportService reportService, User user) {
+    public GeneralLedgerController(AccountRepository repository, GeneralLedgerView view,
+            Consumer<JournalEntryPK> editJournalEntry, AccountSubtypeRepository subtypeRepository,
+            LedgerRecordRepository ledgerRecordRepository, ReportService reportService, User user) {
         super(repository, view, editJournalEntry, reportService, user);
         this.ledgerRecordRepository = ledgerRecordRepository;
         this.subtypeRepository = subtypeRepository;
         loadDataSubtype();
     }
 
-
     public void loadDataSubtype() {
         var accountType = cbxModelAccountType.getSelectedItem();
-        if (accountType == null) return;
+        if (accountType == null)
+            return;
         List<AccountSubtype> list = subtypeRepository.findAllByAccountType(accountType);
         cbxModelSubtype.setData(list);
     }
@@ -72,7 +74,8 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
 
     @Override
     protected void initialize() {
-        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo Documento", "Cuenta", "Referencia", "Debíto", "Crédito", "Saldo") {
+        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo Documento", "Cuenta", "Referencia", "Debíto",
+                "Crédito", "Saldo") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var dto = getData().get(rowIndex);
@@ -118,12 +121,10 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
         getCbxAccount().setModel(cbxModelAccount);
         cbxModelAccountType.addListDataListener(new ListDataListener() {
             @Override
-            public void intervalAdded(ListDataEvent e) {
-            }
+            public void intervalAdded(ListDataEvent e) {}
 
             @Override
-            public void intervalRemoved(ListDataEvent e) {
-            }
+            public void intervalRemoved(ListDataEvent e) {}
 
             @Override
             public void contentsChanged(ListDataEvent e) {
@@ -132,12 +133,10 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
         });
         cbxModelSubtype.addListDataListener(new ListDataListener() {
             @Override
-            public void intervalAdded(ListDataEvent e) {
-            }
+            public void intervalAdded(ListDataEvent e) {}
 
             @Override
-            public void intervalRemoved(ListDataEvent e) {
-            }
+            public void intervalRemoved(ListDataEvent e) {}
 
             @Override
             public void contentsChanged(ListDataEvent e) {
@@ -146,12 +145,10 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
         });
         cbxModelAccount.addListDataListener(new ListDataListener() {
             @Override
-            public void intervalAdded(ListDataEvent e) {
-            }
+            public void intervalAdded(ListDataEvent e) {}
 
             @Override
-            public void intervalRemoved(ListDataEvent e) {
-            }
+            public void intervalRemoved(ListDataEvent e) {}
 
             @Override
             public void contentsChanged(ListDataEvent e) {
@@ -162,11 +159,15 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
             try {
                 var dtos = new ArrayList<GeneralLedgerReportDTO>();
                 data.forEach(t -> dtos.add(new GeneralLedgerReportDTO(
-                        toStringSafe(t.getEntryId()), toStringSafe(t.getEntryDate()), toStringSafe(t.getDocumentType(), DocumentType::getName), toStringSafe(t.getAccountId()), toStringSafe(t.getAccountType(), AccountType::getName), toStringSafe(t.getVoucher()), toStringSafe(t.getReference()), formatDecimalSafe(t.getDebit()), formatDecimalSafe(t.getCredit()), formatDecimalSafe(t.getBalance())
-                )));
+                        toStringSafe(t.getEntryId()), toStringSafe(t.getEntryDate()),
+                        toStringSafe(t.getDocumentType(), DocumentType::getName), toStringSafe(t.getAccountId()),
+                        toStringSafe(t.getAccountType(), AccountType::getName), toStringSafe(t.getVoucher()),
+                        toStringSafe(t.getReference()), formatDecimalSafe(t.getDebit()),
+                        formatDecimalSafe(t.getCredit()), formatDecimalSafe(t.getBalance()))));
                 var dto = new GeneralLedgerDTOReport(spnModelStartPeriod.getValue(),
                         spnModelEndPeriod.getValue(),
-                        Account.getCellRenderer(cbxModelAccount.getSelectedItem().getId()) + " " + cbxModelAccount.getSelectedItem().getName(),
+                        Account.getCellRenderer(cbxModelAccount.getSelectedItem().getId()) + " "
+                                + cbxModelAccount.getSelectedItem().getName(),
                         dtos);
                 reportService.generateReport(GeneralLedgerReport.class, dto);
                 showMessage("Reporte generado!");
@@ -185,12 +186,14 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
 
         @Override
         protected List<GeneralLedgerTableDTO> doInBackground() {
-            //        log.info("Load data");
+            // log.info("Load data");
             var accountSelectedItem = cbxModelAccount.getSelectedItem();
-            if (accountSelectedItem == null) return null;
-//        log.info("account: {}", accountSelectedItem);
+            if (accountSelectedItem == null)
+                return null;
+            // log.info("account: {}", accountSelectedItem);
 
-            var ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccount(accountSelectedItem, spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue());
+            var ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccount(accountSelectedItem,
+                    spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue());
 
             // 🔹 Usar Stream para mapear, ordenar y calcular totales
             List<GeneralLedgerTableDTO> generalLedgers = ledgerRecords.stream()
@@ -208,11 +211,10 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
                             record.getReference(),
                             record.getDebit(),
                             record.getCredit(),
-                            BigDecimal.ZERO
-                    ))
+                            BigDecimal.ZERO))
                     .sorted(Comparator.comparing(GeneralLedgerTableDTO::getEntryDate)) // Ordenar por fecha
                     .toList();
-//        log.info("GeneralLedgerDTOs: {}", generalLedgers);
+            // log.info("GeneralLedgerDTOs: {}", generalLedgers);
             // 🔹 Calcular totales usando reduce()
             var debitSum = generalLedgers.stream()
                     .map(GeneralLedgerTableDTO::getDebit)
@@ -240,7 +242,6 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
             return generalLedgers;
         }
     }
-
 
     @Override
     protected void setElementSelected(@NotNull MouseEvent e) {

@@ -47,7 +47,9 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
     private boolean isBeingEdited;
     public static final BigDecimal ZERO = BigDecimal.valueOf(0, 2);
 
-    public AccountingEntryFormController(LedgerRecordRepository repository, AccountingEntryFormView view, JournalEntryRepository journalRepository, AccountRepository accountRepository, ReportService reportService, User user) {
+    public AccountingEntryFormController(LedgerRecordRepository repository, AccountingEntryFormView view,
+            JournalEntryRepository journalRepository, AccountRepository accountRepository, ReportService reportService,
+            User user) {
         super(repository, view, reportService, user);
         this.journalRepository = journalRepository;
         this.accountRepository = accountRepository;
@@ -61,6 +63,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             public int getRowCount() {
                 return tblDataList.size();
             }
+
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var record = tblDataList.get(rowIndex);
@@ -125,9 +128,11 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         for (LedgerRecord record : getData()) {
             debitSum = debitSum.add(record.getDebit(), MathContext.DECIMAL128);
             creditSum = creditSum.add(record.getCredit(), MathContext.DECIMAL128);
-            tblDataList.add(new LedgerRecordDTO(Account.getCellRenderer(record.getAccount().getId()), record.getReference(), formatBigDecimal(record.getDebit()), formatBigDecimal(record.getCredit())));
+            tblDataList.add(new LedgerRecordDTO(Account.getCellRenderer(record.getAccount().getId()),
+                    record.getReference(), formatBigDecimal(record.getDebit()), formatBigDecimal(record.getCredit())));
         }
-        tblDataList.add(new LedgerRecordDTO("", "TOTAL", DECIMAL_FORMAT.format(debitSum), DECIMAL_FORMAT.format(creditSum)));
+        tblDataList.add(
+                new LedgerRecordDTO("", "TOTAL", DECIMAL_FORMAT.format(debitSum), DECIMAL_FORMAT.format(creditSum)));
         boolean isBalanced = !getData().isEmpty();
         getBtnSaveEntry().setEnabled(isBalanced && isBeingAdded);
         getBtnUpdateEntry().setEnabled(isBalanced && isBeingEdited);
@@ -169,8 +174,10 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
                 showError("Error al crear el Reporte.", ex);
             }
         });
-        ((AbstractDocument) getTxtRecordAmount().getDocument()).setDocumentFilter(new CustomDocumentFilter(CustomDocumentFilter.Type.DECIMAL));
-        ((AbstractDocument) getTxtEntryDocumentNumber().getDocument()).setDocumentFilter(new CustomDocumentFilter(CustomDocumentFilter.Type.INTEGER));
+        ((AbstractDocument) getTxtRecordAmount().getDocument())
+                .setDocumentFilter(new CustomDocumentFilter(CustomDocumentFilter.Type.DECIMAL));
+        ((AbstractDocument) getTxtEntryDocumentNumber().getDocument())
+                .setDocumentFilter(new CustomDocumentFilter(CustomDocumentFilter.Type.INTEGER));
     }
 
     private @Nullable JournalEntryReportDTO getJournalEntryDTO() {
@@ -205,14 +212,12 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
                             toStringSafe(record.getAccount().getId(), Account::getCellRenderer),
                             toStringSafe(record.getReference()),
                             formatDecimalSafe(record.getDebit()),
-                            formatBigDecimal(record.getCredit())
-                    )
-            );
+                            formatBigDecimal(record.getCredit())));
         }
-        recordList.add(new LedgerRecordReportDTO("", "", "", "TOTAL", DECIMAL_FORMAT.format(debitSum), DECIMAL_FORMAT.format(creditSum)));
+        recordList.add(new LedgerRecordReportDTO("", "", "", "TOTAL", DECIMAL_FORMAT.format(debitSum),
+                DECIMAL_FORMAT.format(creditSum)));
         return recordList;
     }
-
 
     @Override
     protected void updateView() {
@@ -242,10 +247,14 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
     @Override
     protected void setAuditoria() {
         SwingUtilities.invokeLater(() -> {
-            getAuditablePanel().getLblCreateAt().setText(getSelected().getCreatedAt() == null ? NA : getSelected().getCreatedAt().format(DATE_FORMATTER));
-            getAuditablePanel().getLblCreateBy().setText(getSelected().getCreatedBy() == null ? NA : getSelected().getCreatedBy());
-            getAuditablePanel().getLblUpdateAt().setText(getSelected().getUpdatedAt() == null ? NA : getSelected().getUpdatedAt().format(DATE_FORMATTER));
-            getAuditablePanel().getLblUpdateBy().setText(getSelected().getUpdatedBy() == null ? NA : getSelected().getUpdatedBy());
+            getAuditablePanel().getLblCreateAt().setText(
+                    getSelected().getCreatedAt() == null ? NA : getSelected().getCreatedAt().format(DATE_FORMATTER));
+            getAuditablePanel().getLblCreateBy()
+                    .setText(getSelected().getCreatedBy() == null ? NA : getSelected().getCreatedBy());
+            getAuditablePanel().getLblUpdateAt().setText(
+                    getSelected().getUpdatedAt() == null ? NA : getSelected().getUpdatedAt().format(DATE_FORMATTER));
+            getAuditablePanel().getLblUpdateBy()
+                    .setText(getSelected().getUpdatedBy() == null ? NA : getSelected().getUpdatedBy());
             getAuditablePanel().revalidate();
             getAuditablePanel().repaint();
         });
@@ -290,7 +299,8 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             showMessage("El monto debe ser un numero y no puede estar vació.");
             return Optional.empty();
         }
-        if (lr == null) lr = new LedgerRecord();
+        if (lr == null)
+            lr = new LedgerRecord();
         lr.setJournalEntry(journalEntry.get());
         lr.setReference(getTxtRecordReference().getText());
         lr.setAccount(account.get());
@@ -372,12 +382,12 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         getTxtRecordReference().setText(getSelected().getReference());
         cbxModelAccount.setSelectedItem(getSelected().getAccount());
 
-        if (getSelected().getCredit() != null && !(getSelected().getCredit().compareTo(BigDecimal.ZERO)==0)) {
+        if (getSelected().getCredit() != null && !(getSelected().getCredit().compareTo(BigDecimal.ZERO) == 0)) {
             log.info("es credito");
             getRbtRecordCredit().setSelected(true);
             getTxtRecordAmount().setText(getSelected().getCredit().toString());
         }
-        if (getSelected().getDebit() != null && !(getSelected().getDebit().compareTo(BigDecimal.ZERO) == 0)){
+        if (getSelected().getDebit() != null && !(getSelected().getDebit().compareTo(BigDecimal.ZERO) == 0)) {
             log.info("es debito");
             getRbtRecordDebit().setSelected(true);
             getTxtRecordAmount().setText(getSelected().getDebit().toString());
@@ -432,7 +442,8 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
                 var journalId = new JournalEntryPK(id, cbxModelDocumentType.getSelectedItem());
 
                 if (journalRepository.existsById(journalId)) {
-                    showMessage("Ya existe una Entrada con el numero de documento: " + id + " y tipo de documento: " + cbxModelDocumentType.getSelectedItem().getName() + ".");
+                    showMessage("Ya existe una Entrada con el numero de documento: " + id + " y tipo de documento: "
+                            + cbxModelDocumentType.getSelectedItem().getName() + ".");
                     return;
                 }
                 entry.setId(journalId);
@@ -476,7 +487,8 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
                 "Elimination",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-        if (response != JOptionPane.OK_OPTION) return;
+        if (response != JOptionPane.OK_OPTION)
+            return;
 
         journalEntry.ifPresentOrElse(entry -> {
             try {
@@ -544,7 +556,8 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             showError("Error: journal repository is null!");
             return;
         }
-        journalRepository.findById(jeId).ifPresentOrElse(this::prepareToEditEntry, () -> showMessage("No journal entry found: " + jeId));
+        journalRepository.findById(jeId).ifPresentOrElse(this::prepareToEditEntry,
+                () -> showMessage("No journal entry found: " + jeId));
     }
 
     private void prepareToAddEntry() {

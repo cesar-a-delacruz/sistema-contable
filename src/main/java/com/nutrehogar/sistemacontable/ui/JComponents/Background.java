@@ -48,9 +48,10 @@ public class Background extends JPanel {
     /**
      * Establece las fracciones para los colores del degradado.
      *
-     * @param fractions Fracciónes. (4)
+     * @param fractions
+     *            Fracciónes. (4)
      */
-    public void setFractions(float @NotNull ... fractions) {
+    public void setFractions(float @NotNull... fractions) {
         this.fraction1 = fractions[0];
         this.fraction2 = fractions[1];
         this.fraction3 = fractions[2];
@@ -60,9 +61,10 @@ public class Background extends JPanel {
     /**
      * Establece los colores para el degradado.
      *
-     * @param colors Colores (5).
+     * @param colors
+     *            Colores (5).
      */
-    public void setColors(Color @NotNull ... colors) {
+    public void setColors(Color @NotNull... colors) {
         this.color1 = colors[0];
         this.color2 = colors[1];
         this.color3 = colors[2];
@@ -98,8 +100,10 @@ public class Background extends JPanel {
     /**
      * Configura los puntos de inicio y fin del degradado según la posición central.
      *
-     * @param width  Ancho del panel.
-     * @param height Alto del panel.
+     * @param width
+     *            Ancho del panel.
+     * @param height
+     *            Alto del panel.
      */
     private void configureGradientPoints(double width, double height) {
         switch (centerPosition) {
@@ -162,11 +166,11 @@ public class Background extends JPanel {
         return switch (numberOfColors) {
             case ONE -> {
                 fundType = FundType.SOLID;
-                yield new Color[]{color1};
+                yield new Color[] { color1 };
             }
-            case TWO -> new Color[]{color1, color2};
-            case TREE -> new Color[]{color1, color2, color3};
-            case FOUR -> new Color[]{color1, color2, color3, color4};
+            case TWO -> new Color[] { color1, color2 };
+            case TREE -> new Color[] { color1, color2, color3 };
+            case FOUR -> new Color[] { color1, color2, color3, color4 };
         };
     }
 
@@ -178,20 +182,24 @@ public class Background extends JPanel {
     @Contract(pure = true)
     private float @NotNull [] getFractions() {
         return switch (numberOfColors) {
-            case ONE -> new float[]{fraction1};
-            case TWO -> new float[]{fraction1, fraction2};
-            case TREE -> new float[]{fraction1, fraction2, fraction3};
-            default -> new float[]{fraction1, fraction2, fraction3, fraction4};
+            case ONE -> new float[] { fraction1 };
+            case TWO -> new float[] { fraction1, fraction2 };
+            case TREE -> new float[] { fraction1, fraction2, fraction3 };
+            default -> new float[] { fraction1, fraction2, fraction3, fraction4 };
         };
     }
 
     /**
      * Crea el degradado según el tipo de fondo.
      *
-     * @param width     Ancho del panel.
-     * @param height    Alto del panel.
-     * @param colors    Colores del degradado.
-     * @param fractions Fracciones del degradado.
+     * @param width
+     *            Ancho del panel.
+     * @param height
+     *            Alto del panel.
+     * @param colors
+     *            Colores del degradado.
+     * @param fractions
+     *            Fracciones del degradado.
      * @return El degradado configurado.
      */
     private Paint createGradientPaint(double width, double height, Color[] colors, float[] fractions) {
@@ -207,7 +215,8 @@ public class Background extends JPanel {
     /**
      * Convierte un código hexadecimal a un objeto Color.
      *
-     * @param hex Código hexadecimal del color.
+     * @param hex
+     *            Código hexadecimal del color.
      * @return Objeto Color.
      */
     public Color hexToColor(String hex) {
@@ -228,6 +237,7 @@ public class Background extends JPanel {
 
     public enum NumberOfColors {
         ONE, TWO, TREE, FOUR;
+
         private int value;
     }
 }

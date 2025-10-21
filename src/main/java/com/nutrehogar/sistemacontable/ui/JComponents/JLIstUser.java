@@ -34,8 +34,7 @@ public class JLIstUser extends JPanel {
                 User.builder().username("Yospeh").isEnable(true).build(),
                 User.builder().username("Yospeh").isEnable(true).build(),
                 User.builder().username("Yospeh").isEnable(true).build(),
-                User.builder().username("Yospeh").isEnable(true).build()
-        ));
+                User.builder().username("Yospeh").isEnable(true).build()));
         var frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
@@ -46,6 +45,7 @@ public class JLIstUser extends JPanel {
         frame.setVisible(true);
         frame.setResizable(false);
     }
+
     private List<User> users;
     private User userSelected;
     private Consumer<User> selectUser;
@@ -75,7 +75,8 @@ public class JLIstUser extends JPanel {
 
     public void setList(@NotNull List<User> users) {
         removeAll();
-        if (users.isEmpty()) return;
+        if (users.isEmpty())
+            return;
 
         DefaultListModel<User> listModel = new DefaultListModel<>();
         for (User user : users) {

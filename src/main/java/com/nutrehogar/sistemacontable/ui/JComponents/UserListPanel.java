@@ -46,7 +46,8 @@ public class UserListPanel extends JPanel {
 
     public void setList(@NotNull List<User> users) {
         removeAll();
-        if (users.isEmpty()) return;
+        if (users.isEmpty())
+            return;
         boolean first = true;
         for (var user : users) {
             var element = new UserListElement(user, selectUser);
@@ -61,7 +62,6 @@ public class UserListPanel extends JPanel {
         updateSelection();
     }
 
-
     private void updateSelection() {
         for (var comp : getComponents()) {
             if (comp instanceof UserListElement element) {
@@ -75,8 +75,10 @@ public class UserListPanel extends JPanel {
     @EqualsAndHashCode(callSuper = true)
     @Getter
     public static class UserListElement extends JLabel {
-        public static final FlatSVGIcon userIcon = new FlatSVGIcon("svgs/user.svg", ThemeConfig.ICON_MD, ThemeConfig.ICON_MD);
-        public static final FlatSVGIcon userDisableIcon = new FlatSVGIcon("svgs/user_disable.svg", ThemeConfig.ICON_MD, ThemeConfig.ICON_MD);
+        public static final FlatSVGIcon userIcon = new FlatSVGIcon("svgs/user.svg", ThemeConfig.ICON_MD,
+                ThemeConfig.ICON_MD);
+        public static final FlatSVGIcon userDisableIcon = new FlatSVGIcon("svgs/user_disable.svg", ThemeConfig.ICON_MD,
+                ThemeConfig.ICON_MD);
         private final User user;
         private boolean isSelected = false;
 
@@ -94,33 +96,35 @@ public class UserListPanel extends JPanel {
             setBackground(user.isEnable() ? Color.WHITE : ThemeConfig.Palette.WHITE_SMOKE);
             setIcon(user.isEnable() ? userIcon : userDisableIcon);
             setBorder(ThemeConfig.Spacing.BORDER_MD);
-            if (user.isEnable()) addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    action.accept(user);
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    if (!isSelected) {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        setBackground(ThemeConfig.Palette.COLUMBIA_BLUE);
+            if (user.isEnable())
+                addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        action.accept(user);
                     }
-                }
 
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    if (!isSelected) {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                        setBackground(Color.WHITE);
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        if (!isSelected) {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                            setBackground(ThemeConfig.Palette.COLUMBIA_BLUE);
+                        }
                     }
-                }
-            });
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        if (!isSelected) {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                            setBackground(Color.WHITE);
+                        }
+                    }
+                });
 
         }
 
         public void setSelected(boolean selected) {
-            if (!user.isEnable()) return;
+            if (!user.isEnable())
+                return;
             this.isSelected = selected;
             if (selected) {
                 setBackground(ThemeConfig.Palette.URANIAN_BLUE);
@@ -132,6 +136,5 @@ public class UserListPanel extends JPanel {
         }
 
     }
-
 
 }

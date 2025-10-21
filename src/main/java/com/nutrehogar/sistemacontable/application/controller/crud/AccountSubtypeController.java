@@ -18,7 +18,8 @@ public class AccountSubtypeController extends CRUDController<AccountSubtype, Int
     private CustomComboBoxModel<AccountType> cbxModelAccountType;
     private DocumentSizeFilter documentSizeFilter;
 
-    public AccountSubtypeController(AccountSubtypeRepository repository, AccountSubtypeView view, ReportService reportService, User user) {
+    public AccountSubtypeController(AccountSubtypeRepository repository, AccountSubtypeView view,
+            ReportService reportService, User user) {
         super(repository, view, reportService, user);
         setTextToLbAccountTypeId();
         prepareToAdd();
@@ -66,7 +67,8 @@ public class AccountSubtypeController extends CRUDController<AccountSubtype, Int
     }
 
     private void setTextToLbAccountTypeId() {
-        if (cbxModelAccountType.getSelectedItem() == null) return;
+        if (cbxModelAccountType.getSelectedItem() == null)
+            return;
         var id = cbxModelAccountType.getSelectedItem().getId();
         getView().getLblAccountTypeId().setText(id + ".");
     }

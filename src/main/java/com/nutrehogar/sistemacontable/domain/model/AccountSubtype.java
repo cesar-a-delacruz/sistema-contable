@@ -46,7 +46,6 @@ public class AccountSubtype extends AuditableEntity {
         this.id = Integer.valueOf(accountType.getId() + id.toString());
     }
 
-
     public String getCanonicalId() {
         return id.toString().substring(1);
     }
@@ -54,6 +53,7 @@ public class AccountSubtype extends AuditableEntity {
     public String getFormattedId() {
         return getAccountType().getId() + "." + getCanonicalId();
     }
+
     public static class Comparator implements java.util.Comparator<AccountSubtype> {
         @Override
         public int compare(AccountSubtype o1, AccountSubtype o2) {
@@ -74,11 +74,11 @@ public class AccountSubtype extends AuditableEntity {
         private Integer ajustarDecimal(String decimal) {
             // Normalizar la longitud a 3 dígitos rellenando a la derecha
             if (decimal.length() == 1) {
-                return Integer.parseInt(decimal) * 100;  // "6" → "600"
+                return Integer.parseInt(decimal) * 100; // "6" → "600"
             } else if (decimal.length() == 2) {
-                return Integer.parseInt(decimal) * 10;   // "61" → "610"
+                return Integer.parseInt(decimal) * 10; // "61" → "610"
             } else {
-                return Integer.parseInt(decimal);        // "999" → "999"
+                return Integer.parseInt(decimal); // "999" → "999"
             }
         }
     }

@@ -57,23 +57,23 @@ public class BackupRepo implements BackupRepository {
     }
 
     public void execute(Consumer<Statement> consumer) throws InterruptedException {
-//        WriteExecutor.submitWrite(() -> {
-            Session session = null;
-            try {
-                session = HibernateUtil.getSession();
-                session.doWork(connection -> {
-                    try (Statement stmt = connection.createStatement()) {
-                        connection.setAutoCommit(true);
-                        consumer.accept(stmt);
-                        connection.setAutoCommit(false);
-                    }
-                });
-            } finally {
-                if (session != null) {
-                    HibernateUtil.returnSession(session); // Devolver sesión al pool
+        // WriteExecutor.submitWrite(() -> {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSession();
+            session.doWork(connection -> {
+                try (Statement stmt = connection.createStatement()) {
+                    connection.setAutoCommit(true);
+                    consumer.accept(stmt);
+                    connection.setAutoCommit(false);
                 }
+            });
+        } finally {
+            if (session != null) {
+                HibernateUtil.returnSession(session); // Devolver sesión al pool
             }
-//            return null;
-//        });
+        }
+        // return null;
+        // });
     }
 }
