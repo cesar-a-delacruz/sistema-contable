@@ -1,20 +1,16 @@
 package com.nutrehogar.sistemacontable.application.controller.business;
 
-import com.nutrehogar.sistemacontable.domain.model.JournalEntryPK;
-import com.nutrehogar.sistemacontable.exception.RepositoryException;
-import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 import com.nutrehogar.sistemacontable.application.controller.business.dto.TrialBalanceTableDTO;
 import com.nutrehogar.sistemacontable.application.repository.JournalEntryRepository;
+import com.nutrehogar.sistemacontable.application.view.business.BusinessView;
 import com.nutrehogar.sistemacontable.domain.DocumentType;
-import com.nutrehogar.sistemacontable.domain.model.Account;
-import com.nutrehogar.sistemacontable.domain.model.JournalEntry;
-import com.nutrehogar.sistemacontable.domain.model.User;
-import com.nutrehogar.sistemacontable.application.view.business.TrialBalanceView;
+import com.nutrehogar.sistemacontable.domain.model.*;
+import com.nutrehogar.sistemacontable.exception.RepositoryException;
+
+import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 import com.nutrehogar.sistemacontable.infrastructure.report.TrialBalance;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.SimpleReportDTO;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.TrialBalanceReportDTO;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
@@ -25,12 +21,13 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import static com.nutrehogar.sistemacontable.application.config.Util.*;
 
 @Slf4j
 public class TrialBalanceController extends BusinessController<TrialBalanceTableDTO, JournalEntry> {
-
-    public TrialBalanceController(JournalEntryRepository repository, TrialBalanceView view,
+    public TrialBalanceController(JournalEntryRepository repository, BusinessView view,
             Consumer<JournalEntryPK> editJournalEntry, ReportService reportService, User user) {
         super(repository, view, editJournalEntry, reportService, user);
     }
@@ -164,7 +161,6 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
                 processedList.add(totalDTO);
 
                 // Agregar una línea en blanco para separación visual
-                // processedList.add(new TrialBalanceDTO("", null, null, null));
 
                 // 3️⃣ Agregar la lista procesada al mapa final
                 list.addAll(processedList);
@@ -195,13 +191,12 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
     }
 
     @Override
-    public TrialBalanceView getView() {
-        return (TrialBalanceView) super.getView();
+    public BusinessView getView() {
+        return (BusinessView) super.getView();
     }
 
     @Override
     public JournalEntryRepository getRepository() {
         return (JournalEntryRepository) super.getRepository();
     }
-
 }

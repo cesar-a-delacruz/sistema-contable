@@ -1,14 +1,15 @@
 package com.nutrehogar.sistemacontable.domain.model;
 
 import com.nutrehogar.sistemacontable.domain.DocumentType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter

@@ -1,23 +1,17 @@
 package com.nutrehogar.sistemacontable.application.controller.business;
 
-import com.nutrehogar.sistemacontable.domain.model.JournalEntryPK;
-import com.nutrehogar.sistemacontable.exception.ApplicationException;
-import com.nutrehogar.sistemacontable.exception.RepositoryException;
-import com.nutrehogar.sistemacontable.infrastructure.report.Journal;
-import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 import com.nutrehogar.sistemacontable.application.controller.business.dto.JournalTableDTO;
 import com.nutrehogar.sistemacontable.application.repository.JournalEntryRepository;
+import com.nutrehogar.sistemacontable.application.view.business.BusinessView;
+import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.domain.DocumentType;
-import com.nutrehogar.sistemacontable.domain.model.Account;
-import com.nutrehogar.sistemacontable.domain.model.JournalEntry;
-import com.nutrehogar.sistemacontable.domain.model.User;
-import com.nutrehogar.sistemacontable.application.view.business.JournalView;
+import com.nutrehogar.sistemacontable.domain.model.*;
+
+import com.nutrehogar.sistemacontable.infrastructure.report.Journal;
+import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.JournalReportDTO;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.SimpleReportDTO;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,11 +20,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import static com.nutrehogar.sistemacontable.application.config.Util.*;
 
 @Slf4j
 public class JournalController extends BusinessController<JournalTableDTO, JournalEntry> {
-    public JournalController(JournalEntryRepository repository, JournalView view,
+    public JournalController(JournalEntryRepository repository, BusinessView view,
             Consumer<JournalEntryPK> editJournalEntry, ReportService reportService, User user) {
         super(repository, view, editJournalEntry, reportService, user);
     }
@@ -142,8 +138,8 @@ public class JournalController extends BusinessController<JournalTableDTO, Journ
     }
 
     @Override
-    public JournalView getView() {
-        return (JournalView) super.getView();
+    public BusinessView getView() {
+        return (BusinessView) super.getView();
     }
 
     @Override

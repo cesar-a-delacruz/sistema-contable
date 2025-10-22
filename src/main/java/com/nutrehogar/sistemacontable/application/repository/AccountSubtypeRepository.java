@@ -3,7 +3,6 @@ package com.nutrehogar.sistemacontable.application.repository;
 import com.nutrehogar.sistemacontable.domain.AccountType;
 import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
-
 import java.util.List;
 
 public interface AccountSubtypeRepository extends CRUDRepository<AccountSubtype, Integer> {

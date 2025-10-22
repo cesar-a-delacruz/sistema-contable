@@ -1,9 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.business;
 
 import com.nutrehogar.sistemacontable.domain.AccountType;
@@ -12,15 +6,8 @@ import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.application.view.business.GeneralLedgerView;
 import lombok.Getter;
 
-/**
- * @author Calci
- */
 @Getter
 public class DefaultGeneralLedgerView extends GeneralLedgerView {
-
-    /**
-     * Creates new form DefaultGeneralLedgerView
-     */
     public DefaultGeneralLedgerView() {
         initComponents();
     }
@@ -56,7 +43,7 @@ public class DefaultGeneralLedgerView extends GeneralLedgerView {
         lblAccountType = new javax.swing.JLabel();
         lblAccountSubtype = new javax.swing.JLabel();
         lblAccount = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
         btnGenerateReport = new javax.swing.JButton();
 
         setOpaque(false);
@@ -107,11 +94,6 @@ public class DefaultGeneralLedgerView extends GeneralLedgerView {
         cbxAccount.setModel(new javax.swing.DefaultComboBoxModel<>());
 
         cbxAccountType.setModel(new javax.swing.DefaultComboBoxModel<>());
-        cbxAccountType.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbxAccountTypeActionPerformed(evt);
-            }
-        });
 
         cbxAccountSubtype.setModel(new javax.swing.DefaultComboBoxModel<>());
 
@@ -321,12 +303,8 @@ public class DefaultGeneralLedgerView extends GeneralLedgerView {
                                                 Short.MAX_VALUE))));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cbxAccountTypeActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cbxAccountTypeActionPerformed
-        // TODO add your handling code here:
-    }// GEN-LAST:event_cbxAccountTypeActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnGenerateReport;

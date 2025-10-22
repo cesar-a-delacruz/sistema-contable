@@ -1,11 +1,9 @@
 package com.nutrehogar.sistemacontable.domain.model;
 
-import com.nutrehogar.sistemacontable.domain.DocumentType;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter

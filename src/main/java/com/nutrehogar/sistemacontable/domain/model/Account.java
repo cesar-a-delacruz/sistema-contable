@@ -1,12 +1,11 @@
 package com.nutrehogar.sistemacontable.domain.model;
 
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.Objects;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -18,12 +17,12 @@ import java.util.Objects;
 @Entity
 @Table(name = "account")
 public class Account extends AuditableEntity {
+    public static final int MAX_ID_LENGTH = 5;
+    public static final int MAX_CANONICAL_ID_LENGTH = 3;
+
     public Account(User user) {
         super(user);
     }
-
-    public static final int MAX_ID_LENGTH = 5;
-    public static final int MAX_CANONICAL_ID_LENGTH = 3;
 
     @Id
     @Column(name = "id", nullable = false)

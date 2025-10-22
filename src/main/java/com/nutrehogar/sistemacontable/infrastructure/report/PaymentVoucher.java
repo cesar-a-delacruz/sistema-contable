@@ -10,5 +10,4 @@ public final class PaymentVoucher extends EntryForm {
                 "PaymentVoucher.jrxml",
                 ConfigLoader.Props.DIR_PAYMENT_VOUCHER_NAME.getPath());
     }
-
 }

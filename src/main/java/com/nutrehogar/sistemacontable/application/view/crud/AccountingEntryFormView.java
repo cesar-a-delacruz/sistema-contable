@@ -50,5 +50,4 @@ public abstract class AccountingEntryFormView extends CRUDView {
     public abstract JLabel getLblUpdateAt();
 
     public abstract JLabel getLblUpdateBy();
-
 }

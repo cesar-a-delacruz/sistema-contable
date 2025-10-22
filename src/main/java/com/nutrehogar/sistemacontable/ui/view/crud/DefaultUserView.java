@@ -1,18 +1,12 @@
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
-import com.nutrehogar.sistemacontable.domain.AccountType;
-import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
-import com.nutrehogar.sistemacontable.application.view.crud.AccountView;
 import com.nutrehogar.sistemacontable.application.view.crud.UserView;
 import com.nutrehogar.sistemacontable.domain.Permissions;
-import com.nutrehogar.sistemacontable.domain.model.User;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import lombok.Getter;
 
 @Getter
 public class DefaultUserView extends UserView {
-
     public DefaultUserView() {
         initComponents();
         txtUsername.putClientProperty("JTextField.placeholderText", "Lic. Ema Perez");
@@ -48,7 +42,7 @@ public class DefaultUserView extends UserView {
         chkIsEnable = new javax.swing.JCheckBox();
         cbxPermissions = new javax.swing.JComboBox<>();
         lblUserPasswod1 = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
 
         setOpaque(false);
 
@@ -149,12 +143,6 @@ public class DefaultUserView extends UserView {
         lblUsername.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblUsername.setLabelFor(txtUsername);
         lblUsername.setText("Nombre de Usuario:");
-
-        txtUsername.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtUsernameActionPerformed(evt);
-            }
-        });
 
         btnSave.setText("Guardar");
 
@@ -327,12 +315,8 @@ public class DefaultUserView extends UserView {
                                 .addContainerGap()));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtUsernameActionPerformed
-        // TODO add your handling code here:
-    }// GEN-LAST:event_txtUsernameActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;

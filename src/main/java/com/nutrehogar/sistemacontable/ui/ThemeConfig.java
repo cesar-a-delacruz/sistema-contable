@@ -2,12 +2,15 @@ package com.nutrehogar.sistemacontable.ui;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.util.UIScale;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
 public class ThemeConfig {
+    public static final int ICON_SM = scale(30);
+    public static final int ICON_MD = scale(40);
+    public static final int ICON_LG = scale(50);
+
     private ThemeConfig() {
         throw new IllegalStateException("Configure Class");
     }
@@ -55,10 +58,6 @@ public class ThemeConfig {
     public static int scale(int value) {
         return UIScale.scale(value);
     }
-
-    public static final int ICON_SM = scale(30);
-    public static final int ICON_MD = scale(40);
-    public static final int ICON_LG = scale(50);
 
     // 🔹 Configuración de Tipografías
     public static class Typography {

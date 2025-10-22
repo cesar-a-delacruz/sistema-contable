@@ -2,19 +2,18 @@ package com.nutrehogar.sistemacontable.application.controller.crud;
 
 import com.nutrehogar.sistemacontable.application.controller.SimpleController;
 import com.nutrehogar.sistemacontable.application.controller.crud.dto.LedgerRecordDTO;
+import com.nutrehogar.sistemacontable.application.repository.*;
+import com.nutrehogar.sistemacontable.application.view.crud.AccountingEntryFormView;
+
+import com.nutrehogar.sistemacontable.domain.DocumentType;
 import com.nutrehogar.sistemacontable.domain.model.*;
-import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
+import com.nutrehogar.sistemacontable.exception.RepositoryException;
+import com.nutrehogar.sistemacontable.infrastructure.report.*;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.JournalEntryReportDTO;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.LedgerRecordReportDTO;
-import com.nutrehogar.sistemacontable.infrastructure.report.PaymentVoucher;
-import com.nutrehogar.sistemacontable.infrastructure.report.RegistrationForm;
-import com.nutrehogar.sistemacontable.application.repository.AccountRepository;
-import com.nutrehogar.sistemacontable.application.repository.JournalEntryRepository;
-import com.nutrehogar.sistemacontable.application.repository.LedgerRecordRepository;
-import com.nutrehogar.sistemacontable.domain.DocumentType;
-import com.nutrehogar.sistemacontable.exception.RepositoryException;
-import com.nutrehogar.sistemacontable.ui.components.*;
-import com.nutrehogar.sistemacontable.application.view.crud.AccountingEntryFormView;
+import com.nutrehogar.sistemacontable.ui.builders.*;
+import com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner;
+
 import jakarta.persistence.EntityExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ObjectDeletedException;
@@ -22,17 +21,14 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.text.AbstractDocument;
 import java.awt.event.MouseEvent;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import java.math.*;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.swing.*;
+import javax.swing.text.AbstractDocument;
 import static com.nutrehogar.sistemacontable.application.config.Util.*;
 
 @Slf4j
@@ -725,5 +721,4 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
     public JLabel getLblUpdateBy() {
         return getView().getLblUpdateBy();
     }
-
 }

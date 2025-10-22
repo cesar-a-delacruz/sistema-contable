@@ -3,18 +3,15 @@ package com.nutrehogar.sistemacontable.domain.core;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.infrastructure.persistence.HibernateUtil;
 import jakarta.persistence.EntityExistsException;
+import java.util.Objects;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 @Slf4j
 public class TransactionManager {
-
     public static <R> R executeInTransaction(Function<Session, R> operation) throws RepositoryException {
         Session session = null;
         Transaction transaction = null;
@@ -41,21 +38,6 @@ public class TransactionManager {
             }
         }
     }
-    /*
-     * public class TransactionManager {
-     * public static <T> T execute(Supplier<T> operation) {
-     * try (Session session = SessionPool.getSession()) {
-     * return session.getTransaction().execute(s -> {
-     * try {
-     * return operation.get();
-     * } catch (Exception e) {
-     * throw new RepositoryException(e);
-     * }
-     * });
-     * }
-     * }
-     * }
-     */
 
     private static void handleException(Exception e) {
         String message = switch (e) {
@@ -66,6 +48,5 @@ public class TransactionManager {
             default -> "Error: " + e.getMessage();
         };
         System.out.println(message);
-
     }
 }

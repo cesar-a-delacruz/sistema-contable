@@ -2,15 +2,15 @@ package com.nutrehogar.sistemacontable.infrastructure.report;
 
 import com.nutrehogar.sistemacontable.exception.ReportException;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.SimpleReportDTO;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Map;
 
-public abstract class SimpleReport<D> extends Report<SimpleReportDTO<D>> {
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+public abstract class SimpleReport<D> extends Report<SimpleReportDTO<D>> {
     public SimpleReport(String name, String templateName, Path dirPath) throws ReportException {
         super(name, templateName, dirPath);
     }

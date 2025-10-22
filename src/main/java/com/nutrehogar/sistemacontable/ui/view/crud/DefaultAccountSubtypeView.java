@@ -1,9 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
 import com.nutrehogar.sistemacontable.domain.AccountType;
@@ -11,15 +5,8 @@ import com.nutrehogar.sistemacontable.application.view.crud.AccountSubtypeView;
 import javax.swing.JButton;
 import lombok.Getter;
 
-/**
- * @author Calci
- */
 @Getter
 public class DefaultAccountSubtypeView extends AccountSubtypeView {
-
-    /**
-     * Creates new form DefaultAccountSubtypeView
-     */
     public DefaultAccountSubtypeView() {
         initComponents();
         txtAccountSubtypeName.putClientProperty("JTextField.placeholderText", "Activos Corrientes");
@@ -61,7 +48,7 @@ public class DefaultAccountSubtypeView extends AccountSubtypeView {
         btnUpdate = new javax.swing.JButton();
         lblSave = new javax.swing.JLabel();
         lblUpdate = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -354,7 +341,7 @@ public class DefaultAccountSubtypeView extends AccountSubtypeView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;

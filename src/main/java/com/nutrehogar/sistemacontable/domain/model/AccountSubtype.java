@@ -2,12 +2,11 @@ package com.nutrehogar.sistemacontable.domain.model;
 
 import com.nutrehogar.sistemacontable.domain.AccountType;
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.Objects;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -18,12 +17,13 @@ import java.util.Objects;
 @Entity
 @Table(name = "account_subtype")
 public class AccountSubtype extends AuditableEntity {
+    public static final int MAX_ID_LENGTH = 4;
+    public static final int MAX_CANONICAL_ID_LENGTH = 3;
+
     public AccountSubtype(User user) {
         super(user);
     }
 
-    public static final int MAX_ID_LENGTH = 4;
-    public static final int MAX_CANONICAL_ID_LENGTH = 3;
     @Id
     @Column(name = "id", nullable = false)
     Integer id;

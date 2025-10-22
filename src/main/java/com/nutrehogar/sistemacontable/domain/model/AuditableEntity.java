@@ -1,11 +1,10 @@
 package com.nutrehogar.sistemacontable.domain.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @MappedSuperclass
 @Getter
@@ -49,5 +48,4 @@ public abstract class AuditableEntity {
         return Optional.ofNullable(user.getUsername())
                 .orElse("unknown user");
     }
-
 }

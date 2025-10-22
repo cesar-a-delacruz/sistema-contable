@@ -1,42 +1,33 @@
 package com.nutrehogar.sistemacontable.application.controller.business;
 
-import com.nutrehogar.sistemacontable.application.repository.LedgerRecordRepository;
-import com.nutrehogar.sistemacontable.domain.model.JournalEntryPK;
-import com.nutrehogar.sistemacontable.exception.RepositoryException;
-import com.nutrehogar.sistemacontable.infrastructure.report.GeneralLedgerReport;
-import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 import com.nutrehogar.sistemacontable.application.controller.business.dto.GeneralLedgerTableDTO;
-import com.nutrehogar.sistemacontable.application.repository.AccountRepository;
-import com.nutrehogar.sistemacontable.application.repository.AccountSubtypeRepository;
+import com.nutrehogar.sistemacontable.application.repository.*;
+import com.nutrehogar.sistemacontable.application.view.business.GeneralLedgerView;
 import com.nutrehogar.sistemacontable.domain.AccountType;
 import com.nutrehogar.sistemacontable.domain.DocumentType;
-import com.nutrehogar.sistemacontable.domain.model.Account;
-import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
-import com.nutrehogar.sistemacontable.domain.model.User;
+import com.nutrehogar.sistemacontable.domain.model.*;
+
+import com.nutrehogar.sistemacontable.infrastructure.report.GeneralLedgerReport;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.GeneralLedgerDTOReport;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.GeneralLedgerReportDTO;
-import com.nutrehogar.sistemacontable.ui.components.AccountListCellRenderer;
-import com.nutrehogar.sistemacontable.ui.components.CustomComboBoxModel;
-import com.nutrehogar.sistemacontable.ui.components.CustomListCellRenderer;
-import com.nutrehogar.sistemacontable.application.view.business.GeneralLedgerView;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
-import org.jetbrains.annotations.NotNull;
+import com.nutrehogar.sistemacontable.ui.builders.*;
+import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 
-import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.table.AbstractTableModel;
+import com.nutrehogar.sistemacontable.exception.RepositoryException;
+
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
+import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
+import org.jetbrains.annotations.NotNull;
 import static com.nutrehogar.sistemacontable.application.config.Util.*;
 
 @Slf4j
@@ -186,11 +177,9 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
 
         @Override
         protected List<GeneralLedgerTableDTO> doInBackground() {
-            // log.info("Load data");
             var accountSelectedItem = cbxModelAccount.getSelectedItem();
             if (accountSelectedItem == null)
                 return null;
-            // log.info("account: {}", accountSelectedItem);
 
             var ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccount(accountSelectedItem,
                     spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue());
@@ -214,7 +203,6 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
                             BigDecimal.ZERO))
                     .sorted(Comparator.comparing(GeneralLedgerTableDTO::getEntryDate)) // Ordenar por fecha
                     .toList();
-            // log.info("GeneralLedgerDTOs: {}", generalLedgers);
             // 🔹 Calcular totales usando reduce()
             var debitSum = generalLedgers.stream()
                     .map(GeneralLedgerTableDTO::getDebit)

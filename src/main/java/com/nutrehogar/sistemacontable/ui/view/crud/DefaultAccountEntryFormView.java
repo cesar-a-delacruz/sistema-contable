@@ -1,27 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
 import com.nutrehogar.sistemacontable.domain.DocumentType;
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.application.view.crud.AccountingEntryFormView;
 import lombok.Getter;
-
 import javax.swing.*;
 
-/**
- * @author Calci
- */
 @Getter
 public class DefaultAccountEntryFormView extends AccountingEntryFormView {
-
-    /**
-     * Creates new form DefaultAccountEntryFormView
-     */
     public DefaultAccountEntryFormView() {
         initComponents();
         txtEntryName.putClientProperty("JTextField.placeholderText", "Ventas S.A.");
@@ -67,7 +53,7 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
         lblRecordType = new javax.swing.JLabel();
         rbtRecordDebit = new javax.swing.JRadioButton();
         rbtRecordCredit = new javax.swing.JRadioButton();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
         pnlEntryForm = new javax.swing.JPanel();
         lblEntryName = new javax.swing.JLabel();
         txtEntryName = new javax.swing.JTextField();
@@ -542,11 +528,6 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
         btnGeneratePaymentVoucher.setText("Comprobante");
 
         btnGenerateRegistrationForm.setText("Formulario");
-        btnGenerateRegistrationForm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGenerateRegistrationFormActionPerformed(evt);
-            }
-        });
 
         lblCreateBy.setText("nadie");
 
@@ -664,12 +645,8 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnGenerateRegistrationFormActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnGenerateRegistrationFormActionPerformed
-        // TODO add your handling code here:
-    }// GEN-LAST:event_btnGenerateRegistrationFormActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.ButtonGroup bgRecordType;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnAddEntry;

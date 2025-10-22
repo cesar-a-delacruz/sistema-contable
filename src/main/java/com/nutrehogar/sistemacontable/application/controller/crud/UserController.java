@@ -2,16 +2,14 @@ package com.nutrehogar.sistemacontable.application.controller.crud;
 
 import com.nutrehogar.sistemacontable.application.repository.UserRepository;
 import com.nutrehogar.sistemacontable.application.view.crud.UserView;
-import com.nutrehogar.sistemacontable.domain.AccountType;
 import com.nutrehogar.sistemacontable.domain.Permissions;
-import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
-import com.nutrehogar.sistemacontable.ui.components.CustomComboBoxModel;
-import com.nutrehogar.sistemacontable.ui.components.CustomListCellRenderer;
-import org.jetbrains.annotations.NotNull;
+import com.nutrehogar.sistemacontable.ui.builders.CustomComboBoxModel;
+import com.nutrehogar.sistemacontable.ui.builders.CustomListCellRenderer;
 
 import javax.swing.*;
+import org.jetbrains.annotations.NotNull;
 
 public class UserController extends CRUDController<User, Integer> {
     private CustomComboBoxModel<Permissions> cbxModelPermissions;

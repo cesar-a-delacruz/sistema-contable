@@ -1,9 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
 import com.nutrehogar.sistemacontable.domain.AccountType;
@@ -12,15 +6,8 @@ import com.nutrehogar.sistemacontable.application.view.crud.AccountView;
 import javax.swing.JButton;
 import lombok.Getter;
 
-/**
- * @author Calci
- */
 @Getter
 public class DefaultAccountView extends AccountView {
-
-    /**
-     * Creates new form AccountView
-     */
     public DefaultAccountView() {
         initComponents();
         txtAccountName.putClientProperty("JTextField.placeholderText", "Caja Menuda");
@@ -64,7 +51,7 @@ public class DefaultAccountView extends AccountView {
         btnUpdate = new javax.swing.JButton();
         lblSave = new javax.swing.JLabel();
         lblUpdate = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
 
         setOpaque(false);
 
@@ -365,7 +352,7 @@ public class DefaultAccountView extends AccountView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;

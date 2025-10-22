@@ -3,6 +3,7 @@ package com.nutrehogar.sistemacontable.ui.components;
 import com.nutrehogar.sistemacontable.domain.AccountType;
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
+import com.nutrehogar.sistemacontable.ui.builders.CustomListCellRenderer;
 
 import javax.swing.*;
 
@@ -26,9 +27,4 @@ public class CustomComboBox<E> extends JComboBox<E> {
     }
 
     public CustomComboBox() {}
-
-    // public CustomComboBox(ComboBoxModel<E> aModel) {
-    // super(aModel);
-    // }
-
 }

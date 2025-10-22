@@ -1,16 +1,13 @@
 package com.nutrehogar.sistemacontable.application.config;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Clase encargada de gestionar la carga, el almacenamiento y la inicialización
@@ -31,23 +28,19 @@ public class ConfigLoader {
     @Getter
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     public enum Props {
-        DIR_PROGRAM_NAME(Path.of(System.getProperty("user.home"), "Sistema_Contable")), DB_NAME(
-                DIR_PROGRAM_NAME.path.resolve("app_data_base.sqlite")), DIR_BACKUP_NAME(DIR_PROGRAM_NAME.path.resolve(
-                        "backup")), DIR_LOG_NAME(DIR_PROGRAM_NAME.path.resolve("logs")), DIR_REPORTS_TEMPLATE_NAME(
-                                DIR_PROGRAM_NAME.path.resolve("template")), DIR_REPORTS_NAME(Path.of(System.getProperty(
-                                        "user.home"), ("Reportes"))), DIR_PAYMENT_VOUCHER_NAME(DIR_REPORTS_NAME.path
-                                                .resolve("Comprobantes")), DIR_REGISTRATION_FORM_NAME(
-                                                        DIR_REPORTS_NAME.path.resolve("Formularios")), DIR_JOURNAL_NAME(
-                                                                DIR_REPORTS_NAME.path.resolve(
-                                                                        "Libro Diario")), DIR_TRIAL_BALANCE_NAME(
-                                                                                DIR_REPORTS_NAME.path.resolve(
-                                                                                        "Balance de Comprobación")), DIR_GENERAL_LEDGER_NAME(
-                                                                                                DIR_REPORTS_NAME.path
-                                                                                                        .resolve(
-                                                                                                                "Mayor General")),;
+        DIR_PROGRAM_NAME(Path.of(System.getProperty("user.home"), "Sistema_Contable")),
+        DB_NAME(DIR_PROGRAM_NAME.path.resolve("app_data_base.sqlite")),
+        DIR_BACKUP_NAME(DIR_PROGRAM_NAME.path.resolve("backup")),
+        DIR_LOG_NAME(DIR_PROGRAM_NAME.path.resolve("logs")),
+        DIR_REPORTS_TEMPLATE_NAME(DIR_PROGRAM_NAME.path.resolve("template")),
+        DIR_REPORTS_NAME(Path.of(System.getProperty("user.home"), ("Reportes"))),
+        DIR_PAYMENT_VOUCHER_NAME(DIR_REPORTS_NAME.path.resolve("Comprobantes")),
+        DIR_REGISTRATION_FORM_NAME(DIR_REPORTS_NAME.path.resolve("Formularios")),
+        DIR_JOURNAL_NAME(DIR_REPORTS_NAME.path.resolve("Libro Diario")),
+        DIR_TRIAL_BALANCE_NAME(DIR_REPORTS_NAME.path.resolve("Balance de Comprobación")),
+        DIR_GENERAL_LEDGER_NAME(DIR_REPORTS_NAME.path.resolve("Mayor General")),;
 
         Path path;
-
     }
 
     private ConfigLoader() {

@@ -3,16 +3,14 @@ package com.nutrehogar.sistemacontable.infrastructure.report;
 import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.exception.ReportException;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 @Slf4j
 public class ReportService {
-    private static boolean isInitialized = false;
     private static final String IMG_DIR = ConfigLoader.Props.DIR_REPORTS_TEMPLATE_NAME.getPath().toString()
             + File.separator;
     private static final Map<Class<? extends Report<?>>, Report<?>> reports = new HashMap<>();

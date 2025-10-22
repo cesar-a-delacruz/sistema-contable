@@ -1,13 +1,11 @@
 package com.nutrehogar.sistemacontable.domain.model;
 
-import com.nutrehogar.sistemacontable.domain.DocumentType;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -39,5 +37,4 @@ public class JournalEntry extends AuditableEntity {
 
     @OneToMany(mappedBy = "journalEntry", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     List<LedgerRecord> ledgerRecords = new ArrayList<>();
-
 }

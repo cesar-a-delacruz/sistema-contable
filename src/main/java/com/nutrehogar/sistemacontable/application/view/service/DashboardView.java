@@ -1,7 +1,6 @@
 package com.nutrehogar.sistemacontable.application.view.service;
 
 import com.nutrehogar.sistemacontable.application.view.View;
-
 import javax.swing.*;
 
 public abstract class DashboardView extends JPanel implements View {
