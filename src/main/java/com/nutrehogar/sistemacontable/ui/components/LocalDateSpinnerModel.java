@@ -1,11 +1,10 @@
 package com.nutrehogar.sistemacontable.ui.components;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.swing.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import javax.swing.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import static com.nutrehogar.sistemacontable.application.config.Util.CURRENT_DATE;
 
@@ -111,5 +110,4 @@ public class LocalDateSpinnerModel extends AbstractSpinnerModel {
         boolean beforeMax = (maxDate == null || !date.isAfter(maxDate));
         return afterMin && beforeMax;
     }
-
 }

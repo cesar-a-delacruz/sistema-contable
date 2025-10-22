@@ -2,18 +2,13 @@ package com.nutrehogar.sistemacontable.application.controller.service;
 
 import com.nutrehogar.sistemacontable.application.config.ApplicationContext;
 import com.nutrehogar.sistemacontable.application.controller.Controller;
-import com.nutrehogar.sistemacontable.application.controller.business.GeneralLedgerController;
-import com.nutrehogar.sistemacontable.application.controller.business.JournalController;
-import com.nutrehogar.sistemacontable.application.controller.business.TrialBalanceController;
-import com.nutrehogar.sistemacontable.application.controller.crud.AccountController;
-import com.nutrehogar.sistemacontable.application.controller.crud.AccountSubtypeController;
-import com.nutrehogar.sistemacontable.application.controller.crud.AccountingEntryFormController;
-import com.nutrehogar.sistemacontable.application.controller.crud.UserController;
+import com.nutrehogar.sistemacontable.application.controller.business.*;
+import com.nutrehogar.sistemacontable.application.controller.crud.*;
 import com.nutrehogar.sistemacontable.application.view.business.BusinessView;
 import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class DashboardController extends Controller {
     private final ApplicationContext context;
@@ -31,10 +26,6 @@ public class DashboardController extends Controller {
             getPnlContent().setOpaque(false);
         });
         Thread.startVirtualThread(this::setupViewListeners);
-        // prepareToEditJournalEntry = (Integer JournalEntryId) -> {
-        // setContent(getAccountingEntryFormController().getView());
-        // getAccountingEntryFormController().prepareToEditEntry(JournalEntryId);
-        // };
     }
 
     protected void setupViewListeners() {

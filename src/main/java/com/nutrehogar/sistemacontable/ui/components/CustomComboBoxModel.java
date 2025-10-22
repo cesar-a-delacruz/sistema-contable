@@ -1,10 +1,9 @@
 package com.nutrehogar.sistemacontable.ui.components;
 
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.*;
 
 public class CustomComboBoxModel<E> extends DefaultComboBoxModel<E> {
     public CustomComboBoxModel(@NotNull List<E> data) {

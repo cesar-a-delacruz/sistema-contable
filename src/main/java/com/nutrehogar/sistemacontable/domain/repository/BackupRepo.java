@@ -1,14 +1,12 @@
 package com.nutrehogar.sistemacontable.domain.repository;
 
 import com.nutrehogar.sistemacontable.application.repository.BackupRepository;
-import com.nutrehogar.sistemacontable.domain.core.WriteExecutor;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.infrastructure.persistence.HibernateUtil;
-import org.hibernate.Session;
-
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.function.Consumer;
+import org.hibernate.Session;
 
 public class BackupRepo implements BackupRepository {
     @Override
@@ -57,7 +55,6 @@ public class BackupRepo implements BackupRepository {
     }
 
     public void execute(Consumer<Statement> consumer) throws InterruptedException {
-        // WriteExecutor.submitWrite(() -> {
         Session session = null;
         try {
             session = HibernateUtil.getSession();
@@ -73,7 +70,5 @@ public class BackupRepo implements BackupRepository {
                 HibernateUtil.returnSession(session); // Devolver sesión al pool
             }
         }
-        // return null;
-        // });
     }
 }

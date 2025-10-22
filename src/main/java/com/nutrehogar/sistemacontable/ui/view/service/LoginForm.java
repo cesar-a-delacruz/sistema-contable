@@ -1,19 +1,13 @@
 package com.nutrehogar.sistemacontable.ui.view.service;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import javax.swing.*;
-
-import com.nutrehogar.sistemacontable.application.MainClass;
-import com.nutrehogar.sistemacontable.application.repository.UserRepository;
-import com.nutrehogar.sistemacontable.domain.Permissions;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.application.view.AuthView;
 import com.nutrehogar.sistemacontable.ui.components.UserListCellRenderer;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,9 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 public class LoginForm extends AuthView {
     private static final FlatSVGIcon icon = new FlatSVGIcon("svgs/key.svg");
 
-    /**
-     * Creates new form LoginForm
-     */
     public LoginForm() {
         initComponents();
         setIconImage(icon.getImage());
@@ -50,6 +41,7 @@ public class LoginForm extends AuthView {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -70,18 +62,8 @@ public class LoginForm extends AuthView {
         });
 
         btnOk.setText("OK");
-        btnOk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOkActionPerformed(evt);
-            }
-        });
 
         BtnCancel.setText("Cancelar");
-        BtnCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnCancelActionPerformed(evt);
-            }
-        });
 
         lstUser.setModel(new DefaultListModel<>());
         scrollPanel1.setViewportView(lstUser);
@@ -150,13 +132,6 @@ public class LoginForm extends AuthView {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnOkActionPerformed
-
-    }// GEN-LAST:event_btnOkActionPerformed
-
-    private void BtnCancelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BtnCancelActionPerformed
-    }// GEN-LAST:event_BtnCancelActionPerformed
 
     /**
      * Closes the dialog

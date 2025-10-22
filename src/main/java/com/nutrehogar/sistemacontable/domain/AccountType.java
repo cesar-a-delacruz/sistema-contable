@@ -1,14 +1,15 @@
 package com.nutrehogar.sistemacontable.domain;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
-import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Enum que define los tipos que pueden ser las cunetas.

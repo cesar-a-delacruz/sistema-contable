@@ -2,7 +2,6 @@ package com.nutrehogar.sistemacontable.application.view.business;
 
 import com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner;
 import com.nutrehogar.sistemacontable.application.view.SimpleView;
-
 import javax.swing.*;
 
 public abstract class BusinessView extends SimpleView {

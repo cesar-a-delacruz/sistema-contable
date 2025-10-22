@@ -308,9 +308,6 @@
                   <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;()" type="code"/>
                 </Property>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbxAccountTypeActionPerformed"/>
-              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;AccountType&gt;"/>
               </AuxValues>

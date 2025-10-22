@@ -2,12 +2,11 @@ package com.nutrehogar.sistemacontable.infrastructure.report;
 
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.JournalEntryReportDTO;
 import com.nutrehogar.sistemacontable.exception.ReportException;
-import lombok.extern.slf4j.Slf4j;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Slf4j
 public sealed class EntryForm extends Report<JournalEntryReportDTO> permits PaymentVoucher, RegistrationForm {

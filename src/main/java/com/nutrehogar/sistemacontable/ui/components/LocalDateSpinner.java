@@ -1,10 +1,10 @@
 package com.nutrehogar.sistemacontable.ui.components;
 
-import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import javax.swing.*;
 
 /**
  * Spinner que tiene como valor un {@link LocalDate}, para esto tiene un

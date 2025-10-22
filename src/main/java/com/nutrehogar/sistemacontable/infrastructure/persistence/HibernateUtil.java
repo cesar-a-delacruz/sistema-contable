@@ -1,12 +1,11 @@
 package com.nutrehogar.sistemacontable.infrastructure.persistence;
 
 import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
+import javax.swing.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
-import javax.swing.*;
 
 /**
  * HibernateUtil es una clase de utilidad que gestiona la configuración de
@@ -72,5 +71,4 @@ public class HibernateUtil {
         sessionPool.shutdown();
         sessionFactory.close();
     }
-
 }

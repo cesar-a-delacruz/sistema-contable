@@ -1,23 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.business;
 
-import com.nutrehogar.sistemacontable.application.view.business.TrialBalanceView;
+import com.nutrehogar.sistemacontable.application.view.business.BusinessView;
 import lombok.Getter;
 
-/**
- * @author Calci
- */
 @Getter
-public class DefaultTrialBalanceView extends TrialBalanceView {
-
-    /**
-     * Creates new form DefaultTrialBalanceView
-     */
+public class DefaultTrialBalanceView extends BusinessView {
     public DefaultTrialBalanceView() {
         initComponents();
     }

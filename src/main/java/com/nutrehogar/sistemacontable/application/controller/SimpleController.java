@@ -1,30 +1,27 @@
 package com.nutrehogar.sistemacontable.application.controller;
 
 import com.nutrehogar.sistemacontable.application.config.Util;
-import com.nutrehogar.sistemacontable.application.controller.business.dto.JournalTableDTO;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
-import com.nutrehogar.sistemacontable.exception.RepositoryException;
-import com.nutrehogar.sistemacontable.infrastructure.report.Report;
 import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 import com.nutrehogar.sistemacontable.application.repository.SimpleRepository;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel;
 import com.nutrehogar.sistemacontable.ui.components.CustomTableCellRenderer;
 import com.nutrehogar.sistemacontable.application.view.SimpleView;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 @Slf4j
 @Getter
@@ -47,34 +44,6 @@ public abstract class SimpleController<T, R> extends Controller {
         initialize();
     }
 
-    @Override
-    protected void initialize() {
-        getTblData().setModel(getTblModel());
-        getTblData().setDefaultRenderer(Object.class, new CustomTableCellRenderer());
-        getTblData().setDefaultRenderer(BigDecimal.class, new CustomTableCellRenderer());
-        getTblData().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        loadData();
-        setupViewListeners();
-    }
-
-    protected void loadData() {
-        updateView();
-    }
-
-    @Override
-    protected void setupViewListeners() {
-        getTblData().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                setElementSelected(e);
-            }
-        });
-    }
-
-    protected void updateView() {
-        SwingUtilities.invokeLater(getTblModel()::fireTableDataChanged);
-    }
-
     public abstract class DataLoader extends SwingWorker<List<T>, Void> {
 
         @Override
@@ -91,10 +60,6 @@ public abstract class SimpleController<T, R> extends Controller {
             }
         }
     }
-
-    protected abstract void setElementSelected(@NotNull MouseEvent e);
-
-    protected abstract void setAuditoria();
 
     public abstract class CustomTableModel extends AbstractTableModel {
         private final String[] COLUMN_NAMES;
@@ -119,9 +84,41 @@ public abstract class SimpleController<T, R> extends Controller {
         }
     }
 
+    protected abstract void setElementSelected(@NotNull MouseEvent e);
+
+    protected abstract void setAuditoria();
+
+    @Override
+    protected void initialize() {
+        getTblData().setModel(getTblModel());
+        getTblData().setDefaultRenderer(Object.class, new CustomTableCellRenderer());
+        getTblData().setDefaultRenderer(BigDecimal.class, new CustomTableCellRenderer());
+        getTblData().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        loadData();
+        setupViewListeners();
+    }
+
+    @Override
+    protected void setupViewListeners() {
+        getTblData().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                setElementSelected(e);
+            }
+        });
+    }
+
     @Override
     public SimpleView getView() {
         return (SimpleView) super.getView();
+    }
+
+    protected void updateView() {
+        SwingUtilities.invokeLater(getTblModel()::fireTableDataChanged);
+    }
+
+    protected void loadData() {
+        updateView();
     }
 
     public JTable getTblData() {

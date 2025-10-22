@@ -1,9 +1,7 @@
 package com.nutrehogar.sistemacontable.application.view;
 
 import com.nutrehogar.sistemacontable.domain.model.User;
-
 import javax.swing.*;
-import java.awt.*;
 
 public abstract class AuthView extends JDialog implements View {
     public AuthView() {
@@ -17,5 +15,4 @@ public abstract class AuthView extends JDialog implements View {
     public abstract JPasswordField getTxtPing();
 
     public abstract JList<User> getLstUser();
-
 }

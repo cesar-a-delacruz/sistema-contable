@@ -1,17 +1,18 @@
 package com.nutrehogar.sistemacontable.application;
 
 import com.nutrehogar.sistemacontable.application.config.ApplicationContext;
+import com.nutrehogar.sistemacontable.application.config.AppConfig;
 import com.nutrehogar.sistemacontable.application.controller.AuthController;
 import com.nutrehogar.sistemacontable.application.view.AuthView;
-import com.nutrehogar.sistemacontable.application.config.AppConfig;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
+
 import com.nutrehogar.sistemacontable.domain.core.WriteExecutor;
 import com.nutrehogar.sistemacontable.infrastructure.persistence.HibernateUtil;
 import com.nutrehogar.sistemacontable.ui.ThemeConfig;
-import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
-import lombok.extern.slf4j.Slf4j;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javax.swing.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class App {

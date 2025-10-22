@@ -3,9 +3,8 @@ package com.nutrehogar.sistemacontable.ui.components;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.ui.ThemeConfig;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class UserListCellRenderer extends DefaultListCellRenderer {
     private static final FlatSVGIcon userIcon = new FlatSVGIcon("svgs/user.svg", ThemeConfig.ICON_MD,

@@ -2,14 +2,12 @@ package com.nutrehogar.sistemacontable.application.controller;
 
 import com.nutrehogar.sistemacontable.application.view.View;
 import com.nutrehogar.sistemacontable.exception.AppException;
+import java.awt.*;
+import javax.swing.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.desktop.AppEvent;
 
 @Getter
 @Slf4j

@@ -4,12 +4,12 @@ import com.nutrehogar.sistemacontable.application.repository.UserRepository;
 import com.nutrehogar.sistemacontable.application.view.AuthView;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import javax.swing.*;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class AuthController extends Controller {
@@ -96,5 +96,4 @@ public final class AuthController extends Controller {
     public JPasswordField getTxtPing() {
         return getView().getTxtPing();
     }
-
 }

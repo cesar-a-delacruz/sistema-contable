@@ -1,7 +1,6 @@
 package com.nutrehogar.sistemacontable.application.view.crud;
 
 import com.nutrehogar.sistemacontable.domain.Permissions;
-
 import javax.swing.*;
 
 public abstract class UserView extends CRUDView {

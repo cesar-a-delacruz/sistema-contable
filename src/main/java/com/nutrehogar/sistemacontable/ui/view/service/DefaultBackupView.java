@@ -1,26 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.service;
 
 import com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel;
 import com.nutrehogar.sistemacontable.application.view.service.BackupView;
 import lombok.Getter;
-
 import javax.swing.*;
 
-/**
- * @author Calci
- */
 @Getter
 public class DefaultBackupView extends BackupView {
-
-    /**
-     * Creates new form DefaultBackupView
-     */
     public DefaultBackupView() {
         initComponents();
     }
@@ -83,11 +69,6 @@ public class DefaultBackupView extends BackupView {
         labelDescriptionRestarBackup.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         btnRestore.setText("Restaurar Copia");
-        btnRestore.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRestoreActionPerformed(evt);
-            }
-        });
 
         labelDescriptionRestarBackup1
                 .setText("<html> <p>Se creara una copia de seguridad con los datos actuales</p> </html>");
@@ -173,10 +154,6 @@ public class DefaultBackupView extends BackupView {
                                         javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap()));
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnRestoreActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnRestoreActionPerformed
-        // TODO add your handling code here:
-    }// GEN-LAST:event_btnRestoreActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;

@@ -2,12 +2,10 @@ package com.nutrehogar.sistemacontable.ui.view.service;
 
 import com.nutrehogar.sistemacontable.application.view.View;
 import lombok.Getter;
-
 import javax.swing.*;
 
 @Getter
 public class HomaPage extends JPanel implements View {
-
     public HomaPage() {
         initComponents();
     }

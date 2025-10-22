@@ -3,7 +3,6 @@ package com.nutrehogar.sistemacontable.application.repository;
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.domain.model.LedgerRecord;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
-
 import java.time.LocalDate;
 import java.util.List;
 

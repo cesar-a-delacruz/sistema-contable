@@ -82,9 +82,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="OK"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOkActionPerformed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="getRootPane().setDefaultButton(btnOk);"/>
       </AuxValues>
@@ -93,9 +90,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Cancelar"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnCancelActionPerformed"/>
-      </Events>
     </Component>
     <Container class="com.nutrehogar.sistemacontable.ui.JComponents.ScrollPanel" name="scrollPanel1">
 

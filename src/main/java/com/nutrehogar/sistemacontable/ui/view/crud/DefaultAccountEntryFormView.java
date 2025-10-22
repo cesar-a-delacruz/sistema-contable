@@ -1,27 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
 import com.nutrehogar.sistemacontable.domain.DocumentType;
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.application.view.crud.AccountingEntryFormView;
 import lombok.Getter;
-
 import javax.swing.*;
 
-/**
- * @author Calci
- */
 @Getter
 public class DefaultAccountEntryFormView extends AccountingEntryFormView {
-
-    /**
-     * Creates new form DefaultAccountEntryFormView
-     */
     public DefaultAccountEntryFormView() {
         initComponents();
         txtEntryName.putClientProperty("JTextField.placeholderText", "Ventas S.A.");
@@ -542,11 +528,6 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
         btnGeneratePaymentVoucher.setText("Comprobante");
 
         btnGenerateRegistrationForm.setText("Formulario");
-        btnGenerateRegistrationForm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGenerateRegistrationFormActionPerformed(evt);
-            }
-        });
 
         lblCreateBy.setText("nadie");
 
@@ -663,10 +644,6 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
                                         .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))));
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnGenerateRegistrationFormActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnGenerateRegistrationFormActionPerformed
-        // TODO add your handling code here:
-    }// GEN-LAST:event_btnGenerateRegistrationFormActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;

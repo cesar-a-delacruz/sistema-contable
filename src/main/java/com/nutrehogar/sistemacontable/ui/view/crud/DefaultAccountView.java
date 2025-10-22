@@ -1,9 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
 import com.nutrehogar.sistemacontable.domain.AccountType;
@@ -12,15 +6,8 @@ import com.nutrehogar.sistemacontable.application.view.crud.AccountView;
 import javax.swing.JButton;
 import lombok.Getter;
 
-/**
- * @author Calci
- */
 @Getter
 public class DefaultAccountView extends AccountView {
-
-    /**
-     * Creates new form AccountView
-     */
     public DefaultAccountView() {
         initComponents();
         txtAccountName.putClientProperty("JTextField.placeholderText", "Caja Menuda");

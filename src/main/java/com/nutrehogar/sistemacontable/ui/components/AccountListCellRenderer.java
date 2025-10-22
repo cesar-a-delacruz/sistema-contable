@@ -1,9 +1,8 @@
 package com.nutrehogar.sistemacontable.ui.components;
 
 import com.nutrehogar.sistemacontable.domain.model.Account;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class AccountListCellRenderer extends DefaultListCellRenderer {
     @Override

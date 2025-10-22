@@ -3,18 +3,12 @@ package com.nutrehogar.sistemacontable.infrastructure.report;
 import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.exception.ReportException;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.GeneralLedgerDTOReport;
-import com.nutrehogar.sistemacontable.infrastructure.report.dto.GeneralLedgerReportDTO;
-import com.nutrehogar.sistemacontable.infrastructure.report.dto.SimpleReportDTO;
+import java.io.File;
+import java.time.LocalDate;
+import java.util.Map;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
 public class GeneralLedgerReport extends Report<GeneralLedgerDTOReport> {
-
     public GeneralLedgerReport() throws ReportException {
         super("Mayor General",
                 "GeneralLedger.jrxml",

@@ -1,10 +1,9 @@
 package com.nutrehogar.sistemacontable.ui.components;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Modelo de un comboBox que puede resivir cualquier enum como valor

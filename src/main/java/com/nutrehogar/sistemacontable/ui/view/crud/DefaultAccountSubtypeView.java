@@ -1,9 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
 import com.nutrehogar.sistemacontable.domain.AccountType;
@@ -11,15 +5,8 @@ import com.nutrehogar.sistemacontable.application.view.crud.AccountSubtypeView;
 import javax.swing.JButton;
 import lombok.Getter;
 
-/**
- * @author Calci
- */
 @Getter
 public class DefaultAccountSubtypeView extends AccountSubtypeView {
-
-    /**
-     * Creates new form DefaultAccountSubtypeView
-     */
     public DefaultAccountSubtypeView() {
         initComponents();
         txtAccountSubtypeName.putClientProperty("JTextField.placeholderText", "Activos Corrientes");

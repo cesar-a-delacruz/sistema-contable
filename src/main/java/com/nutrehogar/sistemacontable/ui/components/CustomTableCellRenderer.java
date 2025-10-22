@@ -6,10 +6,9 @@ import com.nutrehogar.sistemacontable.domain.Permissions;
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
 
-import javax.swing.table.DefaultTableCellRenderer;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-
+import javax.swing.table.DefaultTableCellRenderer;
 import static com.nutrehogar.sistemacontable.application.config.Util.DECIMAL_FORMAT;
 
 /**
@@ -33,7 +32,6 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     protected void setValue(Object value) {
-
         switch (value) {
             case BigDecimal bigDecimal -> {
                 setText(bigDecimal.compareTo(BigDecimal.ZERO) == 0 ? "" : DECIMAL_FORMAT.format(bigDecimal));
@@ -64,5 +62,4 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
             default -> setText(value.toString());
         }
     }
-
 }

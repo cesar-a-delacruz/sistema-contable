@@ -2,13 +2,11 @@ package com.nutrehogar.sistemacontable.domain.core;
 
 import com.nutrehogar.sistemacontable.application.repository.CRUDRepository;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class CRUDRepositoryImpl<T, ID> implements CRUDRepository<T, ID> {
-
     private final Class<T> entityClass;
 
     public CRUDRepositoryImpl(Class<T> entityClass) {

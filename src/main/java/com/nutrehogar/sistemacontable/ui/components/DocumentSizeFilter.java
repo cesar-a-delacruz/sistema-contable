@@ -1,10 +1,9 @@
 package com.nutrehogar.sistemacontable.ui.components;
 
-import lombok.Setter;
-
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
+import lombok.Setter;
 
 @Setter
 public class DocumentSizeFilter extends DocumentFilter {

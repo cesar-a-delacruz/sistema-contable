@@ -3,7 +3,6 @@ package com.nutrehogar.sistemacontable.application.view.crud;
 import com.nutrehogar.sistemacontable.domain.DocumentType;
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner;
-
 import javax.swing.*;
 
 public abstract class AccountingEntryFormView extends CRUDView {
@@ -50,5 +49,4 @@ public abstract class AccountingEntryFormView extends CRUDView {
     public abstract JLabel getLblUpdateAt();
 
     public abstract JLabel getLblUpdateBy();
-
 }

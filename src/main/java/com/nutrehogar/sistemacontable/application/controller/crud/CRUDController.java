@@ -1,24 +1,22 @@
 package com.nutrehogar.sistemacontable.application.controller.crud;
 
-import com.nutrehogar.sistemacontable.application.MainClass;
 import com.nutrehogar.sistemacontable.application.controller.SimpleController;
-import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 import com.nutrehogar.sistemacontable.application.repository.CRUDRepository;
+import com.nutrehogar.sistemacontable.application.view.crud.CRUDView;
 import com.nutrehogar.sistemacontable.domain.model.AuditableEntity;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
-import com.nutrehogar.sistemacontable.application.view.crud.CRUDView;
+import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
+
 import jakarta.persistence.EntityExistsException;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import javax.swing.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ObjectDeletedException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 public abstract class CRUDController<T extends AuditableEntity, ID> extends SimpleController<T, T> {

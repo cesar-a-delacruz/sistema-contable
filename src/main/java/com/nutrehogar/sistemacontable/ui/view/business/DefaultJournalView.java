@@ -1,23 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit
- * this template
- */
 package com.nutrehogar.sistemacontable.ui.view.business;
 
-import com.nutrehogar.sistemacontable.application.view.business.JournalView;
+import com.nutrehogar.sistemacontable.application.view.business.BusinessView;
 import lombok.Getter;
 
-/**
- * @author Calci
- */
 @Getter
-public class DefaultJournalView extends JournalView {
-
-    /**
-     * Creates new form DefaultJournalView
-     */
+public class DefaultJournalView extends BusinessView {
     public DefaultJournalView() {
         initComponents();
     }

@@ -3,12 +3,11 @@ package com.nutrehogar.sistemacontable.application.repository;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.OptimisticLockException;
-import org.hibernate.ObjectDeletedException;
-import org.hibernate.exception.ConstraintViolationException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import org.hibernate.ObjectDeletedException;
+import org.hibernate.exception.ConstraintViolationException;
 
 /**
  * Interfaz base para repositorios que gestionan operaciones CRUD (Crear, Leer,
