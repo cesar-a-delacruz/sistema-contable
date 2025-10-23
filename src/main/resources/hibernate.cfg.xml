@@ -5,14 +5,11 @@
         <property name="hibernate.connection.url">jdbc:sqlite:sistemacontable.db?journal_mode=WAL</property>
         <property name="hibernate.dialect">org.hibernate.community.dialect.SQLiteDialect</property>
 
-<!--        <property name="hibernate.cache.use_second_level_cache">true</property>-->
-<!--        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory-->
-<!--        </property>-->
         <property name="hibernate.connection.isolation">2</property> <!-- TRANSACTION_SERIALIZABLE -->
         <property name="hibernate.jdbc.batch_size">5</property>
         <!-- log SQL -->
-                <property name="hibernate.show_sql">true</property>
-                <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
 
         <!-- Configuración del esquema -->
         <property name="hibernate.hbm2ddl.auto">update</property>
