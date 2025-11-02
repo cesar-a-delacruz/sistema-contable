@@ -1,4 +1,4 @@
-package com.nutrehogar.sistemacontable.ui.components;
+package com.nutrehogar.sistemacontable.ui.builders;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.nutrehogar.sistemacontable.domain.model.User;

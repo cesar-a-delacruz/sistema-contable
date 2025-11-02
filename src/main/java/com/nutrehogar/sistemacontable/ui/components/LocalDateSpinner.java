@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import javax.swing.*;
 
+import com.nutrehogar.sistemacontable.ui.builders.LocalDateSpinnerModel;
+
 /**
  * Spinner que tiene como valor un {@link LocalDate}, para esto tiene un
  * {@link LocalDateSpinnerModel}.

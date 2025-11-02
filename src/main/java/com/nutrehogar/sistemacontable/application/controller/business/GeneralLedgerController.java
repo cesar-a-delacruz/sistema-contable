@@ -10,10 +10,10 @@ import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.infrastructure.report.GeneralLedgerReport;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.GeneralLedgerDTOReport;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.GeneralLedgerReportDTO;
+import com.nutrehogar.sistemacontable.ui.builders.*;
 import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
-import com.nutrehogar.sistemacontable.ui.components.*;
 
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
@@ -177,11 +177,9 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
 
         @Override
         protected List<GeneralLedgerTableDTO> doInBackground() {
-            // log.info("Load data");
             var accountSelectedItem = cbxModelAccount.getSelectedItem();
             if (accountSelectedItem == null)
                 return null;
-            // log.info("account: {}", accountSelectedItem);
 
             var ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccount(accountSelectedItem,
                     spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue());
@@ -205,7 +203,6 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
                             BigDecimal.ZERO))
                     .sorted(Comparator.comparing(GeneralLedgerTableDTO::getEntryDate)) // Ordenar por fecha
                     .toList();
-            // log.info("GeneralLedgerDTOs: {}", generalLedgers);
             // 🔹 Calcular totales usando reduce()
             var debitSum = generalLedgers.stream()
                     .map(GeneralLedgerTableDTO::getDebit)

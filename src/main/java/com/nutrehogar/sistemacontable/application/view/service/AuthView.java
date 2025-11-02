@@ -1,5 +1,6 @@
-package com.nutrehogar.sistemacontable.application.view;
+package com.nutrehogar.sistemacontable.application.view.service;
 
+import com.nutrehogar.sistemacontable.application.view.View;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import javax.swing.*;
 

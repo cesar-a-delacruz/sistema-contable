@@ -1,8 +1,11 @@
-package com.nutrehogar.sistemacontable.ui.components;
+package com.nutrehogar.sistemacontable.ui.builders;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import javax.swing.*;
+
+import com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner;
+
 import lombok.Getter;
 import lombok.Setter;
 

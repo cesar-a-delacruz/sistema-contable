@@ -1,4 +1,4 @@
-package com.nutrehogar.sistemacontable.ui.components;
+package com.nutrehogar.sistemacontable.ui.builders;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

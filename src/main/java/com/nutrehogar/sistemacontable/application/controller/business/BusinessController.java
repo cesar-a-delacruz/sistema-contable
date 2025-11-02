@@ -8,8 +8,8 @@ import com.nutrehogar.sistemacontable.application.view.business.BusinessView;
 import com.nutrehogar.sistemacontable.domain.model.JournalEntryPK;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
+import com.nutrehogar.sistemacontable.ui.builders.LocalDateSpinnerModel;
 import com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner;
-import com.nutrehogar.sistemacontable.ui.components.LocalDateSpinnerModel;
 
 import java.time.LocalDate;
 import java.util.List;

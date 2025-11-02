@@ -1,17 +1,10 @@
 package com.nutrehogar.sistemacontable.application.config;
 
-import com.nutrehogar.sistemacontable.application.controller.AuthController;
-import com.nutrehogar.sistemacontable.application.controller.crud.UserController;
-import com.nutrehogar.sistemacontable.application.controller.service.DashboardController;
-import com.nutrehogar.sistemacontable.application.view.AuthView;
+import com.nutrehogar.sistemacontable.application.controller.business.*;
+import com.nutrehogar.sistemacontable.application.controller.crud.*;
+import com.nutrehogar.sistemacontable.application.controller.service.*;
+import com.nutrehogar.sistemacontable.application.view.service.AuthView;
 import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
-import com.nutrehogar.sistemacontable.application.controller.business.GeneralLedgerController;
-import com.nutrehogar.sistemacontable.application.controller.business.JournalController;
-import com.nutrehogar.sistemacontable.application.controller.business.TrialBalanceController;
-import com.nutrehogar.sistemacontable.application.controller.crud.AccountController;
-import com.nutrehogar.sistemacontable.application.controller.crud.AccountSubtypeController;
-import com.nutrehogar.sistemacontable.application.controller.crud.AccountingEntryFormController;
-import com.nutrehogar.sistemacontable.application.controller.service.BackupController;
 import com.nutrehogar.sistemacontable.application.repository.*;
 
 import com.nutrehogar.sistemacontable.domain.Permissions;
@@ -19,16 +12,9 @@ import com.nutrehogar.sistemacontable.domain.repository.*;
 import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 
-import com.nutrehogar.sistemacontable.ui.view.business.DefaultGeneralLedgerView;
-import com.nutrehogar.sistemacontable.ui.view.business.DefaultJournalView;
-import com.nutrehogar.sistemacontable.ui.view.crud.DefaultUserView;
-import com.nutrehogar.sistemacontable.ui.view.service.DefaultBackupView;
-import com.nutrehogar.sistemacontable.ui.view.crud.DefaultAccountView;
-import com.nutrehogar.sistemacontable.ui.view.crud.DefaultAccountEntryFormView;
-import com.nutrehogar.sistemacontable.ui.view.crud.DefaultAccountSubtypeView;
-import com.nutrehogar.sistemacontable.ui.view.business.DefaultTrialBalanceView;
-import com.nutrehogar.sistemacontable.ui.view.service.DefaultDashboardView;
-import com.nutrehogar.sistemacontable.ui.view.service.LoginForm;
+import com.nutrehogar.sistemacontable.ui.view.business.*;
+import com.nutrehogar.sistemacontable.ui.view.crud.*;
+import com.nutrehogar.sistemacontable.ui.view.service.*;
 
 import java.util.function.Consumer;
 import javax.swing.*;
@@ -50,7 +36,7 @@ public class AppConfig {
                 .password("0922")
                 .build());
         context.registerBean(UserRepository.class, new UserRepo());
-        context.registerBean(AuthView.class, new LoginForm());
+        context.registerBean(AuthView.class, new DefaultAuthView());
         context.registerBean(AuthController.class, new AuthController(context.getBean(AuthView.class),
                 context.getBean(UserRepository.class), context.getBean(User.class)));
         context.registerBean(DashboardView.class, new DefaultDashboardView());

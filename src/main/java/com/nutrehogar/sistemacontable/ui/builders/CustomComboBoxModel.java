@@ -1,4 +1,4 @@
-package com.nutrehogar.sistemacontable.ui.components;
+package com.nutrehogar.sistemacontable.ui.builders;
 
 import org.jetbrains.annotations.NotNull;
 import java.util.List;

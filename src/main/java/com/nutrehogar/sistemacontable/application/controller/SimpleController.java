@@ -5,8 +5,8 @@ import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
 import com.nutrehogar.sistemacontable.application.repository.SimpleRepository;
 import com.nutrehogar.sistemacontable.domain.model.User;
-import com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel;
-import com.nutrehogar.sistemacontable.ui.components.CustomTableCellRenderer;
+import com.nutrehogar.sistemacontable.ui.builders.CustomTableCellRenderer;
+import com.nutrehogar.sistemacontable.ui.components.AuditablePanel;
 import com.nutrehogar.sistemacontable.application.view.SimpleView;
 
 import java.awt.event.MouseAdapter;

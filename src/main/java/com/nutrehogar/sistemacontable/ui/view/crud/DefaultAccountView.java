@@ -51,7 +51,7 @@ public class DefaultAccountView extends AccountView {
         btnUpdate = new javax.swing.JButton();
         lblSave = new javax.swing.JLabel();
         lblUpdate = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
 
         setOpaque(false);
 
@@ -352,7 +352,7 @@ public class DefaultAccountView extends AccountView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;

@@ -6,7 +6,7 @@ import com.nutrehogar.sistemacontable.application.view.crud.AccountView;
 import com.nutrehogar.sistemacontable.domain.AccountType;
 import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
-import com.nutrehogar.sistemacontable.ui.components.*;
+import com.nutrehogar.sistemacontable.ui.builders.*;
 
 import java.util.List;
 import javax.swing.*;

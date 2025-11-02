@@ -1,4 +1,4 @@
-package com.nutrehogar.sistemacontable.ui.components;
+package com.nutrehogar.sistemacontable.ui.builders;
 
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import java.awt.*;

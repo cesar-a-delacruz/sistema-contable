@@ -1,9 +1,9 @@
 package com.nutrehogar.sistemacontable.application;
 
 import com.nutrehogar.sistemacontable.application.config.ApplicationContext;
+import com.nutrehogar.sistemacontable.application.controller.service.AuthController;
 import com.nutrehogar.sistemacontable.application.config.AppConfig;
-import com.nutrehogar.sistemacontable.application.controller.AuthController;
-import com.nutrehogar.sistemacontable.application.view.AuthView;
+import com.nutrehogar.sistemacontable.application.view.service.AuthView;
 import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
 
 import com.nutrehogar.sistemacontable.domain.core.WriteExecutor;

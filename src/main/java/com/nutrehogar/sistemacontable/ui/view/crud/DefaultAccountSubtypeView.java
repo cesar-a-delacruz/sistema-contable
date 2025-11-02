@@ -48,7 +48,7 @@ public class DefaultAccountSubtypeView extends AccountSubtypeView {
         btnUpdate = new javax.swing.JButton();
         lblSave = new javax.swing.JLabel();
         lblUpdate = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -341,7 +341,7 @@ public class DefaultAccountSubtypeView extends AccountSubtypeView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;

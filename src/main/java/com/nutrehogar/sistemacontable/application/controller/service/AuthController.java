@@ -1,7 +1,8 @@
-package com.nutrehogar.sistemacontable.application.controller;
+package com.nutrehogar.sistemacontable.application.controller.service;
 
+import com.nutrehogar.sistemacontable.application.controller.Controller;
 import com.nutrehogar.sistemacontable.application.repository.UserRepository;
-import com.nutrehogar.sistemacontable.application.view.AuthView;
+import com.nutrehogar.sistemacontable.application.view.service.AuthView;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 

@@ -43,7 +43,7 @@ public class DefaultGeneralLedgerView extends GeneralLedgerView {
         lblAccountType = new javax.swing.JLabel();
         lblAccountSubtype = new javax.swing.JLabel();
         lblAccount = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
         btnGenerateReport = new javax.swing.JButton();
 
         setOpaque(false);
@@ -304,7 +304,7 @@ public class DefaultGeneralLedgerView extends GeneralLedgerView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnGenerateReport;

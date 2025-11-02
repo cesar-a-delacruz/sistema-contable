@@ -53,7 +53,7 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
         lblRecordType = new javax.swing.JLabel();
         rbtRecordDebit = new javax.swing.JRadioButton();
         rbtRecordCredit = new javax.swing.JRadioButton();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
         pnlEntryForm = new javax.swing.JPanel();
         lblEntryName = new javax.swing.JLabel();
         txtEntryName = new javax.swing.JTextField();
@@ -646,7 +646,7 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.ButtonGroup bgRecordType;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnAddEntry;

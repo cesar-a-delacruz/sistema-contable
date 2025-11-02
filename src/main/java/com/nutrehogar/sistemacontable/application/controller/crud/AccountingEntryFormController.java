@@ -11,7 +11,8 @@ import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.infrastructure.report.*;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.JournalEntryReportDTO;
 import com.nutrehogar.sistemacontable.infrastructure.report.dto.LedgerRecordReportDTO;
-import com.nutrehogar.sistemacontable.ui.components.*;
+import com.nutrehogar.sistemacontable.ui.builders.*;
+import com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner;
 
 import jakarta.persistence.EntityExistsException;
 import lombok.extern.slf4j.Slf4j;

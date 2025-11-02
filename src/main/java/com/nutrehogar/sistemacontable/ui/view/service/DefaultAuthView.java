@@ -1,9 +1,9 @@
 package com.nutrehogar.sistemacontable.ui.view.service;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.nutrehogar.sistemacontable.application.view.service.AuthView;
 import com.nutrehogar.sistemacontable.domain.model.User;
-import com.nutrehogar.sistemacontable.application.view.AuthView;
-import com.nutrehogar.sistemacontable.ui.components.UserListCellRenderer;
+import com.nutrehogar.sistemacontable.ui.builders.UserListCellRenderer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -13,10 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
-public class LoginForm extends AuthView {
+public class DefaultAuthView extends AuthView {
     private static final FlatSVGIcon icon = new FlatSVGIcon("svgs/key.svg");
 
-    public LoginForm() {
+    public DefaultAuthView() {
         initComponents();
         setIconImage(icon.getImage());
         lblPing.setIcon(icon);
@@ -47,7 +47,7 @@ public class LoginForm extends AuthView {
 
         btnOk = new javax.swing.JButton();
         BtnCancel = new javax.swing.JButton();
-        scrollPanel1 = new com.nutrehogar.sistemacontable.ui.JComponents.ScrollPanel();
+        scrollPanel1 = new com.nutrehogar.sistemacontable.ui.components.ScrollPanel();
         lstUser = new javax.swing.JList<>();
         lblTitle = new javax.swing.JLabel();
         txtPing = new javax.swing.JPasswordField();
@@ -146,7 +146,7 @@ public class LoginForm extends AuthView {
     private javax.swing.JLabel lblPing;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JList<User> lstUser;
-    private com.nutrehogar.sistemacontable.ui.JComponents.ScrollPanel scrollPanel1;
+    private com.nutrehogar.sistemacontable.ui.components.ScrollPanel scrollPanel1;
     private javax.swing.JPasswordField txtPing;
     // End of variables declaration//GEN-END:variables
 

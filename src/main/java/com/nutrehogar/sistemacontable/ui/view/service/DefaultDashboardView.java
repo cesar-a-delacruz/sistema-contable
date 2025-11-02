@@ -1,8 +1,8 @@
 package com.nutrehogar.sistemacontable.ui.view.service;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.nutrehogar.sistemacontable.ui.JComponents.UserListPanel;
 import com.nutrehogar.sistemacontable.ui.ThemeConfig;
+import com.nutrehogar.sistemacontable.ui.components.UserListPanel;
 import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
 import lombok.Getter;
 
@@ -39,16 +39,16 @@ public class DefaultDashboardView extends DashboardView {
         pnlContent = new javax.swing.JPanel();
         pnlHome = new javax.swing.JPanel();
         pnlGroupBtn = new javax.swing.JPanel();
-        btnShowFormView = new com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton();
-        btnShowAccountView = new com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton();
-        btnShowTrialBalanceView = new com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton();
-        btnShowAccountSubtypeView = new com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton();
-        btnShowGeneralLedgerView = new com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton();
-        btnShowJournalView = new com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton();
-        btnShowUserView = new com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton();
+        btnShowFormView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
+        btnShowAccountView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
+        btnShowTrialBalanceView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
+        btnShowAccountSubtypeView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
+        btnShowGeneralLedgerView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
+        btnShowJournalView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
+        btnShowUserView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
         pnlNav = new javax.swing.JPanel();
-        btnShowBackupView = new com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton();
-        btnHome = new com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton();
+        btnShowBackupView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
+        btnHome = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -281,15 +281,15 @@ public class DefaultDashboardView extends DashboardView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton btnHome;
-    private com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton btnShowAccountSubtypeView;
-    private com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton btnShowAccountView;
-    private com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton btnShowBackupView;
-    private com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton btnShowFormView;
-    private com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton btnShowGeneralLedgerView;
-    private com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton btnShowJournalView;
-    private com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton btnShowTrialBalanceView;
-    private com.nutrehogar.sistemacontable.ui.JComponents.DefaultPanelButton btnShowUserView;
+    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnHome;
+    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowAccountSubtypeView;
+    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowAccountView;
+    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowBackupView;
+    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowFormView;
+    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowGeneralLedgerView;
+    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowJournalView;
+    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowTrialBalanceView;
+    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowUserView;
     private javax.swing.JPanel pnlContent;
     private javax.swing.JPanel pnlGroupBtn;
     private javax.swing.JPanel pnlHome;

@@ -6,7 +6,7 @@ import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.application.controller.Controller;
 import com.nutrehogar.sistemacontable.application.repository.BackupRepository;
 import com.nutrehogar.sistemacontable.exception.ReportException;
-import com.nutrehogar.sistemacontable.ui.components.CustomTableCellRenderer;
+import com.nutrehogar.sistemacontable.ui.builders.CustomTableCellRenderer;
 import com.nutrehogar.sistemacontable.application.view.service.BackupView;
 
 import java.awt.*;

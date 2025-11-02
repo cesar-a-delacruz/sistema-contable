@@ -1,4 +1,4 @@
-package com.nutrehogar.sistemacontable.ui.JComponents;
+package com.nutrehogar.sistemacontable.ui.components;
 
 import com.nutrehogar.sistemacontable.ui.ThemeConfig;
 import java.awt.*;

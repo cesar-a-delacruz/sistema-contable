@@ -5,8 +5,8 @@ import com.nutrehogar.sistemacontable.application.view.crud.UserView;
 import com.nutrehogar.sistemacontable.domain.Permissions;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
-import com.nutrehogar.sistemacontable.ui.components.CustomComboBoxModel;
-import com.nutrehogar.sistemacontable.ui.components.CustomListCellRenderer;
+import com.nutrehogar.sistemacontable.ui.builders.CustomComboBoxModel;
+import com.nutrehogar.sistemacontable.ui.builders.CustomListCellRenderer;
 
 import javax.swing.*;
 import org.jetbrains.annotations.NotNull;

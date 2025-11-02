@@ -42,7 +42,7 @@ public class DefaultUserView extends UserView {
         chkIsEnable = new javax.swing.JCheckBox();
         cbxPermissions = new javax.swing.JComboBox<>();
         lblUserPasswod1 = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
 
         setOpaque(false);
 
@@ -316,7 +316,7 @@ public class DefaultUserView extends UserView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
