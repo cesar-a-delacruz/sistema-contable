@@ -1,12 +1,13 @@
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
-import com.nutrehogar.sistemacontable.application.view.crud.UserView;
-import com.nutrehogar.sistemacontable.domain.Permissions;
+import com.nutrehogar.sistemacontable.base.ui.view.CRUDView;
+import com.nutrehogar.sistemacontable.domain.type.PermissionType;
+
 import javax.swing.JButton;
 import lombok.Getter;
 
 @Getter
-public class DefaultUserView extends UserView {
+public class DefaultUserView extends CRUDView {
     public DefaultUserView() {
         initComponents();
         txtUsername.putClientProperty("JTextField.placeholderText", "Lic. Ema Perez");
@@ -42,7 +43,7 @@ public class DefaultUserView extends UserView {
         chkIsEnable = new javax.swing.JCheckBox();
         cbxPermissions = new javax.swing.JComboBox<>();
         lblUserPasswod1 = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.component.AuditablePanel();
 
         setOpaque(false);
 
@@ -316,13 +317,13 @@ public class DefaultUserView extends UserView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.component.AuditablePanel auditablePanel;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JComboBox<Permissions> cbxPermissions;
+    private javax.swing.JComboBox<PermissionType> cbxPermissions;
     private javax.swing.JCheckBox chkIsEnable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelSection1;

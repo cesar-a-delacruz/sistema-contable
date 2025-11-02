@@ -1,7 +1,7 @@
 package com.nutrehogar.sistemacontable.ui.view.service;
 
-import com.nutrehogar.sistemacontable.application.view.service.BackupView;
-import com.nutrehogar.sistemacontable.ui.components.AuditablePanel;
+import com.nutrehogar.sistemacontable.base.ui.view.service.BackupView;
+import com.nutrehogar.sistemacontable.ui.component.AuditablePanel;
 
 import lombok.Getter;
 import javax.swing.*;

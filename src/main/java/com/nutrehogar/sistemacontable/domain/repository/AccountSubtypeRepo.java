@@ -1,15 +1,14 @@
 package com.nutrehogar.sistemacontable.domain.repository;
 
-import com.nutrehogar.sistemacontable.application.repository.AccountSubtypeRepository;
-import com.nutrehogar.sistemacontable.domain.AccountType;
-import com.nutrehogar.sistemacontable.domain.core.CRUDRepositoryImpl;
-import com.nutrehogar.sistemacontable.domain.core.TransactionManager;
+import com.nutrehogar.sistemacontable.base.domain.repository.AccountSubtypeRepository;
 import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
+import com.nutrehogar.sistemacontable.domain.type.AccountType;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
+import com.nutrehogar.sistemacontable.persistence.TransactionManager;
 
 import java.util.List;
 
-public class AccountSubtypeRepo extends CRUDRepositoryImpl<AccountSubtype, Integer>
+public class AccountSubtypeRepo extends CRUDRepo<AccountSubtype, Integer>
         implements AccountSubtypeRepository {
 
     public AccountSubtypeRepo() {

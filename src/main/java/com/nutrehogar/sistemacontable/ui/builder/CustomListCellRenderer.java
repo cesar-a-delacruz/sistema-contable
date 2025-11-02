@@ -1,0 +1,29 @@
+package com.nutrehogar.sistemacontable.ui.builder;
+
+import com.nutrehogar.sistemacontable.domain.model.Account;
+import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
+import com.nutrehogar.sistemacontable.domain.type.AccountType;
+import com.nutrehogar.sistemacontable.domain.type.DocumentType;
+import com.nutrehogar.sistemacontable.domain.type.PermissionType;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class CustomListCellRenderer extends DefaultListCellRenderer {
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+            boolean cellHasFocus) {
+        var label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        label.setText(switch (value) {
+            case AccountType accountType -> AccountType.getCellRenderer(accountType);
+            case AccountSubtype tipoCuenta -> tipoCuenta.getAccountType().getId() + "." + tipoCuenta.getCanonicalId()
+                    + " " + tipoCuenta.getName();
+            case Account account -> account.getFormattedId();
+            case DocumentType documentType -> documentType.getName();
+            case PermissionType permissions -> permissions.getName();
+            case null -> "";
+            default -> value.toString();
+        });
+        return label;
+    }
+}

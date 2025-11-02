@@ -1,17 +1,15 @@
 package com.nutrehogar.sistemacontable.application.config;
 
-import com.nutrehogar.sistemacontable.application.controller.business.*;
-import com.nutrehogar.sistemacontable.application.controller.crud.*;
-import com.nutrehogar.sistemacontable.application.controller.service.*;
-import com.nutrehogar.sistemacontable.application.view.service.AuthView;
-import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
-import com.nutrehogar.sistemacontable.application.repository.*;
-
-import com.nutrehogar.sistemacontable.domain.Permissions;
+import com.nutrehogar.sistemacontable.base.domain.repository.*;
+import com.nutrehogar.sistemacontable.base.ui.view.service.AuthView;
+import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
+import com.nutrehogar.sistemacontable.controller.business.*;
+import com.nutrehogar.sistemacontable.controller.crud.*;
+import com.nutrehogar.sistemacontable.controller.service.*;
 import com.nutrehogar.sistemacontable.domain.repository.*;
+import com.nutrehogar.sistemacontable.domain.type.PermissionType;
+import com.nutrehogar.sistemacontable.report.ReportService;
 import com.nutrehogar.sistemacontable.domain.model.*;
-import com.nutrehogar.sistemacontable.infrastructure.report.ReportService;
-
 import com.nutrehogar.sistemacontable.ui.view.business.*;
 import com.nutrehogar.sistemacontable.ui.view.crud.*;
 import com.nutrehogar.sistemacontable.ui.view.service.*;
@@ -28,10 +26,10 @@ public class AppConfig {
         throw new IllegalStateException("Utility class");
     }
 
-    public static void setup(@NotNull ApplicationContext context) {
+    public static void setup(@NotNull Context context) {
         context.registerBean(User.class, User.builder()
                 .username("Root")
-                .permissions(Permissions.CREATE)
+                .permissions(PermissionType.CREATE)
                 .isEnable(true)
                 .password("0922")
                 .build());
@@ -49,7 +47,7 @@ public class AppConfig {
         ReportService.initializeReports();
     }
 
-    public static void init(@NotNull ApplicationContext context, Session session, User user, JFrame parent) {
+    public static void init(@NotNull Context context, Session session, User user, JFrame parent) {
 
         // Registro de repositorios
         context.registerBean(AccountRepository.class, new AccountRepo());

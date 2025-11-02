@@ -1,17 +1,16 @@
 package com.nutrehogar.sistemacontable.domain.repository;
 
-import com.nutrehogar.sistemacontable.application.repository.LedgerRecordRepository;
-
-import com.nutrehogar.sistemacontable.domain.core.CRUDRepositoryImpl;
-import com.nutrehogar.sistemacontable.domain.core.TransactionManager;
+import com.nutrehogar.sistemacontable.base.domain.repository.LedgerRecordRepository;
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.domain.model.LedgerRecord;
 
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
+import com.nutrehogar.sistemacontable.persistence.TransactionManager;
+
 import java.time.LocalDate;
 import java.util.List;
 
-public class LedgerRecordRepo extends CRUDRepositoryImpl<LedgerRecord, Integer> implements LedgerRecordRepository {
+public class LedgerRecordRepo extends CRUDRepo<LedgerRecord, Integer> implements LedgerRecordRepository {
     public LedgerRecordRepo() {
         super(LedgerRecord.class);
     }

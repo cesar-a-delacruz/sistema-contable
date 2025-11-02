@@ -1,6 +1,6 @@
 package com.nutrehogar.sistemacontable.exception;
 
-public class ReportException extends ApplicationException {
+public class ReportException extends AppException {
     public ReportException() {
         super();
     }
