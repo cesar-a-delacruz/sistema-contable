@@ -1,6 +1,7 @@
 package com.nutrehogar.sistemacontable.domain.model;
 
-import com.nutrehogar.sistemacontable.domain.Permissions;
+import com.nutrehogar.sistemacontable.domain.type.PermissionType;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -36,10 +37,10 @@ public class User extends AuditableEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    Permissions permissions;
+    PermissionType permissions;
 
     public boolean isAuthorized() {
-        return permissions.equals(Permissions.CREATE);
+        return permissions.equals(PermissionType.CREATE);
     }
 
     public static boolean isAuthorized(User user) {

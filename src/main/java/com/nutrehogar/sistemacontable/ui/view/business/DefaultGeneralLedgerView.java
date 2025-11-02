@@ -1,13 +1,14 @@
 package com.nutrehogar.sistemacontable.ui.view.business;
 
-import com.nutrehogar.sistemacontable.domain.AccountType;
+import com.nutrehogar.sistemacontable.base.ui.view.BusinessView;
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
-import com.nutrehogar.sistemacontable.application.view.business.GeneralLedgerView;
+import com.nutrehogar.sistemacontable.domain.type.AccountType;
+
 import lombok.Getter;
 
 @Getter
-public class DefaultGeneralLedgerView extends GeneralLedgerView {
+public class DefaultGeneralLedgerView extends BusinessView {
     public DefaultGeneralLedgerView() {
         initComponents();
     }
@@ -28,11 +29,11 @@ public class DefaultGeneralLedgerView extends GeneralLedgerView {
         pnlOperations = new javax.swing.JPanel();
         btnFilter = new javax.swing.JButton();
         lblFilter = new javax.swing.JLabel();
-        spnStart = new com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner();
+        spnStart = new com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner();
         lblStart = new javax.swing.JLabel();
         btnResetStart = new javax.swing.JButton();
         btnResetEnd = new javax.swing.JButton();
-        spnEnd = new com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner();
+        spnEnd = new com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner();
         lblEnd = new javax.swing.JLabel();
         btnEdit = new javax.swing.JButton();
         lblEdit = new javax.swing.JLabel();
@@ -43,7 +44,7 @@ public class DefaultGeneralLedgerView extends GeneralLedgerView {
         lblAccountType = new javax.swing.JLabel();
         lblAccountSubtype = new javax.swing.JLabel();
         lblAccount = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.component.AuditablePanel();
         btnGenerateReport = new javax.swing.JButton();
 
         setOpaque(false);
@@ -304,7 +305,7 @@ public class DefaultGeneralLedgerView extends GeneralLedgerView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.component.AuditablePanel auditablePanel;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnGenerateReport;
@@ -324,8 +325,8 @@ public class DefaultGeneralLedgerView extends GeneralLedgerView {
     private javax.swing.JLabel lblStart;
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlOperations;
-    private com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner spnEnd;
-    private com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner spnStart;
+    private com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner spnEnd;
+    private com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner spnStart;
     private javax.swing.JTable tblData;
     // End of variables declaration//GEN-END:variables
 }

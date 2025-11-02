@@ -1,13 +1,14 @@
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
-import com.nutrehogar.sistemacontable.domain.DocumentType;
+import com.nutrehogar.sistemacontable.base.ui.view.CRUDView;
 import com.nutrehogar.sistemacontable.domain.model.Account;
-import com.nutrehogar.sistemacontable.application.view.crud.AccountingEntryFormView;
+import com.nutrehogar.sistemacontable.domain.type.DocumentType;
+
 import lombok.Getter;
 import javax.swing.*;
 
 @Getter
-public class DefaultAccountEntryFormView extends AccountingEntryFormView {
+public class DefaultAccountEntryFormView extends CRUDView {
     public DefaultAccountEntryFormView() {
         initComponents();
         txtEntryName.putClientProperty("JTextField.placeholderText", "Ventas S.A.");
@@ -53,7 +54,7 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
         lblRecordType = new javax.swing.JLabel();
         rbtRecordDebit = new javax.swing.JRadioButton();
         rbtRecordCredit = new javax.swing.JRadioButton();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.component.AuditablePanel();
         pnlEntryForm = new javax.swing.JPanel();
         lblEntryName = new javax.swing.JLabel();
         txtEntryName = new javax.swing.JTextField();
@@ -65,7 +66,7 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
         lblEntryDate = new javax.swing.JLabel();
         txtEntryCheckNumber = new javax.swing.JTextField();
         lblEntryCeckNumber = new javax.swing.JLabel();
-        spnEntryDate = new com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner();
+        spnEntryDate = new com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner();
         btnSaveEntry = new javax.swing.JButton();
         btnUpdateEntry = new javax.swing.JButton();
         btnDeleteEntry = new javax.swing.JButton();
@@ -646,7 +647,7 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.component.AuditablePanel auditablePanel;
     private javax.swing.ButtonGroup bgRecordType;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnAddEntry;
@@ -692,7 +693,7 @@ public class DefaultAccountEntryFormView extends AccountingEntryFormView {
     private javax.swing.JPanel pnlSourceDocuments;
     private javax.swing.JRadioButton rbtRecordCredit;
     private javax.swing.JRadioButton rbtRecordDebit;
-    private com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner spnEntryDate;
+    private com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner spnEntryDate;
     private javax.swing.JTextArea taEntryConcept;
     private javax.swing.JTable tblData;
     private javax.swing.JTextField txtEntryCheckNumber;

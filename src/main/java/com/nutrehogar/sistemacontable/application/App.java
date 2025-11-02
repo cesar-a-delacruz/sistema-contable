@@ -1,15 +1,13 @@
 package com.nutrehogar.sistemacontable.application;
 
-import com.nutrehogar.sistemacontable.application.config.ApplicationContext;
-import com.nutrehogar.sistemacontable.application.controller.service.AuthController;
 import com.nutrehogar.sistemacontable.application.config.AppConfig;
-import com.nutrehogar.sistemacontable.application.view.service.AuthView;
-import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
-
-import com.nutrehogar.sistemacontable.domain.core.WriteExecutor;
-import com.nutrehogar.sistemacontable.infrastructure.persistence.HibernateUtil;
-import com.nutrehogar.sistemacontable.ui.ThemeConfig;
-
+import com.nutrehogar.sistemacontable.application.config.Context;
+import com.nutrehogar.sistemacontable.application.config.WriteExecutor;
+import com.nutrehogar.sistemacontable.base.ui.view.service.AuthView;
+import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
+import com.nutrehogar.sistemacontable.controller.service.AuthController;
+import com.nutrehogar.sistemacontable.persistence.HibernateUtil;
+import com.nutrehogar.sistemacontable.ui.Theme;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javax.swing.*;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +30,7 @@ public class App {
             log.info("Application stopped");
         })));
 
-        var context = new ApplicationContext();
+        var context = new Context();
 
         try {
             AppConfig.setup(context);
@@ -43,7 +41,7 @@ public class App {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
-            frame.getRootPane().setBackground(ThemeConfig.Palette.SOLITUDE_50);
+            frame.getRootPane().setBackground(Theme.Palette.SOLITUDE_50);
             frame.add(context.getBean(DashboardView.class));
             frame.setVisible(true);
             context.getBean(AuthView.class).setVisible(true);

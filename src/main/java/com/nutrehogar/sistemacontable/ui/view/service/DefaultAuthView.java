@@ -1,9 +1,9 @@
 package com.nutrehogar.sistemacontable.ui.view.service;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.nutrehogar.sistemacontable.application.view.service.AuthView;
+import com.nutrehogar.sistemacontable.base.ui.view.service.AuthView;
 import com.nutrehogar.sistemacontable.domain.model.User;
-import com.nutrehogar.sistemacontable.ui.builders.UserListCellRenderer;
+import com.nutrehogar.sistemacontable.ui.builder.UserListCellRenderer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -47,7 +47,7 @@ public class DefaultAuthView extends AuthView {
 
         btnOk = new javax.swing.JButton();
         BtnCancel = new javax.swing.JButton();
-        scrollPanel1 = new com.nutrehogar.sistemacontable.ui.components.ScrollPanel();
+        scrollPanel1 = new com.nutrehogar.sistemacontable.ui.component.ScrollPanel();
         lstUser = new javax.swing.JList<>();
         lblTitle = new javax.swing.JLabel();
         txtPing = new javax.swing.JPasswordField();
@@ -146,7 +146,7 @@ public class DefaultAuthView extends AuthView {
     private javax.swing.JLabel lblPing;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JList<User> lstUser;
-    private com.nutrehogar.sistemacontable.ui.components.ScrollPanel scrollPanel1;
+    private com.nutrehogar.sistemacontable.ui.component.ScrollPanel scrollPanel1;
     private javax.swing.JPasswordField txtPing;
     // End of variables declaration//GEN-END:variables
 

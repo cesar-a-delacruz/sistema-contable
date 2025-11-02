@@ -19,8 +19,8 @@
         <mapping class="com.nutrehogar.sistemacontable.domain.model.Account"/>
         <mapping class="com.nutrehogar.sistemacontable.domain.model.LedgerRecord"/>
         <mapping class="com.nutrehogar.sistemacontable.domain.model.AccountSubtype"/>
-        <mapping class="com.nutrehogar.sistemacontable.domain.AccountType"/>
-        <mapping class="com.nutrehogar.sistemacontable.domain.DocumentType"/>
+        <mapping class="com.nutrehogar.sistemacontable.domain.type.AccountType"/>
+        <mapping class="com.nutrehogar.sistemacontable.domain.type.DocumentType"/>
         <mapping class="com.nutrehogar.sistemacontable.domain.model.User"/>
     </session-factory>
 </hibernate-configuration>

@@ -1,6 +1,7 @@
 package com.nutrehogar.sistemacontable.ui.view.business;
 
-import com.nutrehogar.sistemacontable.application.view.business.BusinessView;
+import com.nutrehogar.sistemacontable.base.ui.view.BusinessView;
+
 import lombok.Getter;
 
 @Getter
@@ -26,15 +27,15 @@ public class DefaultJournalView extends BusinessView {
         pnlOperations = new javax.swing.JPanel();
         btnFilter = new javax.swing.JButton();
         lblFilter = new javax.swing.JLabel();
-        spnStart = new com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner();
+        spnStart = new com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner();
         lblStart = new javax.swing.JLabel();
         btnResetStart = new javax.swing.JButton();
         btnResetEnd = new javax.swing.JButton();
-        spnEnd = new com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner();
+        spnEnd = new com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner();
         lblEnd = new javax.swing.JLabel();
         btnEdit = new javax.swing.JButton();
         lblEdit = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.component.AuditablePanel();
         btnGenerateReport = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -221,7 +222,7 @@ public class DefaultJournalView extends BusinessView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.component.AuditablePanel auditablePanel;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnGenerateReport;
@@ -235,8 +236,8 @@ public class DefaultJournalView extends BusinessView {
     private javax.swing.JLabel lblStart;
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlOperations;
-    private com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner spnEnd;
-    private com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner spnStart;
+    private com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner spnEnd;
+    private com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner spnStart;
     private javax.swing.JTable tblData;
     // End of variables declaration//GEN-END:variables
 }

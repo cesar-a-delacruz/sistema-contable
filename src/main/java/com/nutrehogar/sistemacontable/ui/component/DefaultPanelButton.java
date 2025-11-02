@@ -1,0 +1,37 @@
+package com.nutrehogar.sistemacontable.ui.component;
+
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.*;
+
+import com.nutrehogar.sistemacontable.ui.Theme;
+
+public class DefaultPanelButton extends JButton {
+    {
+        setBorderPainted(false);
+        setVerticalTextPosition(SwingConstants.TOP);
+        setHorizontalAlignment(SwingConstants.LEADING);
+        setMargin(new Insets(4, 6, 3, 14));
+        setFont(Theme.Typography.FONT_LG);
+        setForeground(Theme.Palette.OFFICE_GREEN);
+        setIconTextGap(Theme.Spacing.GAP_MD);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setBackground(Color.WHITE);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                setBackground(Theme.Palette.COLUMBIA_BLUE);
+            }
+        });
+    }
+
+    public DefaultPanelButton() {}
+
+    public DefaultPanelButton(String text) {
+        super(text);
+    }
+}

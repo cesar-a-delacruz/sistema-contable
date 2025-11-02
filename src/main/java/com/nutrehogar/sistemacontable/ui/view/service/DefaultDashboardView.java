@@ -1,16 +1,17 @@
 package com.nutrehogar.sistemacontable.ui.view.service;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.nutrehogar.sistemacontable.ui.ThemeConfig;
-import com.nutrehogar.sistemacontable.ui.components.UserListPanel;
-import com.nutrehogar.sistemacontable.application.view.service.DashboardView;
+import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
+import com.nutrehogar.sistemacontable.ui.Theme;
+import com.nutrehogar.sistemacontable.ui.component.UserListPanel;
+
 import lombok.Getter;
 
 @Getter
 public class DefaultDashboardView extends DashboardView {
     public DefaultDashboardView() {
         initComponents();
-        btnHome.setIcon(new FlatSVGIcon("svgs/home.svg", ThemeConfig.ICON_MD, ThemeConfig.ICON_MD));
+        btnHome.setIcon(new FlatSVGIcon("svgs/home.svg", Theme.ICON_MD, Theme.ICON_MD));
         btnShowFormView.setIcon(getIcon("svgs/form.svg"));
         btnShowJournalView.setIcon(getIcon("svgs/journal.svg"));
         btnShowTrialBalanceView.setIcon(getIcon("svgs/trial_balance.svg"));
@@ -18,12 +19,12 @@ public class DefaultDashboardView extends DashboardView {
         btnShowAccountView.setIcon(getIcon("svgs/account.svg"));
         btnShowAccountSubtypeView.setIcon(getIcon("svgs/account_subtype.svg"));
         btnShowBackupView.setIcon(getIcon("svgs/backup.svg"));
-        btnShowUserView.setIcon(UserListPanel.UserListElement.userIcon.derive(ThemeConfig.ICON_LG,
-                ThemeConfig.ICON_LG));
+        btnShowUserView.setIcon(UserListPanel.UserListElement.userIcon.derive(Theme.ICON_LG,
+                Theme.ICON_LG));
     }
 
     private FlatSVGIcon getIcon(String iconName) {
-        return new FlatSVGIcon(iconName, ThemeConfig.ICON_LG, ThemeConfig.ICON_LG);
+        return new FlatSVGIcon(iconName, Theme.ICON_LG, Theme.ICON_LG);
     }
 
     /**
@@ -39,16 +40,16 @@ public class DefaultDashboardView extends DashboardView {
         pnlContent = new javax.swing.JPanel();
         pnlHome = new javax.swing.JPanel();
         pnlGroupBtn = new javax.swing.JPanel();
-        btnShowFormView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
-        btnShowAccountView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
-        btnShowTrialBalanceView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
-        btnShowAccountSubtypeView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
-        btnShowGeneralLedgerView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
-        btnShowJournalView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
-        btnShowUserView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
+        btnShowFormView = new com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton();
+        btnShowAccountView = new com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton();
+        btnShowTrialBalanceView = new com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton();
+        btnShowAccountSubtypeView = new com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton();
+        btnShowGeneralLedgerView = new com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton();
+        btnShowJournalView = new com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton();
+        btnShowUserView = new com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton();
         pnlNav = new javax.swing.JPanel();
-        btnShowBackupView = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
-        btnHome = new com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton();
+        btnShowBackupView = new com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton();
+        btnHome = new com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -281,15 +282,15 @@ public class DefaultDashboardView extends DashboardView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnHome;
-    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowAccountSubtypeView;
-    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowAccountView;
-    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowBackupView;
-    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowFormView;
-    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowGeneralLedgerView;
-    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowJournalView;
-    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowTrialBalanceView;
-    private com.nutrehogar.sistemacontable.ui.components.DefaultPanelButton btnShowUserView;
+    private com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton btnHome;
+    private com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton btnShowAccountSubtypeView;
+    private com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton btnShowAccountView;
+    private com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton btnShowBackupView;
+    private com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton btnShowFormView;
+    private com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton btnShowGeneralLedgerView;
+    private com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton btnShowJournalView;
+    private com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton btnShowTrialBalanceView;
+    private com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton btnShowUserView;
     private javax.swing.JPanel pnlContent;
     private javax.swing.JPanel pnlGroupBtn;
     private javax.swing.JPanel pnlHome;

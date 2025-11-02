@@ -1,8 +1,9 @@
 package com.nutrehogar.sistemacontable.domain.repository;
 
-import com.nutrehogar.sistemacontable.application.repository.BackupRepository;
+import com.nutrehogar.sistemacontable.base.domain.repository.BackupRepository;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
-import com.nutrehogar.sistemacontable.infrastructure.persistence.HibernateUtil;
+import com.nutrehogar.sistemacontable.persistence.HibernateUtil;
+
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.function.Consumer;

@@ -1,7 +1,9 @@
 package com.nutrehogar.sistemacontable.exception;
 
 public class ApplicationException extends AppException {
-    public ApplicationException() {}
+    public ApplicationException() {
+        super();
+    }
 
     public ApplicationException(String message) {
         super(message);

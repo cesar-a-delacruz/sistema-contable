@@ -1,7 +1,9 @@
 package com.nutrehogar.sistemacontable.exception;
 
 public class RepositoryException extends AppException {
-    public RepositoryException() {}
+    public RepositoryException() {
+        super();
+    }
 
     public RepositoryException(String message) {
         super(message);

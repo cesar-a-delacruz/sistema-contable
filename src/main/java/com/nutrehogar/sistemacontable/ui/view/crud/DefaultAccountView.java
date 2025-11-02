@@ -1,13 +1,14 @@
 package com.nutrehogar.sistemacontable.ui.view.crud;
 
-import com.nutrehogar.sistemacontable.domain.AccountType;
+import com.nutrehogar.sistemacontable.base.ui.view.CRUDView;
 import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
-import com.nutrehogar.sistemacontable.application.view.crud.AccountView;
+import com.nutrehogar.sistemacontable.domain.type.AccountType;
+
 import javax.swing.JButton;
 import lombok.Getter;
 
 @Getter
-public class DefaultAccountView extends AccountView {
+public class DefaultAccountView extends CRUDView {
     public DefaultAccountView() {
         initComponents();
         txtAccountName.putClientProperty("JTextField.placeholderText", "Caja Menuda");
@@ -51,7 +52,7 @@ public class DefaultAccountView extends AccountView {
         btnUpdate = new javax.swing.JButton();
         lblSave = new javax.swing.JLabel();
         lblUpdate = new javax.swing.JLabel();
-        auditablePanel = new com.nutrehogar.sistemacontable.ui.components.AuditablePanel();
+        auditablePanel = new com.nutrehogar.sistemacontable.ui.component.AuditablePanel();
 
         setOpaque(false);
 
@@ -352,7 +353,7 @@ public class DefaultAccountView extends AccountView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui.components.AuditablePanel auditablePanel;
+    private com.nutrehogar.sistemacontable.ui.component.AuditablePanel auditablePanel;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
