@@ -1,4 +1,4 @@
-<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
 <jasperReport name="RegistrationForm" language="java" columnCount="1" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7ee58cf6-d5b5-4286-aae2-58be765c1c95">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<style name="TABLE_STYLE" mode="Opaque" backcolor="#8F8282" markup=""/>
@@ -66,61 +66,65 @@
 	<query language="sql"><![CDATA[]]></query>
 	<background splitType="Stretch"/>
 	<title height="62" splitType="Stretch">
-		<element kind="image" uuid="6dafed81-7dd3-47d9-8fba-a636d6af1c7d" x="268" y="25" width="282" height="10">
-			<expression><![CDATA[$P{IMG_DIR}+"Rectangle1_blue.png"]]></expression>
-		</element>
 		<element kind="staticText" uuid="cb249c6d-b33b-4697-8a4f-f0153332e090" x="22" y="3" width="234" height="54" forecolor="#133E58" fontName="Roboto Black" fontSize="40.0" hTextAlign="Left" vTextAlign="Middle">
 			<text><![CDATA[Nutre Hogar]]></text>
+		</element>
+		<element kind="image" uuid="6dafed81-7dd3-47d9-8fba-a636d6af1c7d" x="268" y="25" width="282" height="10">
+			<expression><![CDATA[$P{IMG_DIR}+"Rectangle1_blue.png"]]></expression>
 		</element>
 		<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 	</title>
 	<pageHeader height="145" splitType="Stretch">
-		<element kind="staticText" uuid="8d1788f8-4709-48db-915c-9f5538738f92" x="395" y="85" width="20" height="17" forecolor="#323232" fontName="Roboto SemiBold" fontSize="11.0" hTextAlign="Right" vTextAlign="Bottom">
-			<text><![CDATA[A:]]></text>
+		<element kind="image" uuid="ed7183ba-8b63-416c-9990-3b52ae000983" x="23" y="29" width="15" height="12" hImageAlign="Center" vImageAlign="Bottom">
+			<expression><![CDATA[$P{IMG_DIR}+"calculator.png"]]></expression>
 		</element>
-		<element kind="image" uuid="8a5164fb-5b1d-4623-b614-b555ff0cbe36" x="268" y="33" width="123" height="99" hImageAlign="Center">
-			<expression><![CDATA[$P{IMG_DIR}+"logo_big.png"]]></expression>
+		<element kind="textField" uuid="d5ba3342-497a-4c46-947f-f628ad917b92" x="38" y="28" width="218" height="14" forecolor="#323232" fontName="Roboto Regular" vTextAlign="Middle">
+			<expression><![CDATA[$P{MANAGER_NAME}]]></expression>
+		</element>
+		<element kind="image" uuid="83576aac-74d1-4791-82c6-5e848160f9d3" x="23" y="50" width="15" height="12" hImageAlign="Center" vImageAlign="Bottom">
+			<expression><![CDATA[$P{IMG_DIR}+"locate_icon.png"]]></expression>
+		</element>
+		<element kind="textField" uuid="9672ca86-5dee-4417-868d-a75259b5a8a4" x="38" y="49" width="218" height="14" forecolor="#323232" fontName="Roboto Regular" vTextAlign="Middle">
+			<expression><![CDATA[$P{LOCATION}]]></expression>
+		</element>
+		<element kind="image" uuid="ec48eea6-9dfc-47c3-9556-19202570b4bb" x="25" y="73" width="11" height="11" hImageAlign="Center" vImageAlign="Bottom">
+			<expression><![CDATA[$P{IMG_DIR}+"phone_icon.png"]]></expression>
 		</element>
 		<element kind="textField" uuid="6ed7cd6c-66ab-43fe-9553-d2a9b60e5383" x="38" y="71" width="218" height="14" forecolor="#323232" fontName="Roboto Regular" vTextAlign="Middle">
 			<expression><![CDATA[$P{PHONE}]]></expression>
 		</element>
+		<element kind="image" uuid="8a5164fb-5b1d-4623-b614-b555ff0cbe36" x="290" y="40" width="75" height="75" hImageAlign="Center">
+			<expression><![CDATA[$P{IMG_DIR}+"logo_big.png"]]></expression>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+		</element>
+		<element kind="image" uuid="1fe355cd-fdff-4761-ad89-5a03f9dfe916" x="25" y="95" width="11" height="12" hImageAlign="Center" vImageAlign="Bottom">
+			<expression><![CDATA[$P{IMG_DIR}+"email_icon.png"]]></expression>
+		</element>
+		<element kind="textField" uuid="417e7618-787c-403d-af02-01bb9844c05c" x="38" y="94" width="218" height="14" forecolor="#323232" fontName="Roboto Regular" vTextAlign="Middle">
+			<expression><![CDATA[$P{EMAIL}]]></expression>
+		</element>
 		<element kind="staticText" uuid="2ea3ac7a-97ce-42a6-aefa-088c9f7bf781" x="265" y="4" width="285" height="25" forecolor="#323232" fontName="Roboto Black" fontSize="21.0" hTextAlign="Right" vTextAlign="Top">
 			<text><![CDATA[Balance de Comprobación]]></text>
 		</element>
-		<element kind="image" uuid="ed7183ba-8b63-416c-9990-3b52ae000983" x="23" y="29" width="15" height="12" hImageAlign="Center" vImageAlign="Bottom">
-			<expression><![CDATA[$P{IMG_DIR}+"calculator.png"]]></expression>
+		<element kind="textField" uuid="15bb3d77-dd12-489a-8a13-6168ca7105fd" x="397" y="36" width="153" height="14" forecolor="#323232" fontName="Roboto Regular" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{ENTRY_DATE}]]></expression>
 		</element>
-		<element kind="image" uuid="ec48eea6-9dfc-47c3-9556-19202570b4bb" x="25" y="73" width="11" height="11" hImageAlign="Center" vImageAlign="Bottom">
-			<expression><![CDATA[$P{IMG_DIR}+"phone_icon.png"]]></expression>
+		<element kind="staticText" uuid="d9529f5c-41ef-4988-9f8b-2a778de5108e" x="395" y="62" width="20" height="17" forecolor="#323232" fontName="Roboto SemiBold" fontSize="11.0" hTextAlign="Right" vTextAlign="Bottom">
+			<text><![CDATA[De:]]></text>
 		</element>
 		<element kind="textField" uuid="f7b5b267-7d74-412b-8765-8d876798447e" x="415" y="62" width="134" height="17" forecolor="#133E58" markup="none" fontName="Roboto" fontSize="11.0" bold="false" hTextAlign="Right" vTextAlign="Bottom">
 			<paragraph lineSpacingSize="0.0"/>
 			<expression><![CDATA[$P{START_DATE}]]></expression>
 		</element>
-		<element kind="textField" uuid="d5ba3342-497a-4c46-947f-f628ad917b92" x="38" y="28" width="218" height="14" forecolor="#323232" fontName="Roboto Regular" vTextAlign="Middle">
-			<expression><![CDATA[$P{MANAGER_NAME}]]></expression>
-		</element>
-		<element kind="textField" uuid="417e7618-787c-403d-af02-01bb9844c05c" x="38" y="94" width="218" height="14" forecolor="#323232" fontName="Roboto Regular" vTextAlign="Middle">
-			<expression><![CDATA[$P{EMAIL}]]></expression>
-		</element>
-		<element kind="image" uuid="1fe355cd-fdff-4761-ad89-5a03f9dfe916" x="25" y="95" width="11" height="12" hImageAlign="Center" vImageAlign="Bottom">
-			<expression><![CDATA[$P{IMG_DIR}+"email_icon.png"]]></expression>
-		</element>
-		<element kind="textField" uuid="15bb3d77-dd12-489a-8a13-6168ca7105fd" x="397" y="36" width="153" height="14" forecolor="#323232" fontName="Roboto Regular" bold="false" hTextAlign="Right">
-			<expression><![CDATA[$P{ENTRY_DATE}]]></expression>
-		</element>
-		<element kind="image" uuid="83576aac-74d1-4791-82c6-5e848160f9d3" x="23" y="50" width="15" height="12" hImageAlign="Center" vImageAlign="Bottom">
-			<expression><![CDATA[$P{IMG_DIR}+"locate_icon.png"]]></expression>
-		</element>
-		<element kind="staticText" uuid="d9529f5c-41ef-4988-9f8b-2a778de5108e" x="395" y="62" width="20" height="17" forecolor="#323232" fontName="Roboto SemiBold" fontSize="11.0" hTextAlign="Right" vTextAlign="Bottom">
-			<text><![CDATA[De:]]></text>
+		<element kind="staticText" uuid="8d1788f8-4709-48db-915c-9f5538738f92" x="395" y="85" width="20" height="17" forecolor="#323232" fontName="Roboto SemiBold" fontSize="11.0" hTextAlign="Right" vTextAlign="Bottom">
+			<text><![CDATA[A:]]></text>
 		</element>
 		<element kind="textField" uuid="81160168-fd17-4d7a-a179-cc9ebe2c618c" x="415" y="85" width="134" height="17" forecolor="#133E58" markup="none" fontName="Roboto" fontSize="11.0" bold="false" hTextAlign="Right" vTextAlign="Bottom">
 			<paragraph lineSpacingSize="0.0"/>
 			<expression><![CDATA[$P{END_DATE}]]></expression>
-		</element>
-		<element kind="textField" uuid="9672ca86-5dee-4417-868d-a75259b5a8a4" x="38" y="49" width="218" height="14" forecolor="#323232" fontName="Roboto Regular" vTextAlign="Middle">
-			<expression><![CDATA[$P{LOCATION}]]></expression>
 		</element>
 	</pageHeader>
 	<detail>
