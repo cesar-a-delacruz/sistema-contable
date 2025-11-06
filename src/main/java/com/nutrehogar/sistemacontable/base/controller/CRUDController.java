@@ -25,8 +25,8 @@ public abstract class CRUDController<T extends AuditableEntity, ID> extends Simp
 
     @Override
     protected void initialize() {
-        getBtnAdd().setEnabled(user.isAuthorized());
-        getBtnSave().setEnabled(user.isAuthorized());
+        getBtnAdd().setEnabled(user.isAuthorized() || user.add_only());
+        getBtnSave().setEnabled(user.isAuthorized() || user.add_only());
         super.initialize();
     }
 
@@ -169,7 +169,7 @@ public abstract class CRUDController<T extends AuditableEntity, ID> extends Simp
     protected void prepareToAdd() {
         deselect();
         getBtnUpdate().setEnabled(false);
-        getBtnSave().setEnabled(user.isAuthorized());
+        getBtnSave().setEnabled(user.isAuthorized() || user.add_only());
     }
 
     protected abstract ID prepareToDelete();
