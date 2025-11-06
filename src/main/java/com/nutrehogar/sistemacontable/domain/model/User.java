@@ -39,11 +39,17 @@ public class User extends AuditableEntity {
     @Column(nullable = false)
     PermissionType permissions;
 
+    public static boolean isAuthorized(User user) {
+        return user != null && user.isAuthorized();
+    }
+
     public boolean isAuthorized() {
         return permissions.equals(PermissionType.CREATE);
     }
 
-    public static boolean isAuthorized(User user) {
-        return user != null && user.isAuthorized();
+    public boolean add_only(){
+        return permissions.equals(PermissionType.ADD_ONLY);
     }
+
+
 }

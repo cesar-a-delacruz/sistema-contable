@@ -84,7 +84,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         tblDataList = new ArrayList<>();
         prepareBtnToAddEntry();
         prepareBtnToAddRecord();
-        if (!user.isAuthorized()) {
+        if (!user.isAuthorized() && !user.add_only()) { // se agrega add_only
             getBtnAddRecord().setEnabled(false);
             getBtnDeleteRecord().setEnabled(false);
             getBtnSaveRecord().setEnabled(false);
@@ -93,6 +93,17 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             getBtnAddEntry().setEnabled(false);
             getBtnUpdateEntry().setEnabled(false);
             getBtnSaveEntry().setEnabled(false);
+        }else if (user.add_only()) {
+            //ADD_ONLY, solo puede agregar
+            getBtnAddRecord().setEnabled(true);
+            getBtnSaveRecord().setEnabled(true);
+            getBtnDeleteRecord().setEnabled(false);
+            getBtnUpdateRecord().setEnabled(false);
+            getBtnEdit().setEnabled(false);
+            getBtnAddEntry().setEnabled(true);
+            getBtnSaveEntry().setEnabled(false);
+            getBtnUpdateEntry().setEnabled(false);
+            getBtnDeleteEntry().setEnabled(false);
         }
         super.initialize();
     }
@@ -131,8 +142,14 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         tblDataList.add(
                 new LedgerRecordDTO("", "TOTAL", DECIMAL_FORMAT.format(debitSum), DECIMAL_FORMAT.format(creditSum)));
         boolean isBalanced = !getData().isEmpty();
+
+        if (user.isAuthorized()) {
         getBtnSaveEntry().setEnabled(isBalanced && isBeingAdded);
         getBtnUpdateEntry().setEnabled(isBalanced && isBeingEdited);
+        }
+        else if (user.add_only()) {
+            getBtnSaveEntry().setEnabled(isBalanced && isBeingAdded);
+            getBtnUpdateEntry().setEnabled(false);  }
     }
 
     private String formatBigDecimal(BigDecimal value) {
@@ -233,8 +250,14 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             }
             setSelected(getData().get(selectedRow));
             setAuditoria();
-            getBtnDeleteRecord().setEnabled(true);
-            getBtnEdit().setEnabled(true);
+            // Opciones habilitadas para CREATE 
+            if (user.isAuthorized()) {
+                getBtnDeleteRecord().setEnabled(true);
+                getBtnEdit().setEnabled(true);
+            } else {
+                getBtnDeleteRecord().setEnabled(false);
+                getBtnEdit().setEnabled(false);
+            }
         } else {
             getBtnDeleteRecord().setEnabled(false);
             getBtnEdit().setEnabled(false);
@@ -590,7 +613,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
     private void prepareBtnToEditEntry() {
         getBtnAddEntry().setEnabled(true);
         getBtnSaveEntry().setEnabled(false);
-        getBtnDeleteEntry().setEnabled(true);
+        getBtnDeleteEntry().setEnabled(user.isAuthorized());
         getBtnUpdateEntry().setEnabled(false);
         getBtnGeneratePaymentVoucher().setEnabled(true);
         getBtnGenerateRegistrationForm().setEnabled(true);

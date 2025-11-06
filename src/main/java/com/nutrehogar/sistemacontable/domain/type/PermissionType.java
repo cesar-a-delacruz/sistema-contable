@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum PermissionType {
-    VIEW("Ver"), CREATE("Crea");
+    VIEW("ViewerAuditor"), CREATE("DataAdministrator"), ADD_ONLY("DataContributor");
 
     String name;
 }
