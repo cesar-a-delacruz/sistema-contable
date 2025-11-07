@@ -403,7 +403,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel" name="auditablePanel">
+        <Component class="com.nutrehogar.sistemacontable.ui.component.AuditablePanel" name="auditablePanel">
         </Component>
       </SubComponents>
     </Container>

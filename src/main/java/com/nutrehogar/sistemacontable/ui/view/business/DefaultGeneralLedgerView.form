@@ -241,7 +241,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner" name="spnStart">
+            <Component class="com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner" name="spnStart">
             </Component>
             <Component class="javax.swing.JLabel" name="lblStart">
               <Properties>
@@ -262,7 +262,7 @@
                 <Property name="text" type="java.lang.String" value="Restablecer"/>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner" name="spnEnd">
+            <Component class="com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner" name="spnEnd">
             </Component>
             <Component class="javax.swing.JLabel" name="lblEnd">
               <Properties>
@@ -351,7 +351,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel" name="auditablePanel">
+        <Component class="com.nutrehogar.sistemacontable.ui.component.AuditablePanel" name="auditablePanel">
         </Component>
         <Component class="javax.swing.JButton" name="btnGenerateReport">
           <Properties>

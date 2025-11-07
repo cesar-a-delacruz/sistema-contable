@@ -91,7 +91,7 @@
         <Property name="text" type="java.lang.String" value="Cancelar"/>
       </Properties>
     </Component>
-    <Container class="com.nutrehogar.sistemacontable.ui.JComponents.ScrollPanel" name="scrollPanel1">
+    <Container class="com.nutrehogar.sistemacontable.ui.component.ScrollPanel" name="scrollPanel1">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>

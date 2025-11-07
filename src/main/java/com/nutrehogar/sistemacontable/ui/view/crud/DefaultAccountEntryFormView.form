@@ -431,7 +431,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="com.nutrehogar.sistemacontable.ui.JComponents.AuditablePanel" name="auditablePanel">
+        <Component class="com.nutrehogar.sistemacontable.ui.component.AuditablePanel" name="auditablePanel">
         </Component>
       </SubComponents>
     </Container>
@@ -610,7 +610,7 @@
             <Property name="text" type="java.lang.String" value="Cheque No:"/>
           </Properties>
         </Component>
-        <Component class="com.nutrehogar.sistemacontable.ui.components.LocalDateSpinner" name="spnEntryDate">
+        <Component class="com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner" name="spnEntryDate">
         </Component>
         <Component class="javax.swing.JButton" name="btnSaveEntry">
           <Properties>
