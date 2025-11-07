@@ -45,11 +45,10 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
                     case 1 -> dto.getVoucher();
                     case 2 -> dto.getDocumentType();
                     case 3 -> Account.getCellRenderer(dto.getAccountId());
-                    case 4 -> dto.getAccountName();
-                    case 5 -> dto.getReference();
-                    case 6 -> dto.getDebit();
-                    case 7 -> dto.getCredit();
-                    case 8 -> dto.getBalance();
+                    case 4 -> dto.getReference();
+                    case 5 -> dto.getDebit();
+                    case 6 -> dto.getCredit();
+                    case 7 -> dto.getBalance();
                     default -> "Element not found";
                 };
             }
