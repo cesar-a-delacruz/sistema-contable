@@ -7,6 +7,7 @@ import com.nutrehogar.sistemacontable.controller.crud.dto.LedgerRecordDTO;
 import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.DocumentType;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
+import com.nutrehogar.sistemacontable.persistence.HibernateUtil;
 import com.nutrehogar.sistemacontable.report.*;
 import com.nutrehogar.sistemacontable.report.dto.JournalEntryReportDTO;
 import com.nutrehogar.sistemacontable.report.dto.LedgerRecordReportDTO;
@@ -93,8 +94,8 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             getBtnAddEntry().setEnabled(false);
             getBtnUpdateEntry().setEnabled(false);
             getBtnSaveEntry().setEnabled(false);
-        }else if (user.add_only()) {
-            //ADD_ONLY, solo puede agregar
+        } else if (user.add_only()) {
+            // ADD_ONLY, solo puede agregar
             getBtnAddRecord().setEnabled(true);
             getBtnSaveRecord().setEnabled(true);
             getBtnDeleteRecord().setEnabled(false);
@@ -110,11 +111,15 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
 
     @Override
     protected void loadData() {
+        System.err.println("load data");
+
         if (journalEntry.isEmpty()) {
             journalEntry = Optional.of(new JournalEntry());
         }
         loadDataAccount();
+
         setData(journalEntry.get().getLedgerRecords());
+
         calcBalance();
         super.loadData();
     }
@@ -144,12 +149,12 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         boolean isBalanced = !getData().isEmpty();
 
         if (user.isAuthorized()) {
-        getBtnSaveEntry().setEnabled(isBalanced && isBeingAdded);
-        getBtnUpdateEntry().setEnabled(isBalanced && isBeingEdited);
-        }
-        else if (user.add_only()) {
             getBtnSaveEntry().setEnabled(isBalanced && isBeingAdded);
-            getBtnUpdateEntry().setEnabled(false);  }
+            getBtnUpdateEntry().setEnabled(isBalanced && isBeingEdited);
+        } else if (user.add_only()) {
+            getBtnSaveEntry().setEnabled(isBalanced && isBeingAdded);
+            getBtnUpdateEntry().setEnabled(false);
+        }
     }
 
     private String formatBigDecimal(BigDecimal value) {
@@ -234,11 +239,6 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
     }
 
     @Override
-    protected void updateView() {
-        super.updateView();
-    }
-
-    @Override
     protected void setElementSelected(@NotNull MouseEvent e) {
         int row = getTblData().rowAtPoint(e.getPoint());
         if (row != -1) {
@@ -249,8 +249,9 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
                 return;
             }
             setSelected(getData().get(selectedRow));
+            prepareToEditRecord();
             setAuditoria();
-            // Opciones habilitadas para CREATE 
+            // Opciones habilitadas para CREATE
             if (user.isAuthorized()) {
                 getBtnDeleteRecord().setEnabled(true);
                 getBtnEdit().setEnabled(true);
@@ -347,17 +348,24 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             showMessage("La Entrada tiene que tener al menos dos registros.");
             return Optional.empty();
         }
+        System.err.println("User: " + user);
+
+        je.setUser(user);
         je.setName(name);
         je.setConcept(getTaEntryConcept().getText());
         je.setCheckNumber(getTxtEntryCheckNumber().getText());
         je.setDate(getSpnEntryDate().getValue());
-        je.setLedgerRecords(getData());
-        je.setUser(user);
 
-        for (var record : getData()) {
-            record.setJournalEntry(je);
-            record.setUser(user);
-        }
+        // TODO no se debe actualizar, se actualiza solo al editar los registros con
+        // updateRecord()
+
+        // je.setLedgerRecords(getData());
+
+        // for (var record : getData()) {
+        // record.setJournalEntry(je);
+        // record.setUser(user);
+        // }
+
         return Optional.of(je);
     }
 
@@ -378,6 +386,10 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
     }
 
     private void updateRecord() {
+        System.err.println("update record");
+
+        // TODO no se debe actualizar, hibernate lo maneja como persist, el detecta
+        // cambios
         if (journalEntry.isEmpty()) {
             showError("La Entrada esta vacia.");
             return;
@@ -530,11 +542,15 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             return;
         }
         JournalEntry entry;
-        var optional = getJournalEntryByForm(journalEntry.get());
+        Optional<JournalEntry> optional = getJournalEntryByForm(journalEntry.get());
         if (optional.isEmpty()) {
+            showError("El Registro no existe.");
             return;
         }
         entry = optional.get();
+
+        System.err.println("Edited");
+        System.out.println(entry);
         try {
             entry = journalRepository.update(entry);
             showMessage("El Registro actualizado exitosamente.");
