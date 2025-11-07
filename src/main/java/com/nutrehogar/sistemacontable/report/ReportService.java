@@ -46,7 +46,7 @@ public class ReportService {
 
     public <T> void generateReport(@NotNull Class<? extends Report<T>> reportClass, T dto) throws ReportException {
 
-        Map<String, Object> params = new HashMap<>(this.parameters);
+        Map<String, Object> params = new HashMap<>(parameters);
 
         Report<T> generate = (Report<T>) reports.get(reportClass);
 
