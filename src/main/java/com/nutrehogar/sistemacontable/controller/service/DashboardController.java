@@ -2,7 +2,6 @@ package com.nutrehogar.sistemacontable.controller.service;
 
 import com.nutrehogar.sistemacontable.application.config.Context;
 import com.nutrehogar.sistemacontable.base.controller.Controller;
-import com.nutrehogar.sistemacontable.base.ui.view.BusinessView;
 import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
 import com.nutrehogar.sistemacontable.controller.business.*;
 import com.nutrehogar.sistemacontable.controller.crud.*;
@@ -73,9 +72,6 @@ public class DashboardController extends Controller {
             getPnlContent().add(p, BorderLayout.CENTER);
             getPnlContent().revalidate();
             getPnlContent().repaint();
-            if (p instanceof BusinessView view) {
-                view.getBtnFilter().doClick();
-            }
         });
     }
 
