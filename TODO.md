@@ -11,3 +11,5 @@
 al buscar datos meadiante hibernate, los opjetos quedan como persists y al detectar cambios en este, automaticamente
 
 #
+
+El problema es que al usar mas de una sesion, los datos de cada una esta desactualizada,

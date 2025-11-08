@@ -7,7 +7,6 @@ import com.nutrehogar.sistemacontable.controller.crud.dto.LedgerRecordDTO;
 import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.DocumentType;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
-import com.nutrehogar.sistemacontable.persistence.HibernateUtil;
 import com.nutrehogar.sistemacontable.report.*;
 import com.nutrehogar.sistemacontable.report.dto.JournalEntryReportDTO;
 import com.nutrehogar.sistemacontable.report.dto.LedgerRecordReportDTO;
