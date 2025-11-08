@@ -28,7 +28,7 @@ public class HibernateUtil {
     }
 
     private static final SessionFactory sessionFactory = buildSessionFactory();
-    private static final SessionPool sessionPool = new SessionPool(sessionFactory, 3); // Pool de 5 sesiones
+    private static final SessionPool sessionPool = new SessionPool(sessionFactory, 2); // Pool de 5 sesiones
 
     /**
      * Construye el SessionFactory utilizando la configuración especificada en
@@ -36,7 +36,7 @@ public class HibernateUtil {
      *
      * @return SessionFactory construida
      * @throws ExceptionInInitializerError
-     *             si la configuración falla
+     *                                     si la configuración falla
      */
     private static SessionFactory buildSessionFactory() {
         log.info("Building Hibernate SessionFactory");
