@@ -5,12 +5,14 @@ import com.nutrehogar.sistemacontable.base.controller.Controller;
 import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
 import com.nutrehogar.sistemacontable.controller.business.*;
 import com.nutrehogar.sistemacontable.controller.crud.*;
+import com.nutrehogar.sistemacontable.domain.model.User;
 
 import java.awt.*;
 import javax.swing.*;
 
 public class DashboardController extends Controller {
     private final Context context;
+    private User user;
 
     public DashboardController(DashboardView view, Context context) {
         super(view);
@@ -20,11 +22,23 @@ public class DashboardController extends Controller {
 
     @Override
     protected void initialize() {
+        this.user = context.getBean(User.class);
         SwingUtilities.invokeLater(() -> {
             getPnlNav().setVisible(false);
             getPnlContent().setOpaque(false);
+
+            ButtonPermissionSettings();
         });
         Thread.startVirtualThread(this::setupViewListeners);
+    }
+    public void refreshPermissions() {
+        this.user = context.getBean(User.class);
+        ButtonPermissionSettings();
+    }
+    private void ButtonPermissionSettings() {
+        if (!user.isAuthorized()) {
+            getBtnShowUserView().setVisible(false);
+        }
     }
 
     protected void setupViewListeners() {
