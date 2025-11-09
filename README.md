@@ -206,3 +206,18 @@ capacidad de convertir objetos Java a JSON y viceversa. Es útil para serializar
 **Propósito**: Esta dependencia añade anotaciones de ayuda como `@Nullable`, `@NotNull`, y otras que pueden mejorar la
 calidad del código al proporcionar indicadores adicionales sobre cómo debe usarse cada método o variable. Es
 particularmente útil para detectar posibles errores y mejorar la comprensión del código.
+
+###  jBCrypt - Password Hashing
+
+```xml
+
+<dependency>
+    <groupId>org.mindrot</groupId>
+    <artifactId>jbcrypt</artifactId>
+    <version>0.4</version>
+</dependency>
+```
+
+**Propósito**:  jBCrypt es una biblioteca de hashing de contraseñas que implementa el algoritmo BCrypt, diseñado específicamente 
+para el almacenamiento seguro de contraseñas. Proporciona hashing con salt automático y es resistente a ataques de fuerza bruta 
+gracias a su factor de trabajo ajustable.
