@@ -1,8 +1,11 @@
 package com.nutrehogar.sistemacontable.controller.service;
 
+import com.nutrehogar.sistemacontable.application.config.Context;
+import com.nutrehogar.sistemacontable.application.config.PasswordHasher;
 import com.nutrehogar.sistemacontable.base.controller.Controller;
 import com.nutrehogar.sistemacontable.base.domain.repository.UserRepository;
 import com.nutrehogar.sistemacontable.base.ui.view.service.AuthView;
+import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 
@@ -16,14 +19,16 @@ import lombok.extern.slf4j.Slf4j;
 public final class AuthController extends Controller {
     private final UserRepository userRepository;
     private final DefaultListModel<User> userListModel;
+    private final Context context;
     @Getter
     private User authenticatedUser;
     private User adminUser;
 
-    public AuthController(AuthView view, UserRepository userRepository, User adminUser) {
+    public AuthController(AuthView view, UserRepository userRepository, User adminUser, Context context) {
         super(view);
         this.userRepository = userRepository;
         this.adminUser = adminUser;
+        this.context = context;
         this.userListModel = new DefaultListModel<>();
         initialize();
     }
@@ -62,13 +67,31 @@ public final class AuthController extends Controller {
             if (userListModel.isEmpty())
                 return;
             User selectedUser = getLstUser().getSelectedValue();
-            if (selectedUser != null && String.valueOf(getTxtPing().getPassword()).equals(selectedUser.getPassword())) {
-                authenticatedUser = selectedUser;
-                authenticatedUser.setUser(authenticatedUser);
-                getView().setVisible(false);
-                getView().dispose();
-            } else {
-                showMessage("Contraseña Incorrecta.");
+            if (selectedUser != null) {
+                String passwordEntered = String.valueOf(getTxtPing().getPassword());
+                String passwordStored = selectedUser.getPassword();
+
+                boolean passwordCorrecto = false;
+
+                if (passwordStored != null && passwordStored.startsWith("$2a$")) {
+                    passwordCorrecto = PasswordHasher.verifyPassword(passwordEntered, passwordStored);
+                } else {
+                    passwordCorrecto = passwordEntered.equals(passwordStored);
+                }
+
+                if (passwordCorrecto) {
+                    authenticatedUser = selectedUser;
+                    authenticatedUser.setUser(authenticatedUser);
+
+                    context.removeBean(User.class);
+                    context.registerBean(User.class, authenticatedUser);
+                    context.getBean(DashboardController.class).refreshPermissions();
+
+                    getView().setVisible(false);
+                    getView().dispose();
+                } else {
+                    showMessage("Contraseña Incorrecta.");
+                }
             }
         });
         getBtnCancel().addActionListener(e -> {

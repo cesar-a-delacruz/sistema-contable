@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "user")
+@EntityListeners(UserEntityListener.class)
 public class User extends AuditableEntity {
     public static final int MIN_LENGTH = 4;
     public static final int MAX_LENGTH = 120;
@@ -27,7 +28,7 @@ public class User extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     String password;
 
     String username;
