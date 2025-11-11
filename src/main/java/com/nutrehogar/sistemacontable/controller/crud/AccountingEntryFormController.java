@@ -2,7 +2,6 @@ package com.nutrehogar.sistemacontable.controller.crud;
 
 import com.nutrehogar.sistemacontable.base.controller.SimpleController;
 import com.nutrehogar.sistemacontable.base.domain.repository.*;
-import com.nutrehogar.sistemacontable.base.ui.view.CRUDView;
 import com.nutrehogar.sistemacontable.controller.crud.dto.LedgerRecordDTO;
 import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.DocumentType;
@@ -44,7 +43,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
     private boolean isBeingEdited;
     public static final BigDecimal ZERO = BigDecimal.valueOf(0, 2);
 
-    public AccountingEntryFormController(LedgerRecordRepository repository, CRUDView view,
+    public AccountingEntryFormController(LedgerRecordRepository repository, DefaultAccountEntryFormView view,
             JournalEntryRepository journalRepository, AccountRepository accountRepository, ReportService reportService,
             User user) {
         super(repository, view, reportService, user);

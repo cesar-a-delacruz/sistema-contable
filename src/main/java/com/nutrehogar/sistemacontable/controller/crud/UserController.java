@@ -2,7 +2,6 @@ package com.nutrehogar.sistemacontable.controller.crud;
 
 import com.nutrehogar.sistemacontable.base.controller.CRUDController;
 import com.nutrehogar.sistemacontable.base.domain.repository.UserRepository;
-import com.nutrehogar.sistemacontable.base.ui.view.CRUDView;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.domain.type.PermissionType;
 import com.nutrehogar.sistemacontable.report.ReportService;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class UserController extends CRUDController<User, Integer> {
     private CustomComboBoxModel<PermissionType> cbxModelPermissions;
 
-    public UserController(UserRepository repository, CRUDView view, ReportService reportService, User user) {
+    public UserController(UserRepository repository, DefaultUserView view, ReportService reportService, User user) {
         super(repository, view, reportService, user);
         prepareToAdd();
     }
