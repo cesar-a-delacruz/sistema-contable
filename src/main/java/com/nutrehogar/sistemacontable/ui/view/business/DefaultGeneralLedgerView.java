@@ -11,7 +11,7 @@ import lombok.Getter;
 public class DefaultGeneralLedgerView extends GeneralLedgerView {
     public DefaultGeneralLedgerView() {
         initComponents();
-        txtId.putClientProperty("JTextField.placeholderText", "1.1020");
+        txtId.putClientProperty("JTextField.placeholderText", "11020");
     }
 
     /**
