@@ -9,4 +9,7 @@ import java.util.List;
 public interface LedgerRecordRepository extends CRUDRepository<LedgerRecord, Integer> {
     List<LedgerRecord> findByDateRangeAndAccount(Account account, LocalDate startDate, LocalDate endDate)
             throws RepositoryException;
+
+    public List<LedgerRecord> findByDateRangeAndAccountId(Integer accountId, LocalDate startDate, LocalDate endDate)
+            throws RepositoryException;
 }
