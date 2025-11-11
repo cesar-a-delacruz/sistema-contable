@@ -2,13 +2,13 @@ package com.nutrehogar.sistemacontable.controller.business;
 
 import com.nutrehogar.sistemacontable.base.controller.BusinessController;
 import com.nutrehogar.sistemacontable.base.domain.repository.JournalEntryRepository;
-import com.nutrehogar.sistemacontable.base.ui.view.BusinessView;
 import com.nutrehogar.sistemacontable.controller.business.dto.JournalTableDTO;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.report.Journal;
 import com.nutrehogar.sistemacontable.report.ReportService;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportDTO;
 import com.nutrehogar.sistemacontable.report.dto.SimpleReportDTO;
+import com.nutrehogar.sistemacontable.ui.view.business.DefaultJournalView;
 import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.DocumentType;
 
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Slf4j
 public class JournalController extends BusinessController<JournalTableDTO, JournalEntry> {
-    public JournalController(JournalEntryRepository repository, BusinessView view,
+    public JournalController(JournalEntryRepository repository, DefaultJournalView view,
             Consumer<JournalEntryPK> editJournalEntry, ReportService reportService, User user) {
         super(repository, view, editJournalEntry, reportService, user);
     }
@@ -139,8 +139,8 @@ public class JournalController extends BusinessController<JournalTableDTO, Journ
     }
 
     @Override
-    public BusinessView getView() {
-        return (BusinessView) super.getView();
+    public DefaultJournalView getView() {
+        return (DefaultJournalView) super.getView();
     }
 
     @Override
