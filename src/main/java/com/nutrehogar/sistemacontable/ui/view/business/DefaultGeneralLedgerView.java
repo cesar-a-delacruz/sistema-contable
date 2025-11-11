@@ -1,6 +1,6 @@
 package com.nutrehogar.sistemacontable.ui.view.business;
 
-import com.nutrehogar.sistemacontable.base.ui.view.BusinessView;
+import com.nutrehogar.sistemacontable.base.ui.view.business.GeneralLedgerView;
 import com.nutrehogar.sistemacontable.domain.model.Account;
 import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.domain.type.AccountType;
@@ -8,9 +8,10 @@ import com.nutrehogar.sistemacontable.domain.type.AccountType;
 import lombok.Getter;
 
 @Getter
-public class DefaultGeneralLedgerView extends BusinessView {
+public class DefaultGeneralLedgerView extends GeneralLedgerView {
     public DefaultGeneralLedgerView() {
         initComponents();
+        txtId.putClientProperty("JTextField.placeholderText", "1.1020");
     }
 
     /**
@@ -20,9 +21,13 @@ public class DefaultGeneralLedgerView extends BusinessView {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btngrpSearchType = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblData = new javax.swing.JTable();
         pnlAside = new javax.swing.JPanel();
@@ -44,6 +49,12 @@ public class DefaultGeneralLedgerView extends BusinessView {
         lblAccountType = new javax.swing.JLabel();
         lblAccountSubtype = new javax.swing.JLabel();
         lblAccount = new javax.swing.JLabel();
+        lblId = new javax.swing.JLabel();
+        txtId = new javax.swing.JTextField();
+        btnSearch = new javax.swing.JButton();
+        lblSearchType = new javax.swing.JLabel();
+        rbtSearchText = new javax.swing.JRadioButton();
+        rbtSearchFilter = new javax.swing.JRadioButton();
         auditablePanel = new com.nutrehogar.sistemacontable.ui.component.AuditablePanel();
         btnGenerateReport = new javax.swing.JButton();
 
@@ -110,21 +121,39 @@ public class DefaultGeneralLedgerView extends BusinessView {
         lblAccount.setLabelFor(lblAccount);
         lblAccount.setText("Cuenta:");
 
+        lblId.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblId.setLabelFor(cbxAccountType);
+        lblId.setText("Código de Cuenta:");
+
+        btnSearch.setText("Buscar");
+
+        lblSearchType.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblSearchType.setLabelFor(cbxAccountType);
+        lblSearchType.setText("Tipo de Búsqueda:");
+
+        btngrpSearchType.add(rbtSearchText);
+        rbtSearchText.setSelected(true);
+        rbtSearchText.setText("Texto");
+
+        btngrpSearchType.add(rbtSearchFilter);
+        rbtSearchFilter.setText("Filtro");
+        rbtSearchFilter.setToolTipText("");
+
         javax.swing.GroupLayout pnlOperationsLayout = new javax.swing.GroupLayout(pnlOperations);
         pnlOperations.setLayout(pnlOperationsLayout);
         pnlOperationsLayout.setHorizontalGroup(
                 pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlOperationsLayout
-                                .createSequentialGroup()
+                        .addGroup(pnlOperationsLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(pnlOperationsLayout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                pnlOperationsLayout.createSequentialGroup()
+                                                        .addGap(0, 0, Short.MAX_VALUE)
+                                                        .addComponent(jSeparator1,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 354,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(pnlOperationsLayout.createSequentialGroup()
-                                                .addGap(0, 0, Short.MAX_VALUE)
-                                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 354,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlOperationsLayout
-                                                .createSequentialGroup()
                                                 .addGroup(pnlOperationsLayout
                                                         .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addComponent(lblFilter,
@@ -167,30 +196,61 @@ public class DefaultGeneralLedgerView extends BusinessView {
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                        .addGroup(pnlOperationsLayout.createSequentialGroup()
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlOperationsLayout
+                                                .createSequentialGroup()
                                                 .addGroup(pnlOperationsLayout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(lblSearchType,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblId, javax.swing.GroupLayout.Alignment.LEADING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(lblAccountType,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(lblAccountSubtype,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(lblAccount, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        .addComponent(lblAccount,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                                .addGap(18, 18, 18)
                                                 .addGroup(pnlOperationsLayout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING,
-                                                                false)
-                                                        .addComponent(cbxAccountType,
-                                                                javax.swing.GroupLayout.Alignment.TRAILING, 0, 230,
-                                                                Short.MAX_VALUE)
-                                                        .addComponent(cbxAccountSubtype,
-                                                                javax.swing.GroupLayout.Alignment.TRAILING, 0,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(cbxAccount, 0,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                Short.MAX_VALUE))))
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(pnlOperationsLayout.createSequentialGroup()
+                                                                .addGap(18, 18, 18)
+                                                                .addGroup(pnlOperationsLayout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        false)
+                                                                        .addComponent(cbxAccountType,
+                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                0, 230, Short.MAX_VALUE)
+                                                                        .addComponent(cbxAccountSubtype,
+                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                0, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                Short.MAX_VALUE)
+                                                                        .addComponent(cbxAccount, 0,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                Short.MAX_VALUE)
+                                                                        .addGroup(pnlOperationsLayout
+                                                                                .createSequentialGroup()
+                                                                                .addComponent(txtId,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        90,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                .addComponent(btnSearch))))
+                                                        .addGroup(pnlOperationsLayout.createSequentialGroup()
+                                                                .addGap(30, 30, 30)
+                                                                .addComponent(rbtSearchText)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(rbtSearchFilter)))))
                                 .addContainerGap()));
         pnlOperationsLayout.setVerticalGroup(
                 pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,7 +289,21 @@ public class DefaultGeneralLedgerView extends BusinessView {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 3,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(pnlOperationsLayout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(lblSearchType)
+                                                .addComponent(rbtSearchText)
+                                                .addComponent(rbtSearchFilter))
+                                        .addGap(9, 9, 9)
+                                        .addGroup(pnlOperationsLayout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(lblId)
+                                                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(btnSearch))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addGroup(pnlOperationsLayout
                                                 .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                 .addComponent(cbxAccountType, javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -250,7 +324,7 @@ public class DefaultGeneralLedgerView extends BusinessView {
                                                         javax.swing.GroupLayout.DEFAULT_SIZE,
                                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(lblAccount))
-                                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                                        .addGap(18, 18, 18)));
 
         btnGenerateReport.setText("Generar Reporte");
 
@@ -300,8 +374,7 @@ public class DefaultGeneralLedgerView extends BusinessView {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 502,
-                                                Short.MAX_VALUE))));
+                                        .addComponent(jScrollPane1))));
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -311,6 +384,8 @@ public class DefaultGeneralLedgerView extends BusinessView {
     private javax.swing.JButton btnGenerateReport;
     private javax.swing.JButton btnResetEnd;
     private javax.swing.JButton btnResetStart;
+    private javax.swing.JButton btnSearch;
+    private javax.swing.ButtonGroup btngrpSearchType;
     private javax.swing.JComboBox<Account> cbxAccount;
     private javax.swing.JComboBox<AccountSubtype> cbxAccountSubtype;
     private javax.swing.JComboBox<AccountType> cbxAccountType;
@@ -322,11 +397,16 @@ public class DefaultGeneralLedgerView extends BusinessView {
     private javax.swing.JLabel lblEdit;
     private javax.swing.JLabel lblEnd;
     private javax.swing.JLabel lblFilter;
+    private javax.swing.JLabel lblId;
+    private javax.swing.JLabel lblSearchType;
     private javax.swing.JLabel lblStart;
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlOperations;
+    private javax.swing.JRadioButton rbtSearchFilter;
+    private javax.swing.JRadioButton rbtSearchText;
     private com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner spnEnd;
     private com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner spnStart;
     private javax.swing.JTable tblData;
+    private javax.swing.JTextField txtId;
     // End of variables declaration//GEN-END:variables
 }

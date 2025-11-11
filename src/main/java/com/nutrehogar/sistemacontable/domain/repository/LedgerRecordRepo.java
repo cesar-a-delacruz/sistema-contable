@@ -29,6 +29,22 @@ public class LedgerRecordRepo extends CRUDRepo<LedgerRecord, Integer> implements
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .list());
+    }
+
+    @Override
+    public List<LedgerRecord> findByDateRangeAndAccountId(Integer accountId, LocalDate startDate, LocalDate endDate)
+            throws RepositoryException {
+        return TransactionManager.executeInTransaction(session -> session.createQuery(
+                "SELECT lr FROM LedgerRecord lr " +
+                        "JOIN FETCH lr.journalEntry " + // 🔹 Forzar la carga de journalEntry
+                        "WHERE lr.account.id = :accountId " +
+                        "AND lr.journalEntry.date BETWEEN :startDate AND :endDate " +
+                        "ORDER BY lr.journalEntry.date DESC",
+                LedgerRecord.class)
+                .setParameter("accountId", accountId)
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .list());
 
     }
 }
