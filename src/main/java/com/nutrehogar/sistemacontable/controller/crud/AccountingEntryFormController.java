@@ -27,6 +27,7 @@ import java.math.*;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -203,9 +204,15 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
 
             var records = getLedgerRecordDTO();
 
+            StringBuilder newCheckNumber = new StringBuilder();
+            for (var check : entry.getCheckNumber().split(";")) {
+                newCheckNumber.append(check.trim());
+                newCheckNumber.append("\n");
+            }
+
             journalEntryDTO.set(new JournalEntryReportDTO(
                     entry.getId().getDocumentNumber(),
-                    entry.getCheckNumber(),
+                    newCheckNumber.toString(),
                     entry.getDate(),
                     entry.getName(),
                     entry.getConcept(),
