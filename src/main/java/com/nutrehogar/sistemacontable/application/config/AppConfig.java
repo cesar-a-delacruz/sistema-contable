@@ -36,7 +36,7 @@ public class AppConfig {
         context.registerBean(UserRepository.class, new UserRepo());
         context.registerBean(AuthView.class, new DefaultAuthView());
         context.registerBean(AuthController.class, new AuthController(context.getBean(AuthView.class),
-                context.getBean(UserRepository.class), context.getBean(User.class)));
+                context.getBean(UserRepository.class), context.getBean(User.class),context));
         context.registerBean(DashboardView.class, new DefaultDashboardView());
         var dashboard = new DashboardController(context.getBean(DashboardView.class), context);
         context.registerBean(DashboardController.class, dashboard);

@@ -16,4 +16,7 @@ public class Context {
     public <T> T getBean(Class<T> type) {
         return (T) beans.get(type);
     }
+    public <T> void removeBean(Class<T> type) {
+        beans.remove(type);
+    }
 }
