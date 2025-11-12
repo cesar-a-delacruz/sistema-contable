@@ -520,6 +520,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         }, () -> showError("El Registro no puede estar vacia."));
     }
 
+
     private void updateEntry() {
         if (journalRepository == null) {
             showError("Error: journal repository is null!");
@@ -530,11 +531,32 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             return;
         }
         JournalEntry entry;
+
         var optional = getJournalEntryByForm(journalEntry.get());
         if (optional.isEmpty()) {
             return;
         }
         entry = optional.get();
+
+        //
+        String documentNo = getTxtEntryDocumentNumber().getText();
+        if (!documentNo.isBlank()) {
+        int id;
+        try {
+            id = Integer.parseInt(documentNo);
+        } catch (NumberFormatException e) {
+            showMessage("El Documento No. debe ser un numero.");
+            return;
+        }
+
+        var journalId = new JournalEntryPK(id, cbxModelDocumentType.getSelectedItem());
+        entry.setId(journalId);
+        } else {
+        showMessage("El Documento no puede estar vacio.");
+        return;
+        }
+        //
+
         try {
             entry = journalRepository.update(entry);
             showMessage("El Registro actualizado exitosamente.");
@@ -554,9 +576,9 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
 
     public void prepareToEditEntry(@NotNull JournalEntry je) {
         journalEntry = Optional.of(je);
-        getTxtEntryDocumentNumber().setEnabled(false);
+        getTxtEntryDocumentNumber().setEnabled(true);
         getTxtEntryDocumentNumber().setText(je.getId().getDocumentNumber().toString());
-        getCbxEntryDocumentType().setEnabled(false);
+        getCbxEntryDocumentType().setEnabled(true);
         getCbxEntryDocumentType().setSelectedItem(je.getId().getDocumentType());
         getTxtEntryName().setText(je.getName());
         getTaEntryConcept().setText(je.getConcept());
