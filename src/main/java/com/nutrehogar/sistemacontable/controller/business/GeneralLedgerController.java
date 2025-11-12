@@ -2,13 +2,12 @@ package com.nutrehogar.sistemacontable.controller.business;
 
 import com.nutrehogar.sistemacontable.base.controller.BusinessController;
 import com.nutrehogar.sistemacontable.base.domain.repository.*;
-import com.nutrehogar.sistemacontable.base.ui.view.BusinessView;
+import com.nutrehogar.sistemacontable.base.ui.view.business.GeneralLedgerView;
 import com.nutrehogar.sistemacontable.controller.business.dto.GeneralLedgerTableDTO;
 import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.AccountType;
 import com.nutrehogar.sistemacontable.domain.type.DocumentType;
 import com.nutrehogar.sistemacontable.ui.builder.*;
-import com.nutrehogar.sistemacontable.ui.view.business.DefaultGeneralLedgerView;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.report.GeneralLedgerReport;
 import com.nutrehogar.sistemacontable.report.ReportService;
@@ -27,6 +26,8 @@ import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import javax.swing.text.AbstractDocument;
+
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +40,7 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
     private CustomComboBoxModel<Account> cbxModelAccount;
     private CustomComboBoxModel<AccountSubtype> cbxModelSubtype;
 
-    public GeneralLedgerController(AccountRepository repository, BusinessView view,
+    public GeneralLedgerController(AccountRepository repository, GeneralLedgerView view,
             Consumer<JournalEntryPK> editJournalEntry, AccountSubtypeRepository subtypeRepository,
             LedgerRecordRepository ledgerRecordRepository, ReportService reportService, User user) {
         super(repository, view, editJournalEntry, reportService, user);
@@ -99,6 +100,9 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
         cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
         cbxModelSubtype = new CustomComboBoxModel<>(List.of());
         cbxModelAccount = new CustomComboBoxModel<>(List.of());
+        getRbtSearchFilter().setSelected(true);
+        getRbtSearchText().setSelected(false);
+        toggleSearch(false);
         super.initialize();
     }
 
@@ -123,6 +127,7 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
                 loadDataSubtype();
             }
         });
+
         cbxModelSubtype.addListDataListener(new ListDataListener() {
             @Override
             public void intervalAdded(ListDataEvent e) {}
@@ -147,6 +152,19 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
                 loadData();
             }
         });
+
+        getRbtSearchText().addActionListener(e -> {
+            toggleSearch(true);
+        });
+        getRbtSearchFilter().addActionListener(e -> {
+            toggleSearch(false);
+        });
+        getBtnSearch().addActionListener(e -> {
+            getBtnFilter().doClick();
+        });
+
+        ((AbstractDocument) getTxtId().getDocument())
+                .setDocumentFilter(new CustomDocumentFilter(CustomDocumentFilter.Type.DECIMAL));
         getBtnGenerateReport().addActionListener(e -> {
             try {
                 var dtos = new ArrayList<GeneralLedgerReportDTO>();
@@ -178,12 +196,24 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
 
         @Override
         protected List<GeneralLedgerTableDTO> doInBackground() {
-            var accountSelectedItem = cbxModelAccount.getSelectedItem();
-            if (accountSelectedItem == null)
-                return null;
+            List<LedgerRecord> ledgerRecords;
 
-            var ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccount(accountSelectedItem,
-                    spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue());
+            if (!getRbtSearchText().isSelected()) {
+                Account accountSelectedItem = cbxModelAccount.getSelectedItem();
+                if (accountSelectedItem == null) {
+                    return null;
+                }
+                ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccount(accountSelectedItem,
+                        spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue());
+            } else {
+                if (getTxtId().getText().isBlank() || getTxtId().getText().length() > 5) {
+                    showMessage("Inserte un número entre 1 y 5.");
+                    return null;
+                }
+                ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccountId(
+                        Integer.parseInt(getTxtId().getText()),
+                        spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue());
+            }
 
             // 🔹 Usar Stream para mapear, ordenar y calcular totales
             List<GeneralLedgerTableDTO> generalLedgers = ledgerRecords.stream()
@@ -248,9 +278,17 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
         }
     }
 
+    protected void toggleSearch(boolean isText) {
+        getTxtId().setEnabled(isText);
+        getBtnSearch().setEnabled(isText);
+        getCbxAccount().setEnabled(!isText);
+        getCbxAccountSubtype().setEnabled(!isText);
+        getCbxAccountType().setEnabled(!isText);
+    }
+
     @Override
-    public DefaultGeneralLedgerView getView() {
-        return (DefaultGeneralLedgerView) super.getView();
+    public GeneralLedgerView getView() {
+        return (GeneralLedgerView) super.getView();
     }
 
     private JComboBox<AccountType> getCbxAccountType() {
@@ -263,6 +301,22 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
 
     private JComboBox<Account> getCbxAccount() {
         return getView().getCbxAccount();
+    }
+
+    private JRadioButton getRbtSearchText() {
+        return getView().getRbtSearchText();
+    }
+
+    private JRadioButton getRbtSearchFilter() {
+        return getView().getRbtSearchFilter();
+    }
+
+    private JTextField getTxtId() {
+        return getView().getTxtId();
+    }
+
+    private JButton getBtnSearch() {
+        return getView().getBtnSearch();
     }
 
     @Override

@@ -118,7 +118,7 @@
 		<element kind="textField" uuid="2478e073-9de6-4a8f-8068-eddcd820b9ff" x="407" y="69" width="138" height="14" forecolor="#323232" fontName="Roboto Regular" bold="false" hTextAlign="Right">
 			<expression><![CDATA[$P{ENTRY_DATE}]]></expression>
 		</element>
-		<element kind="textField" uuid="6eb0550c-ff72-43a4-8867-61c84b9ac717" x="409" y="85" width="139" height="24" forecolor="#133E58" markup="none" fontName="Roboto Black" fontSize="16.0" bold="false" hTextAlign="Right" vTextAlign="Top">
+		<element kind="textField" uuid="6eb0550c-ff72-43a4-8867-61c84b9ac717" x="409" y="85" width="139" height="24" forecolor="#133E58" markup="none" fontName="Roboto Black" fontSize="16.0" textAdjust="StretchHeight" bold="false" hTextAlign="Right" vTextAlign="Top">
 			<paragraph lineSpacingSize="0.0"/>
 			<expression><![CDATA[$P{ENTRY_CHECK_NUMBER}]]></expression>
 		</element>

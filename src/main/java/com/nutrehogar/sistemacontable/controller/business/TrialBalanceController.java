@@ -2,7 +2,6 @@ package com.nutrehogar.sistemacontable.controller.business;
 
 import com.nutrehogar.sistemacontable.base.controller.BusinessController;
 import com.nutrehogar.sistemacontable.base.domain.repository.JournalEntryRepository;
-import com.nutrehogar.sistemacontable.base.ui.view.BusinessView;
 import com.nutrehogar.sistemacontable.controller.business.dto.TrialBalanceTableDTO;
 import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.DocumentType;
@@ -11,6 +10,7 @@ import com.nutrehogar.sistemacontable.report.ReportService;
 import com.nutrehogar.sistemacontable.report.TrialBalance;
 import com.nutrehogar.sistemacontable.report.dto.SimpleReportDTO;
 import com.nutrehogar.sistemacontable.report.dto.TrialBalanceReportDTO;
+import com.nutrehogar.sistemacontable.ui.view.business.DefaultTrialBalanceView;
 
 import static com.nutrehogar.sistemacontable.application.config.Util.*;
 
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Slf4j
 public class TrialBalanceController extends BusinessController<TrialBalanceTableDTO, JournalEntry> {
-    public TrialBalanceController(JournalEntryRepository repository, BusinessView view,
+    public TrialBalanceController(JournalEntryRepository repository, DefaultTrialBalanceView view,
             Consumer<JournalEntryPK> editJournalEntry, ReportService reportService, User user) {
         super(repository, view, editJournalEntry, reportService, user);
     }
@@ -191,8 +191,8 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
     }
 
     @Override
-    public BusinessView getView() {
-        return (BusinessView) super.getView();
+    public DefaultTrialBalanceView getView() {
+        return (DefaultTrialBalanceView) super.getView();
     }
 
     @Override
