@@ -537,6 +537,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         }, () -> showError("El Registro no puede estar vacia."));
     }
 
+
     private void updateEntry() {
         if (journalRepository == null) {
             showError("Error: journal repository is null!");
@@ -547,15 +548,42 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             return;
         }
         JournalEntry entry;
+<<<<<<< HEAD
+
+        var optional = getJournalEntryByForm(journalEntry.get());
+=======
         Optional<JournalEntry> optional = getJournalEntryByForm(journalEntry.get());
+>>>>>>> f9b49b041f9a04a7ec7f7e10a6773223c8831466
         if (optional.isEmpty()) {
             showError("El Registro no existe.");
             return;
         }
         entry = optional.get();
 
+<<<<<<< HEAD
+        //
+        String documentNo = getTxtEntryDocumentNumber().getText();
+        if (!documentNo.isBlank()) {
+        int id;
+        try {
+            id = Integer.parseInt(documentNo);
+        } catch (NumberFormatException e) {
+            showMessage("El Documento No. debe ser un numero.");
+            return;
+        }
+
+        var journalId = new JournalEntryPK(id, cbxModelDocumentType.getSelectedItem());
+        entry.setId(journalId);
+        } else {
+        showMessage("El Documento no puede estar vacio.");
+        return;
+        }
+        //
+
+=======
         System.err.println("Edited");
         System.out.println(entry);
+>>>>>>> f9b49b041f9a04a7ec7f7e10a6773223c8831466
         try {
             entry = journalRepository.update(entry);
             showMessage("El Registro actualizado exitosamente.");
@@ -575,9 +603,9 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
 
     public void prepareToEditEntry(@NotNull JournalEntry je) {
         journalEntry = Optional.of(je);
-        getTxtEntryDocumentNumber().setEnabled(false);
+        getTxtEntryDocumentNumber().setEnabled(true);
         getTxtEntryDocumentNumber().setText(je.getId().getDocumentNumber().toString());
-        getCbxEntryDocumentType().setEnabled(false);
+        getCbxEntryDocumentType().setEnabled(true);
         getCbxEntryDocumentType().setSelectedItem(je.getId().getDocumentType());
         getTxtEntryName().setText(je.getName());
         getTaEntryConcept().setText(je.getConcept());

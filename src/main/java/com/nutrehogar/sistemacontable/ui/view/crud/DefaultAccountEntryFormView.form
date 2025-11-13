@@ -42,11 +42,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="pnlEntryForm" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="pnlSourceDocuments" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="7" pref="7" max="-2" attributes="0"/>
                   </Group>
                   <Component id="pnlAside" max="32767" attributes="0"/>
               </Group>
@@ -104,7 +103,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="pnlRecordForm" alignment="0" max="32767" attributes="0"/>
                       <Component id="pnlLedgerRecordOperations" alignment="0" max="32767" attributes="0"/>
-                      <Component id="auditablePanel" alignment="1" max="32767" attributes="0"/>
+                      <Component id="auditablePanel" alignment="1" pref="409" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -118,7 +117,7 @@
                   <Component id="pnlRecordForm" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="auditablePanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="16" max="32767" attributes="0"/>
+                  <EmptySpace pref="19" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -450,42 +449,57 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="lblConcept" pref="58" max="32767" attributes="0"/>
-                      <Component id="lblEntryName" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane2" pref="0" max="32767" attributes="0"/>
-                      <Component id="txtEntryName" max="32767" attributes="0"/>
+                      <Component id="lblEntryName" min="-2" pref="58" max="-2" attributes="0"/>
+                      <Component id="lblEntryCeckNumber" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblConcept" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="lblEntryCeckNumber" max="32767" attributes="0"/>
-                      <Component id="lblEntryDate" max="32767" attributes="0"/>
-                      <Component id="lblEntryDocumentNumber" alignment="0" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="txtEntryDocumentNumber" max="32767" attributes="0"/>
-                      <Component id="spnEntryDate" alignment="0" pref="105" max="32767" attributes="0"/>
-                      <Component id="txtEntryCheckNumber" alignment="0" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="btnUpdateEntry" alignment="1" min="-2" pref="113" max="-2" attributes="0"/>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="cbxEntryDocumentType" max="32767" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="btnDeleteEntry" min="-2" pref="113" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Component id="jScrollPane2" max="32767" attributes="0"/>
+                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <Component id="spnEntryDate" min="-2" pref="116" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="btnUpdateEntry" alignment="1" min="-2" pref="115" max="-2" attributes="0"/>
+                              <Component id="btnSaveEntry" alignment="1" min="-2" pref="115" max="-2" attributes="0"/>
+                              <Component id="btnAddEntry" alignment="1" min="-2" pref="115" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="btnAddEntry" min="-2" pref="110" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Component id="txtEntryName" pref="97" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="lblEntryDocumentNumber" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="txtEntryCheckNumber" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="txtEntryDocumentNumber" min="-2" pref="105" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                                  <Component id="lblEntryDate" min="-2" pref="74" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="btnSaveEntry" min="-2" pref="113" max="-2" attributes="0"/>
+                          <Component id="cbxEntryDocumentType" min="-2" pref="116" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnDeleteEntry" min="-2" pref="115" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -494,43 +508,44 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="lblEntryName" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtEntryName" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="lblConcept" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              </Group>
-                              <Component id="jScrollPane2" pref="0" max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblEntryDocumentNumber" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntryDocumentNumber" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnDeleteEntry" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="cbxEntryDocumentType" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblEntryDate" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="spnEntryDate" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnUpdateEntry" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="lblEntryCeckNumber" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
                               <Component id="txtEntryCheckNumber" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnSaveEntry" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnAddEntry" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblEntryDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="spnEntryDate" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="btnDeleteEntry" alignment="0" min="-2" pref="24" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="lblEntryDocumentNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtEntryDocumentNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="cbxEntryDocumentType" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="btnUpdateEntry" min="-2" pref="24" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                          <Component id="btnAddEntry" min="-2" pref="24" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="btnSaveEntry" min="-2" pref="24" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="lblConcept" min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane2" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -571,7 +586,9 @@
             <Component class="javax.swing.JTextArea" name="taEntryConcept">
               <Properties>
                 <Property name="columns" type="int" value="20"/>
+                <Property name="lineWrap" type="boolean" value="true"/>
                 <Property name="rows" type="int" value="5"/>
+                <Property name="wrapStyleWord" type="boolean" value="true"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[400, 400]"/>
                 </Property>
@@ -589,6 +606,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtEntryDocumentNumber">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEntryDocumentNumberActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblEntryDate">
           <Properties>
@@ -600,6 +620,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtEntryCheckNumber">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEntryCheckNumberActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblEntryCeckNumber">
           <Properties>
@@ -614,7 +637,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnSaveEntry">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Guadar"/>
+            <Property name="text" type="java.lang.String" value="Guardar"/>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+            <Property name="actionCommand" type="java.lang.String" value="Guardar"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[73, 23]"/>
             </Property>
@@ -625,6 +650,9 @@
               <Dimension value="[73, 23]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSaveEntryActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnUpdateEntry">
           <Properties>
@@ -639,11 +667,17 @@
               <Dimension value="[73, 23]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUpdateEntryActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnDeleteEntry">
           <Properties>
             <Property name="text" type="java.lang.String" value="Eliminar"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteEntryActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnAddEntry">
           <Properties>
@@ -663,6 +697,9 @@
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Tipo de Documento"/>
           </AccessibilityProperties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbxEntryDocumentTypeActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;DocumentType&gt;"/>
           </AuxValues>
@@ -708,7 +745,7 @@
                       <Component id="lblUpdateAt" min="-2" max="-2" attributes="0"/>
                       <Component id="lblUpdateBy" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="182" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
