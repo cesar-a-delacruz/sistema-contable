@@ -362,14 +362,14 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         je.setDate(getSpnEntryDate().getValue());
 
         // TODO no se debe actualizar, se actualiza solo al editar los registros con
-        // updateRecord()
+        updateRecord();
 
-        // je.setLedgerRecords(getData());
+        je.setLedgerRecords(getData());
 
-        // for (var record : getData()) {
-        // record.setJournalEntry(je);
-        // record.setUser(user);
-        // }
+        for (var record : getData()) {
+            record.setJournalEntry(je);
+            record.setUser(user);
+        }
 
         return Optional.of(je);
     }
