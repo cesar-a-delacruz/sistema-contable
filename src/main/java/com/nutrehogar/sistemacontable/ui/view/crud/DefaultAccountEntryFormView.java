@@ -26,7 +26,8 @@ public class DefaultAccountEntryFormView extends CRUDView {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         bgRecordType = new javax.swing.ButtonGroup();
@@ -87,16 +88,15 @@ public class DefaultAccountEntryFormView extends CRUDView {
         setOpaque(false);
 
         tblData.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, "a", null, "a"},
-                {null, null, "aa", null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+                new Object[][] {
+                        { null, "a", null, "a" },
+                        { null, null, "aa", null },
+                        { null, null, null, null },
+                        { null, null, null, null }
+                },
+                new String[] {
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }));
         jScrollPane1.setViewportView(tblData);
 
         pnlAside.setOpaque(false);
@@ -126,42 +126,59 @@ public class DefaultAccountEntryFormView extends CRUDView {
 
         btnDelete.setText("Eliminar");
 
-        javax.swing.GroupLayout pnlLedgerRecordOperationsLayout = new javax.swing.GroupLayout(pnlLedgerRecordOperations);
+        javax.swing.GroupLayout pnlLedgerRecordOperationsLayout = new javax.swing.GroupLayout(
+                pnlLedgerRecordOperations);
         pnlLedgerRecordOperations.setLayout(pnlLedgerRecordOperationsLayout);
         pnlLedgerRecordOperationsLayout.setHorizontalGroup(
-            pnlLedgerRecordOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlLedgerRecordOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
-                        .addComponent(lblEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
-                        .addComponent(lblAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
-                        .addComponent(lblDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
+                pnlLedgerRecordOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlLedgerRecordOperationsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
+                                                .addComponent(lblEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 250,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
+                                                .addComponent(lblAdd, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
+                                                .addComponent(lblDelete, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addContainerGap()));
         pnlLedgerRecordOperationsLayout.setVerticalGroup(
-            pnlLedgerRecordOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
-                .addGroup(pnlLedgerRecordOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAdd))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlLedgerRecordOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEdit))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlLedgerRecordOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDelete)))
-        );
+                pnlLedgerRecordOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlLedgerRecordOperationsLayout.createSequentialGroup()
+                                .addGroup(pnlLedgerRecordOperationsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblAdd, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnAdd))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlLedgerRecordOperationsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblEdit, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnEdit))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlLedgerRecordOperationsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblDelete, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnDelete))));
 
         pnlRecordForm.setBorder(javax.swing.BorderFactory.createTitledBorder(" Registro Contable "));
         pnlRecordForm.setOpaque(false);
@@ -208,90 +225,135 @@ public class DefaultAccountEntryFormView extends CRUDView {
         javax.swing.GroupLayout pnlRecordFormLayout = new javax.swing.GroupLayout(pnlRecordForm);
         pnlRecordForm.setLayout(pnlRecordFormLayout);
         pnlRecordFormLayout.setHorizontalGroup(
-            pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlRecordFormLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlRecordFormLayout.createSequentialGroup()
-                        .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblRecordAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblRecordReference, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblRecordType, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rbtRecordDebit)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rbtRecordCredit, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
-                        .addGap(123, 123, 123))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecordFormLayout.createSequentialGroup()
-                        .addComponent(lblRecordAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtRecordReference, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(cbxRecordAccount, javax.swing.GroupLayout.Alignment.TRAILING, 0, 253, Short.MAX_VALUE)
-                            .addComponent(txtRecordAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnlRecordFormLayout.createSequentialGroup()
-                        .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecordFormLayout.createSequentialGroup()
-                        .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
+                pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlRecordFormLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlRecordFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(pnlRecordFormLayout.createSequentialGroup()
+                                                .addGroup(pnlRecordFormLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(lblRecordAccount,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblRecordReference,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblRecordType,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, 120,
+                                                                Short.MAX_VALUE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rbtRecordDebit)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rbtRecordCredit, javax.swing.GroupLayout.DEFAULT_SIZE, 72,
+                                                        Short.MAX_VALUE)
+                                                .addGap(123, 123, 123))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecordFormLayout
+                                                .createSequentialGroup()
+                                                .addComponent(lblRecordAmount, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGroup(pnlRecordFormLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                false)
+                                                        .addComponent(txtRecordReference,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(cbxRecordAccount,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING, 0, 253,
+                                                                Short.MAX_VALUE)
+                                                        .addComponent(txtRecordAmount,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 130,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(pnlRecordFormLayout.createSequentialGroup()
+                                                .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 250,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecordFormLayout
+                                                .createSequentialGroup()
+                                                .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, 250,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addContainerGap()));
         pnlRecordFormLayout.setVerticalGroup(
-            pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlRecordFormLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtRecordReference, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblRecordReference))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRecordAccount)
-                    .addComponent(cbxRecordAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRecordType)
-                    .addComponent(rbtRecordDebit)
-                    .addComponent(rbtRecordCredit))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRecordAmount)
-                    .addComponent(txtRecordAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSave)
-                    .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdate))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlRecordFormLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlRecordFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(txtRecordReference, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblRecordReference))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlRecordFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblRecordAccount)
+                                        .addComponent(cbxRecordAccount, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlRecordFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblRecordType)
+                                        .addComponent(rbtRecordDebit)
+                                        .addComponent(rbtRecordCredit))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlRecordFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblRecordAmount)
+                                        .addComponent(txtRecordAmount, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlRecordFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnSave)
+                                        .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlRecordFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnUpdate))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);
         pnlAsideLayout.setHorizontalGroup(
-            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlRecordForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlLedgerRecordOperations, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(auditablePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+                pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlAsideLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(pnlRecordForm, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(pnlLedgerRecordOperations, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(auditablePanel, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE))
+                                .addContainerGap()));
         pnlAsideLayout.setVerticalGroup(
-            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addComponent(pnlLedgerRecordOperations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlRecordForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(auditablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
-        );
+                pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlAsideLayout.createSequentialGroup()
+                                .addComponent(pnlLedgerRecordOperations, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnlRecordForm, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(auditablePanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(19, Short.MAX_VALUE)));
 
         pnlEntryForm.setBorder(javax.swing.BorderFactory.createTitledBorder("  Entrada de Diario  "));
         pnlEntryForm.setOpaque(false);
@@ -317,21 +379,9 @@ public class DefaultAccountEntryFormView extends CRUDView {
         lblEntryDocumentNumber.setLabelFor(txtEntryDocumentNumber);
         lblEntryDocumentNumber.setText("Documento No:");
 
-        txtEntryDocumentNumber.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEntryDocumentNumberActionPerformed(evt);
-            }
-        });
-
         lblEntryDate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblEntryDate.setLabelFor(spnEntryDate);
         lblEntryDate.setText("Fecha:");
-
-        txtEntryCheckNumber.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEntryCheckNumberActionPerformed(evt);
-            }
-        });
 
         lblEntryCeckNumber.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblEntryCeckNumber.setLabelFor(txtEntryCheckNumber);
@@ -343,120 +393,161 @@ public class DefaultAccountEntryFormView extends CRUDView {
         btnSaveEntry.setMaximumSize(new java.awt.Dimension(73, 23));
         btnSaveEntry.setMinimumSize(new java.awt.Dimension(73, 23));
         btnSaveEntry.setPreferredSize(new java.awt.Dimension(73, 23));
-        btnSaveEntry.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveEntryActionPerformed(evt);
-            }
-        });
 
         btnUpdateEntry.setText("Actualizar");
         btnUpdateEntry.setMaximumSize(new java.awt.Dimension(73, 23));
         btnUpdateEntry.setMinimumSize(new java.awt.Dimension(73, 23));
         btnUpdateEntry.setPreferredSize(new java.awt.Dimension(73, 23));
-        btnUpdateEntry.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUpdateEntryActionPerformed(evt);
-            }
-        });
 
         btnDeleteEntry.setText("Eliminar");
-        btnDeleteEntry.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteEntryActionPerformed(evt);
-            }
-        });
 
         btnAddEntry.setText("Nuevo");
 
         cbxEntryDocumentType.setModel(new javax.swing.DefaultComboBoxModel<>());
         cbxEntryDocumentType.setToolTipText("Tipo de Documento");
         cbxEntryDocumentType.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        cbxEntryDocumentType.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbxEntryDocumentTypeActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout pnlEntryFormLayout = new javax.swing.GroupLayout(pnlEntryForm);
         pnlEntryForm.setLayout(pnlEntryFormLayout);
         pnlEntryFormLayout.setHorizontalGroup(
-            pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEntryName, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblEntryCeckNumber)
-                    .addComponent(lblConcept, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                                .addComponent(jScrollPane2)
-                                .addGap(12, 12, 12))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlEntryFormLayout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(spnEntryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnUpdateEntry, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnSaveEntry, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnAddEntry, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                                .addComponent(txtEntryName, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblEntryDocumentNumber))
-                            .addComponent(txtEntryCheckNumber))
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtEntryDocumentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                                .addGap(23, 23, 23)
-                                .addComponent(lblEntryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cbxEntryDocumentType, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnDeleteEntry, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
+                pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlEntryFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(lblEntryName, javax.swing.GroupLayout.PREFERRED_SIZE, 58,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblEntryCeckNumber)
+                                        .addComponent(lblConcept, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlEntryFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                                .addGroup(pnlEntryFormLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                                                .addComponent(jScrollPane2)
+                                                                .addGap(12, 12, 12))
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                pnlEntryFormLayout.createSequentialGroup()
+                                                                        .addGap(0, 0, Short.MAX_VALUE)
+                                                                        .addComponent(spnEntryDate,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                116,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                                                .addGroup(pnlEntryFormLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                false)
+                                                        .addComponent(btnUpdateEntry,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 115,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(btnSaveEntry,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 115,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(btnAddEntry,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 115,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                                .addGroup(pnlEntryFormLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                                                .addComponent(txtEntryName,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 97,
+                                                                        Short.MAX_VALUE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(lblEntryDocumentNumber))
+                                                        .addComponent(txtEntryCheckNumber))
+                                                .addGroup(pnlEntryFormLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(txtEntryDocumentNumber,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 105,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                                                .addGap(23, 23, 23)
+                                                                .addComponent(lblEntryDate,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 74,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(cbxEntryDocumentType,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 116,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnDeleteEntry, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap()));
         pnlEntryFormLayout.setVerticalGroup(
-            pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblEntryName)
-                            .addComponent(txtEntryName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(11, 11, 11)
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblEntryCeckNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEntryCheckNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEntryDate)
-                            .addComponent(spnEntryDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnDeleteEntry, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(lblEntryDocumentNumber)
-                                .addComponent(txtEntryDocumentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(cbxEntryDocumentType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnUpdateEntry, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(btnAddEntry, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnSaveEntry, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblConcept)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlEntryFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                                .addGroup(pnlEntryFormLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(lblEntryName)
+                                                        .addComponent(txtEntryName,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(11, 11, 11)
+                                                .addGroup(pnlEntryFormLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(lblEntryCeckNumber,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 16,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(txtEntryCheckNumber,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(lblEntryDate)
+                                                        .addComponent(spnEntryDate,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                                .addGroup(pnlEntryFormLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(btnDeleteEntry,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 24,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGroup(pnlEntryFormLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(lblEntryDocumentNumber)
+                                                                .addComponent(txtEntryDocumentNumber,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(cbxEntryDocumentType,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnUpdateEntry, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        24, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlEntryFormLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                                                .addGap(6, 6, 6)
+                                                .addComponent(btnAddEntry, javax.swing.GroupLayout.PREFERRED_SIZE, 24,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnSaveEntry, javax.swing.GroupLayout.PREFERRED_SIZE, 24,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(lblConcept)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0,
+                                                Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         cbxEntryDocumentType.getAccessibleContext().setAccessibleName("Tipo de Documento");
 
@@ -486,101 +577,101 @@ public class DefaultAccountEntryFormView extends CRUDView {
         javax.swing.GroupLayout pnlSourceDocumentsLayout = new javax.swing.GroupLayout(pnlSourceDocuments);
         pnlSourceDocuments.setLayout(pnlSourceDocumentsLayout);
         pnlSourceDocumentsLayout.setHorizontalGroup(
-            pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnGeneratePaymentVoucher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnGenerateRegistrationForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblCreateBy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblCreateAt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblUpdateAt)
-                    .addComponent(lblUpdateBy))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlSourceDocumentsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(btnGeneratePaymentVoucher, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnGenerateRegistrationForm, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(pnlSourceDocumentsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 90,
+                                                Short.MAX_VALUE)
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlSourceDocumentsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(lblCreateBy, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(lblCreateAt, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlSourceDocumentsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE, 110,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlSourceDocumentsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(lblUpdateAt)
+                                        .addComponent(lblUpdateBy))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
         pnlSourceDocumentsLayout.setVerticalGroup(
-            pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnGeneratePaymentVoucher)
-                    .addComponent(jLabel1)
-                    .addComponent(lblCreateBy)
-                    .addComponent(jLabel4)
-                    .addComponent(lblUpdateBy))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnGenerateRegistrationForm)
-                    .addComponent(jLabel2)
-                    .addComponent(lblCreateAt)
-                    .addComponent(jLabel3)
-                    .addComponent(lblUpdateAt))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlSourceDocumentsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnGeneratePaymentVoucher)
+                                        .addComponent(jLabel1)
+                                        .addComponent(lblCreateBy)
+                                        .addComponent(jLabel4)
+                                        .addComponent(lblUpdateBy))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlSourceDocumentsLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnGenerateRegistrationForm)
+                                        .addComponent(jLabel2)
+                                        .addComponent(lblCreateAt)
+                                        .addComponent(jLabel3)
+                                        .addComponent(lblUpdateAt))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlEntryForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(pnlSourceDocuments, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(pnlEntryForm, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0,
+                                                Short.MAX_VALUE)
+                                        .addComponent(pnlSourceDocuments, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnlEntryForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlSourceDocuments, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(pnlEntryForm, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0,
+                                                        Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(pnlSourceDocuments,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))));
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnDeleteEntryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteEntryActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnDeleteEntryActionPerformed
-
-    private void txtEntryCheckNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntryCheckNumberActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEntryCheckNumberActionPerformed
-
-    private void btnSaveEntryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveEntryActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSaveEntryActionPerformed
-
-    private void cbxEntryDocumentTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxEntryDocumentTypeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbxEntryDocumentTypeActionPerformed
-
-    private void txtEntryDocumentNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntryDocumentNumberActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEntryDocumentNumberActionPerformed
-
-    private void btnUpdateEntryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateEntryActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnUpdateEntryActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.nutrehogar.sistemacontable.ui.component.AuditablePanel auditablePanel;
@@ -637,5 +728,11 @@ public class DefaultAccountEntryFormView extends CRUDView {
     private javax.swing.JTextField txtEntryName;
     private javax.swing.JTextField txtRecordAmount;
     private javax.swing.JTextField txtRecordReference;
+
     // End of variables declaration//GEN-END:variables
+    @Override
+    public JButton getBtnGenerateReport() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getBtnGenerateReport'");
+    }
 }

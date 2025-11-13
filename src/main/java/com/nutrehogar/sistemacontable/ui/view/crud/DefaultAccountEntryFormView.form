@@ -606,9 +606,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtEntryDocumentNumber">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEntryDocumentNumberActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblEntryDate">
           <Properties>
@@ -620,9 +617,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtEntryCheckNumber">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEntryCheckNumberActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblEntryCeckNumber">
           <Properties>
@@ -650,9 +644,6 @@
               <Dimension value="[73, 23]"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSaveEntryActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnUpdateEntry">
           <Properties>
@@ -667,17 +658,11 @@
               <Dimension value="[73, 23]"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUpdateEntryActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnDeleteEntry">
           <Properties>
             <Property name="text" type="java.lang.String" value="Eliminar"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteEntryActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnAddEntry">
           <Properties>
@@ -697,9 +682,6 @@
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Tipo de Documento"/>
           </AccessibilityProperties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbxEntryDocumentTypeActionPerformed"/>
-          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;DocumentType&gt;"/>
           </AuxValues>
