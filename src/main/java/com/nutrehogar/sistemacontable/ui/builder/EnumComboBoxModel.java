@@ -27,6 +27,7 @@ public class EnumComboBoxModel<E extends Enum<E>> implements ComboBoxModel<E> {
         return selected;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setSelectedItem(Object anItem) {
         this.selected = (E) anItem;
