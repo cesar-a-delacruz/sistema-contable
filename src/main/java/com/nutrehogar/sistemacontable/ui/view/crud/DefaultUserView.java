@@ -14,7 +14,6 @@ public class DefaultUserView extends CRUDView {
         txtPassword.putClientProperty("JTextField.placeholderText", "20010");
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -316,6 +315,11 @@ public class DefaultUserView extends CRUDView {
                                 .addContainerGap()));
     }// </editor-fold>//GEN-END:initComponents
 
+    @Override
+    public JButton getBtnGenerateReport() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.nutrehogar.sistemacontable.ui.component.AuditablePanel auditablePanel;
     private javax.swing.JButton btnAdd;
@@ -343,10 +347,4 @@ public class DefaultUserView extends CRUDView {
     private javax.swing.JTextField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public JButton getBtnGenerateReport() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from
-                                                                       // nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }
