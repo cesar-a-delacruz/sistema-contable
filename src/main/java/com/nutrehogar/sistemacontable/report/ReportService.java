@@ -48,6 +48,7 @@ public class ReportService {
 
         Map<String, Object> params = new HashMap<>(parameters);
 
+        @SuppressWarnings("unchecked")
         Report<T> generate = (Report<T>) reports.get(reportClass);
 
         if (generate == null) {

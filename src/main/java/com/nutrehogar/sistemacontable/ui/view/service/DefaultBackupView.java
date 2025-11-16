@@ -45,12 +45,14 @@ public class DefaultBackupView extends BackupView {
                 new String[] {
                         "Title aaa", "Title yghj", "Title ftyghj", "Title 4aa"
                 }) {
-            Class[] types = new Class[] {
+
+            @SuppressWarnings("unchecked")
+            Class<String>[] types = (Class<String>[]) new Class[] {
                     java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
+            public Class<String> getColumnClass(int columnIndex) {
+                return (Class<String>) types[columnIndex];
             }
         });
         jScrollPane1.setViewportView(tblData);

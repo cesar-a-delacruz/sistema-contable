@@ -178,6 +178,7 @@ public abstract class CRUDController<T extends AuditableEntity, ID> extends Simp
 
     protected abstract T prepareToUpdate();
 
+    @SuppressWarnings("unchecked")
     @Override
     public CRUDRepository<T, ID> getRepository() {
         return (CRUDRepository<T, ID>) super.getRepository();
