@@ -40,6 +40,7 @@ public class DashboardController extends Controller {
     private void ButtonPermissionSettings() {
         if (!user.isAdmin()) {
             getBtnShowUserView().setVisible(false);
+            getBtnShowBackupView().setEnabled(false);
         }
     }
 
