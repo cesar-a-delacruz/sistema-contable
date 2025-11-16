@@ -31,12 +31,14 @@ public class DashboardController extends Controller {
         });
         Thread.startVirtualThread(this::setupViewListeners);
     }
+
     public void refreshPermissions() {
         this.user = context.getBean(User.class);
         ButtonPermissionSettings();
     }
+
     private void ButtonPermissionSettings() {
-        if (!user.isAuthorized()) {
+        if (!user.isAdmin()) {
             getBtnShowUserView().setVisible(false);
         }
     }

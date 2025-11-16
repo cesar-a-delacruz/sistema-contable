@@ -29,14 +29,14 @@ public class AppConfig {
     public static void setup(@NotNull Context context) {
         context.registerBean(User.class, User.builder()
                 .username("Root")
-                .permissions(PermissionType.CREATE)
+                .permissions(PermissionType.ADMIN)
                 .isEnable(true)
                 .password("0922")
                 .build());
         context.registerBean(UserRepository.class, new UserRepo());
         context.registerBean(AuthView.class, new DefaultAuthView());
         context.registerBean(AuthController.class, new AuthController(context.getBean(AuthView.class),
-                context.getBean(UserRepository.class), context.getBean(User.class),context));
+                context.getBean(UserRepository.class), context.getBean(User.class), context));
         context.registerBean(DashboardView.class, new DefaultDashboardView());
         var dashboard = new DashboardController(context.getBean(DashboardView.class), context);
         context.registerBean(DashboardController.class, dashboard);

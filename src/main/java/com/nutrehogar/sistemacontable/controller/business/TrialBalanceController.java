@@ -185,7 +185,7 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
             }
             setSelected(selected);
             setAuditoria();
-            getBtnEdit().setEnabled(user.isAuthorized());
+            getBtnEdit().setEnabled(user.isAdmin());
             setJournalEntryId(selected.getJournalId());
         }
     }

@@ -68,7 +68,7 @@ public abstract class BusinessController<T extends AuditableDTO, R> extends Simp
         getBtnEdit().setEnabled(false);
         getBtnEdit().addActionListener(e -> editJournalEntry.accept(journalEntryId));
         getBtnFilter().addActionListener(e -> {
-            if (!user.isAuthorized())
+            if (!user.isAdmin())
                 return;
             loadData();
             setSelected(null);

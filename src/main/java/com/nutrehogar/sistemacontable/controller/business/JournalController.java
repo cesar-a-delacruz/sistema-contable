@@ -130,7 +130,7 @@ public class JournalController extends BusinessController<JournalTableDTO, Journ
             if (selectedRow >= 0 && selectedRow < getData().size()) {
                 setSelected(getData().get(selectedRow));
                 setAuditoria();
-                getBtnEdit().setEnabled(user.isAuthorized());
+                getBtnEdit().setEnabled(user.isAdmin());
                 setJournalEntryId(getSelected().getEntryId());
             } else {
                 getBtnEdit().setEnabled(false);
