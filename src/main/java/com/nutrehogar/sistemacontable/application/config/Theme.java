@@ -1,4 +1,4 @@
-package com.nutrehogar.sistemacontable.ui;
+package com.nutrehogar.sistemacontable.application.config;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.util.UIScale;

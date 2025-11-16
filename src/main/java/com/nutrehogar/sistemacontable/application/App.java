@@ -2,12 +2,12 @@ package com.nutrehogar.sistemacontable.application;
 
 import com.nutrehogar.sistemacontable.application.config.AppConfig;
 import com.nutrehogar.sistemacontable.application.config.Context;
+import com.nutrehogar.sistemacontable.application.config.Theme;
 import com.nutrehogar.sistemacontable.application.config.WriteExecutor;
 import com.nutrehogar.sistemacontable.base.ui.view.service.AuthView;
 import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
 import com.nutrehogar.sistemacontable.controller.service.AuthController;
 import com.nutrehogar.sistemacontable.persistence.HibernateUtil;
-import com.nutrehogar.sistemacontable.ui.Theme;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javax.swing.*;
 import lombok.extern.slf4j.Slf4j;

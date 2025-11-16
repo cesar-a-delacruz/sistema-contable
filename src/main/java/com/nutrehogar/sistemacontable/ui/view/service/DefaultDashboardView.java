@@ -1,8 +1,8 @@
 package com.nutrehogar.sistemacontable.ui.view.service;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.nutrehogar.sistemacontable.application.config.Theme;
 import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
-import com.nutrehogar.sistemacontable.ui.Theme;
 import com.nutrehogar.sistemacontable.ui.component.UserListPanel;
 
 import lombok.Getter;
