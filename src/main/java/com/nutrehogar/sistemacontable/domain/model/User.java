@@ -41,16 +41,15 @@ public class User extends AuditableEntity {
     PermissionType permissions;
 
     public static boolean isAuthorized(User user) {
-        return user != null && user.isAuthorized();
+        return user != null && user.isAdmin();
     }
 
-    public boolean isAuthorized() {
-        return permissions.equals(PermissionType.CREATE);
+    public boolean isAdmin() {
+        return permissions.equals(PermissionType.ADMIN);
     }
 
-    public boolean add_only(){
-        return permissions.equals(PermissionType.ADD_ONLY);
+    public boolean isContribuitor() {
+        return permissions.equals(PermissionType.CONTRIBUTE);
     }
-
 
 }

@@ -71,15 +71,15 @@ public final class AuthController extends Controller {
                 String passwordEntered = String.valueOf(getTxtPing().getPassword());
                 String passwordStored = selectedUser.getPassword();
 
-                boolean passwordCorrecto = false;
+                boolean passwordCorrect = false;
 
                 if (passwordStored != null && passwordStored.startsWith("$2a$")) {
-                    passwordCorrecto = PasswordHasher.verifyPassword(passwordEntered, passwordStored);
+                    passwordCorrect = PasswordHasher.verifyPassword(passwordEntered, passwordStored);
                 } else {
-                    passwordCorrecto = passwordEntered.equals(passwordStored);
+                    passwordCorrect = passwordEntered.equals(passwordStored);
                 }
 
-                if (passwordCorrecto) {
+                if (passwordCorrect) {
                     authenticatedUser = selectedUser;
                     authenticatedUser.setUser(authenticatedUser);
 

@@ -84,7 +84,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         tblDataList = new ArrayList<>();
         prepareBtnToAddEntry();
         prepareBtnToAddRecord();
-        if (!user.isAuthorized() && !user.add_only()) { // se agrega add_only
+        if (!user.isAdmin() && !user.isContribuitor()) { // se agrega isContribuitor
             getBtnAddRecord().setEnabled(false);
             getBtnDeleteRecord().setEnabled(false);
             getBtnSaveRecord().setEnabled(false);
@@ -93,8 +93,8 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             getBtnAddEntry().setEnabled(false);
             getBtnUpdateEntry().setEnabled(false);
             getBtnSaveEntry().setEnabled(false);
-        } else if (user.add_only()) {
-            // ADD_ONLY, solo puede agregar
+        } else if (user.isContribuitor()) {
+            // isContribuitor, solo puede agregar
             getBtnAddRecord().setEnabled(true);
             getBtnSaveRecord().setEnabled(true);
             getBtnDeleteRecord().setEnabled(false);
@@ -147,10 +147,10 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
                 new LedgerRecordDTO("", "TOTAL", DECIMAL_FORMAT.format(debitSum), DECIMAL_FORMAT.format(creditSum)));
         boolean isBalanced = !getData().isEmpty();
 
-        if (user.isAuthorized()) {
+        if (user.isAdmin()) {
             getBtnSaveEntry().setEnabled(isBalanced && isBeingAdded);
             getBtnUpdateEntry().setEnabled(isBalanced && isBeingEdited);
-        } else if (user.add_only()) {
+        } else if (user.isContribuitor()) {
             getBtnSaveEntry().setEnabled(isBalanced && isBeingAdded);
             getBtnUpdateEntry().setEnabled(false);
         }
@@ -257,7 +257,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             prepareToEditRecord();
             setAuditoria();
             // Opciones habilitadas para CREATE
-            if (user.isAuthorized()) {
+            if (user.isAdmin()) {
                 getBtnDeleteRecord().setEnabled(true);
                 getBtnEdit().setEnabled(true);
             } else {
@@ -634,7 +634,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
     private void prepareBtnToEditEntry() {
         getBtnAddEntry().setEnabled(true);
         getBtnSaveEntry().setEnabled(false);
-        getBtnDeleteEntry().setEnabled(user.isAuthorized());
+        getBtnDeleteEntry().setEnabled(user.isAdmin());
         getBtnUpdateEntry().setEnabled(false);
         getBtnGeneratePaymentVoucher().setEnabled(true);
         getBtnGenerateRegistrationForm().setEnabled(true);
