@@ -5,7 +5,6 @@ import com.nutrehogar.sistemacontable.application.config.PasswordHasher;
 import com.nutrehogar.sistemacontable.base.controller.Controller;
 import com.nutrehogar.sistemacontable.base.domain.repository.UserRepository;
 import com.nutrehogar.sistemacontable.base.ui.view.service.AuthView;
-import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 
