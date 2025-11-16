@@ -1,7 +1,7 @@
 package com.nutrehogar.sistemacontable.application;
 
 import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
-import com.nutrehogar.sistemacontable.ui.Theme;
+import com.nutrehogar.sistemacontable.application.config.Theme;
 
 public class Main {
     public static void main(String[] args) {

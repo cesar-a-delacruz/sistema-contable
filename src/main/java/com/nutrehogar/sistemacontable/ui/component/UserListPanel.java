@@ -1,8 +1,8 @@
 package com.nutrehogar.sistemacontable.ui.component;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.nutrehogar.sistemacontable.application.config.Theme;
 import com.nutrehogar.sistemacontable.domain.model.User;
-import com.nutrehogar.sistemacontable.ui.Theme;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
