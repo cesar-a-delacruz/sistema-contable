@@ -3,6 +3,7 @@ package com.nutrehogar.sistemacontable.domain.repository;
 import com.nutrehogar.sistemacontable.base.domain.repository.JournalEntryRepository;
 import com.nutrehogar.sistemacontable.domain.model.JournalEntry;
 import com.nutrehogar.sistemacontable.domain.model.JournalEntryPK;
+import com.nutrehogar.sistemacontable.domain.type.DocumentType;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.persistence.TransactionManager;
 
@@ -24,5 +25,13 @@ public class JournalEntryRepo extends CRUDRepo<JournalEntry, JournalEntryPK>
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .list());
+    }
+
+    @Override
+    public JournalEntry findLast(DocumentType type) throws RepositoryException {
+        return TransactionManager.executeInTransaction(session -> session.createQuery(
+                "FROM JournalEntry  WHERE id.documentType = :type ORDER BY id.documentNumber DESC",
+                JournalEntry.class)).setParameter("type", type)
+                .setMaxResults(1).uniqueResult();
     }
 }

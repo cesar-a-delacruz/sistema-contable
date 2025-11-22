@@ -165,6 +165,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         getCbxRecordAccount().setModel(cbxModelAccount);
         getCbxEntryDocumentType().setModel(cbxModelDocumentType);
         getCbxEntryDocumentType().setRenderer(new CustomListCellRenderer());
+        getCbxEntryDocumentType().addActionListener(e -> setNewDocumentNumber());
         getCbxRecordAccount().setRenderer(new AccountListCellRenderer());
         getBtnSaveRecord().addActionListener(e -> saveRecord());
         getBtnDeleteRecord().addActionListener(e -> deleteRecord());
@@ -647,6 +648,12 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         }
         var list = accountRepository.findAll();
         cbxModelAccount.setData(list);
+    }
+
+    private void setNewDocumentNumber() {
+        JournalEntry last = journalRepository
+                .findLast(DocumentType.valueOf(getCbxEntryDocumentType().getSelectedItem().toString()));
+        getTxtEntryDocumentNumber().setText(String.valueOf(last.getId().getDocumentNumber() + 1));
     }
 
     public LedgerRecordRepository getLedgerRecordRepository() {
