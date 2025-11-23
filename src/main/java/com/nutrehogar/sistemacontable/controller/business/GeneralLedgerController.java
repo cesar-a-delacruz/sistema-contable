@@ -18,7 +18,6 @@ import static com.nutrehogar.sistemacontable.application.config.Util.*;
 
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
@@ -204,7 +203,7 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
                     return null;
                 }
                 ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccount(accountSelectedItem,
-                        spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue());
+                        spnModelEndPeriod.getValue());
             } else {
                 if (getTxtId().getText().isBlank() || getTxtId().getText().length() > 5) {
                     showMessage("Inserte un número entre 1 y 5.");
@@ -212,11 +211,14 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
                 }
                 ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccountId(
                         Integer.parseInt(getTxtId().getText()),
-                        spnModelStartPeriod.getValue(), spnModelEndPeriod.getValue());
+                        spnModelEndPeriod.getValue());
             }
 
+            List<LedgerRecord> lrInRange = ledgerRecords.stream()
+                    .filter(record -> !record.getJournalEntry().getDate().isBefore(spnModelStartPeriod.getValue()))
+                    .toList();
             // 🔹 Usar Stream para mapear, ordenar y calcular totales
-            List<GeneralLedgerTableDTO> generalLedgers = ledgerRecords.stream()
+            List<GeneralLedgerTableDTO> generalLedgers = lrInRange.stream()
                     .map(record -> new GeneralLedgerTableDTO(
                             record.getCreatedBy(),
                             record.getUpdatedBy(),
@@ -234,28 +236,21 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
                             BigDecimal.ZERO))
                     .sorted(Comparator.comparing(GeneralLedgerTableDTO::getEntryDate)) // Ordenar por fecha
                     .toList();
-            // 🔹 Calcular totales usando reduce()
-            var debitSum = generalLedgers.stream()
-                    .map(GeneralLedgerTableDTO::getDebit)
-                    .filter(Objects::nonNull)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add)
-                    .setScale(2, RoundingMode.HALF_UP);
 
-            var creditSum = generalLedgers.stream()
-                    .map(GeneralLedgerTableDTO::getCredit)
-                    .filter(Objects::nonNull)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add)
-                    .setScale(2, RoundingMode.HALF_UP);
+            var debitSumAll = ledgerRecords.stream().map(record -> record.getDebit()).filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            var creditSumAll = ledgerRecords.stream().map(record -> record.getCredit()).filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             // 🔹 Calcular balances
-            var balance = BigDecimal.ZERO;
-            for (GeneralLedgerTableDTO dto : generalLedgers) {
-                balance = dto.getAccountType().getBalance(balance, dto.getCredit(), dto.getDebit());
-                dto.setBalance(balance);
+            var balanceAll = BigDecimal.ZERO;
+            for (LedgerRecord lr : ledgerRecords) {
+                balanceAll = lr.getAccount().getAccountSubtype().getAccountType().getBalance(balanceAll, lr.getCredit(),
+                        lr.getDebit());
             }
 
             // 🔹 Agregar total al final de la lista
-            var totalDTO = new GeneralLedgerTableDTO("TOTAL", debitSum, creditSum, balance);
+            var totalDTO = new GeneralLedgerTableDTO("TOTAL", debitSumAll, creditSumAll, balanceAll);
             generalLedgers = new ArrayList<>(generalLedgers);
             generalLedgers.add(totalDTO);
             return generalLedgers;
