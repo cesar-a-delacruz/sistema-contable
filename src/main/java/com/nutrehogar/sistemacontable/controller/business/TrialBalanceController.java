@@ -126,8 +126,8 @@ public class TrialBalanceController extends BusinessController<TrialBalanceTable
                             Collectors.collectingAndThen(Collectors.toList(),
                                     list -> list.stream()
                                             .sorted(Comparator.comparing(TrialBalanceTableDTO::getJournalDate)) // Ordenar
-                                                                                                                // por
-                                                                                                                // fecha
+                                            // por
+                                            // fecha
                                             .toList())));
 
             var list = new ArrayList<TrialBalanceTableDTO>();
