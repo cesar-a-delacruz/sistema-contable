@@ -84,7 +84,7 @@ public class JournalController extends BusinessController<JournalTableDTO, Journ
                 var simpleReportDTO = new SimpleReportDTO<>(
                         spnModelStartPeriod.getValue(),
                         spnModelEndPeriod.getValue(),
-                        journalReportDTOs);
+                        journalReportDTOs.reversed());
                 reportService.generateReport(Journal.class, simpleReportDTO);
                 showMessage("Reporte generado!");
             } catch (RepositoryException ex) {
@@ -117,7 +117,7 @@ public class JournalController extends BusinessController<JournalTableDTO, Journ
                                     ledgerRecord.getReference(),
                                     ledgerRecord.getDebit(),
                                     ledgerRecord.getCredit())))
-                    .sorted(Comparator.comparing(JournalTableDTO::getEntryDate))
+                    .sorted(Comparator.comparing(JournalTableDTO::getEntryDate).reversed())
                     .toList();
         }
     }
