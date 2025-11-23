@@ -7,9 +7,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface LedgerRecordRepository extends CRUDRepository<LedgerRecord, Integer> {
-    List<LedgerRecord> findByDateRangeAndAccount(Account account, LocalDate startDate, LocalDate endDate)
+    List<LedgerRecord> findByDateRangeAndAccount(Account account, LocalDate endDate)
             throws RepositoryException;
 
-    public List<LedgerRecord> findByDateRangeAndAccountId(Integer accountId, LocalDate startDate, LocalDate endDate)
+    public List<LedgerRecord> findByDateRangeAndAccountId(Integer accountId, LocalDate endDate)
             throws RepositoryException;
 }

@@ -16,33 +16,31 @@ public class LedgerRecordRepo extends CRUDRepo<LedgerRecord, Integer> implements
     }
 
     @Override
-    public List<LedgerRecord> findByDateRangeAndAccount(Account account, LocalDate startDate, LocalDate endDate)
+    public List<LedgerRecord> findByDateRangeAndAccount(Account account, LocalDate endDate)
             throws RepositoryException {
         return TransactionManager.executeInTransaction(session -> session.createQuery(
                 "SELECT lr FROM LedgerRecord lr " +
                         "JOIN FETCH lr.journalEntry " + // 🔹 Forzar la carga de journalEntry
                         "WHERE lr.account = :account " +
-                        "AND lr.journalEntry.date BETWEEN :startDate AND :endDate " +
+                        "AND lr.journalEntry.date < :endDate " +
                         "ORDER BY lr.journalEntry.date DESC",
                 LedgerRecord.class)
                 .setParameter("account", account)
-                .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .list());
     }
 
     @Override
-    public List<LedgerRecord> findByDateRangeAndAccountId(Integer accountId, LocalDate startDate, LocalDate endDate)
+    public List<LedgerRecord> findByDateRangeAndAccountId(Integer accountId, LocalDate endDate)
             throws RepositoryException {
         return TransactionManager.executeInTransaction(session -> session.createQuery(
                 "SELECT lr FROM LedgerRecord lr " +
                         "JOIN FETCH lr.journalEntry " + // 🔹 Forzar la carga de journalEntry
                         "WHERE lr.account.id = :accountId " +
-                        "AND lr.journalEntry.date BETWEEN :startDate AND :endDate " +
+                        "AND lr.journalEntry.date < :endDate " +
                         "ORDER BY lr.journalEntry.date DESC",
                 LedgerRecord.class)
                 .setParameter("accountId", accountId)
-                .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .list());
 
