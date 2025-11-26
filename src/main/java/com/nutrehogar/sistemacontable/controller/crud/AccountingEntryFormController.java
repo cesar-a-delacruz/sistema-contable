@@ -22,10 +22,10 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.nutrehogar.sistemacontable.application.config.Util.*;
 
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.math.*;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.*;
@@ -41,6 +41,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
     private List<LedgerRecordDTO> tblDataList;
     private boolean isBeingAdded;
     private boolean isBeingEdited;
+    private ActionListener setNewDocumentNumberListener;
     public static final BigDecimal ZERO = BigDecimal.valueOf(0, 2);
 
     public AccountingEntryFormController(LedgerRecordRepository repository, DefaultAccountEntryFormView view,
@@ -77,6 +78,11 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
                 return String.class;
             }
         });
+        setNewDocumentNumberListener = (e) -> {
+            JournalEntry last = journalRepository
+                    .findLast(DocumentType.valueOf(getCbxEntryDocumentType().getSelectedItem().toString()));
+            getTxtEntryDocumentNumber().setText(String.valueOf(last.getId().getDocumentNumber() + 1));
+        };
         cbxModelAccount = new CustomComboBoxModel<>(List.of());
         cbxModelDocumentType = new CustomComboBoxModel<>(DocumentType.values());
         journalEntry = Optional.empty();
@@ -144,7 +150,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         }
         tblDataList.add(
                 new LedgerRecordDTO("", "TOTAL", DECIMAL_FORMAT.format(debitSum), DECIMAL_FORMAT.format(creditSum)));
-        boolean isBalanced = !getData().isEmpty();
+        boolean isBalanced = !getData().isEmpty() && debitSum.compareTo(creditSum) == 0;
 
         if (user.isAdmin()) {
             getBtnSaveEntry().setEnabled(isBalanced && isBeingAdded);
@@ -165,8 +171,8 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         getCbxRecordAccount().setModel(cbxModelAccount);
         getCbxEntryDocumentType().setModel(cbxModelDocumentType);
         getCbxEntryDocumentType().setRenderer(new CustomListCellRenderer());
-        getCbxEntryDocumentType().addActionListener(e -> setNewDocumentNumber());
         getCbxRecordAccount().setRenderer(new AccountListCellRenderer());
+        getCbxEntryDocumentType().addActionListener(setNewDocumentNumberListener);
         getBtnSaveRecord().addActionListener(e -> saveRecord());
         getBtnDeleteRecord().addActionListener(e -> deleteRecord());
         getBtnUpdateRecord().addActionListener(e -> updateRecord());
@@ -546,39 +552,89 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             showError("El Registro no puede estar vacia.");
             return;
         }
-        JournalEntry entry;
+
         Optional<JournalEntry> optional = getJournalEntryByForm(journalEntry.get());
         if (optional.isEmpty()) {
             showError("El Registro no existe.");
             return;
         }
-        entry = optional.get();
+        JournalEntry entry = optional.get();
 
-        System.err.println("Edited");
-        System.out.println(entry);
         try {
-            entry = journalRepository.update(entry);
+            Integer documenNo = Integer.parseInt(getTxtEntryDocumentNumber().getText());
+            DocumentType newDocType = cbxModelDocumentType.getSelectedItem();
+
+            // Si el PK NO cambió, solo actualizar
+            if (documenNo.equals(entry.getId().getDocumentNumber())
+                    && entry.getId().getDocumentType().equals(newDocType)) {
+                entry = journalRepository.update(entry);
+                showMessage("El Registro actualizado exitosamente.");
+                prepareToEditEntry(entry);
+                return;
+            }
+
+            // Si el PK SÍ cambió, crear nueva entrada y eliminar la vieja
+            JournalEntryPK oldPK = entry.getId();
+            JournalEntryPK newPK = new JournalEntryPK(documenNo, newDocType);
+
+            if (journalRepository.existsById(newPK)) {
+                showMessage("Ya existe una Entrada con el numero de documento: " + documenNo
+                        + " y tipo de documento: " + newDocType.getName() + ".");
+                return;
+            }
+
+            // Crear nueva entrada con el nuevo PK
+            JournalEntry newEntry = new JournalEntry(user);
+            newEntry.setId(newPK);
+            newEntry.setName(entry.getName());
+            newEntry.setConcept(entry.getConcept());
+            newEntry.setCheckNumber(entry.getCheckNumber());
+            newEntry.setDate(entry.getDate());
+
+            // Copiar los ledgerRecords
+            for (LedgerRecord oldRecord : entry.getLedgerRecords()) {
+                LedgerRecord newRecord = new LedgerRecord(user);
+                newRecord.setJournalEntry(newEntry);
+                newRecord.setReference(oldRecord.getReference());
+                newRecord.setAccount(oldRecord.getAccount());
+                newRecord.setDebit(oldRecord.getDebit());
+                newRecord.setCredit(oldRecord.getCredit());
+
+                newEntry.getLedgerRecords().add(newRecord);
+            }
+
+            // Guardar la nueva entrada
+            journalRepository.save(newEntry);
+
+            // Eliminar la antigua
+            journalRepository.deleteById(oldPK);
+
             showMessage("El Registro actualizado exitosamente.");
-            prepareToEditEntry(entry);
+            prepareToEditEntry(newEntry);
+
+        } catch (NumberFormatException e) {
+            showMessage("El Documento No. debe ser un numero.");
         } catch (RepositoryException e) {
             String fullMessage = switch (e.getCause()) {
                 case IllegalArgumentException c -> "Los datos no son validos";
-                case ObjectDeletedException c -> "No se puede editar un cuenta eliminado";
-                case ConstraintViolationException c -> "Operacion no valido";
+                case ObjectDeletedException c -> "No se puede editar una entrada eliminada";
+                case ConstraintViolationException c -> "Operacion no valida";
                 case null, default -> e.getMessage();
             };
             showError("Error al guardar: " + fullMessage);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            showError("Error inesperado: " + e.getMessage());
         }
     }
 
     public void prepareToEditEntry(@NotNull JournalEntry je) {
         journalEntry = Optional.of(je);
+        getCbxEntryDocumentType().removeActionListener(setNewDocumentNumberListener);
         getTxtEntryDocumentNumber().setEnabled(true);
         getTxtEntryDocumentNumber().setText(je.getId().getDocumentNumber().toString());
         getCbxEntryDocumentType().setEnabled(true);
         getCbxEntryDocumentType().setSelectedItem(je.getId().getDocumentType());
+        getCbxEntryDocumentType().addActionListener(setNewDocumentNumberListener);
         getTxtEntryName().setText(je.getName());
         getTaEntryConcept().setText(je.getConcept());
         getSpnEntryDate().getModel().setValue(je.getDate());
@@ -603,6 +659,8 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
 
     private void prepareToAddEntry() {
         journalEntry = Optional.of(new JournalEntry());
+        getCbxEntryDocumentType().removeActionListener(setNewDocumentNumberListener);
+        getCbxEntryDocumentType().addActionListener(setNewDocumentNumberListener);
         getTxtEntryDocumentNumber().setEnabled(true);
         getCbxEntryDocumentType().setEnabled(true);
         getCbxEntryDocumentType().setSelectedItem(DocumentType.INCOME);
@@ -648,12 +706,6 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         }
         var list = accountRepository.findAll();
         cbxModelAccount.setData(list);
-    }
-
-    private void setNewDocumentNumber() {
-        JournalEntry last = journalRepository
-                .findLast(DocumentType.valueOf(getCbxEntryDocumentType().getSelectedItem().toString()));
-        getTxtEntryDocumentNumber().setText(String.valueOf(last.getId().getDocumentNumber() + 1));
     }
 
     public LedgerRecordRepository getLedgerRecordRepository() {
