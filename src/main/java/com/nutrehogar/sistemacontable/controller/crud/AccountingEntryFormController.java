@@ -171,8 +171,8 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         getCbxRecordAccount().setModel(cbxModelAccount);
         getCbxEntryDocumentType().setModel(cbxModelDocumentType);
         getCbxEntryDocumentType().setRenderer(new CustomListCellRenderer());
-        getCbxRecordAccount().setRenderer(new AccountListCellRenderer());
         getCbxEntryDocumentType().addActionListener(setNewDocumentNumberListener);
+        getCbxRecordAccount().setRenderer(new AccountListCellRenderer());
         getBtnSaveRecord().addActionListener(e -> saveRecord());
         getBtnDeleteRecord().addActionListener(e -> deleteRecord());
         getBtnUpdateRecord().addActionListener(e -> updateRecord());
@@ -564,7 +564,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             Integer documenNo = Integer.parseInt(getTxtEntryDocumentNumber().getText());
             DocumentType newDocType = cbxModelDocumentType.getSelectedItem();
 
-            // Si el PK NO cambió, solo actualizar
+            // Si el PK NO cambió, solo actualizar. se supone xd
             if (documenNo.equals(entry.getId().getDocumentNumber())
                     && entry.getId().getDocumentType().equals(newDocType)) {
                 entry = journalRepository.update(entry);
@@ -573,7 +573,12 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
                 return;
             }
 
-            // Si el PK SÍ cambió, crear nueva entrada y eliminar la vieja
+            /**
+             * Si el PK si cambio, crear nueva entrada y eliminar la vieja.
+             * 
+             * no se si por hibernate o sql, no deja simplemente editar el Id directo,
+             * por lo que se crea una copia con el nuevo Id, y lo mismo con los records.
+             */
             JournalEntryPK oldPK = entry.getId();
             JournalEntryPK newPK = new JournalEntryPK(documenNo, newDocType);
 
