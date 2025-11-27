@@ -3,6 +3,9 @@
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
     <Property name="opaque" type="boolean" value="false"/>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[524, 664]"/>
+    </Property>
   </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -21,7 +24,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="160" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="93" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="pnlAside" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -32,13 +35,11 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                    <Component id="jScrollPane1" alignment="1" max="32767" attributes="0"/>
-                    <Component id="pnlAside" alignment="1" pref="600" max="32767" attributes="0"/>
-                     </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-               </Group>
-           </Group>
-       </Group>
+                  <Component id="jScrollPane1" max="32767" attributes="0"/>
+                  <Component id="pnlAside" pref="658" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+      </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
@@ -53,22 +54,27 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
-                <Column editable="true" title="Title 1" type="java.lang.Object"/>
-                <Column editable="true" title="Title 2" type="java.lang.Object">
+                <Column editable="true" title="Title 1" type="java.lang.Object">
+                  <Data value="1"/>
                   <Data value="a"/>
                   <Data value="null"/>
+                  <Data value="null"/>
+                </Column>
+                <Column editable="true" title="Title 2" type="java.lang.Object">
+                  <Data value="2"/>
+                  <Data value="b"/>
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
                 <Column editable="true" title="Title 3" type="java.lang.Object">
-                  <Data value="null"/>
-                  <Data value="aa"/>
+                  <Data value="3"/>
+                  <Data value="c"/>
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
                 <Column editable="true" title="Title 4" type="java.lang.Object">
-                  <Data value="a"/>
-                  <Data value="null"/>
+                  <Data value="4"/>
+                  <Data value="d"/>
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
@@ -81,6 +87,9 @@
     <Container class="javax.swing.JPanel" name="pnlAside">
       <Properties>
         <Property name="opaque" type="boolean" value="false"/>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[419, 652]"/>
+        </Property>
       </Properties>
 
       <Layout>
@@ -91,7 +100,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="pnlOperations" alignment="1" max="32767" attributes="0"/>
                       <Component id="pnlForm" alignment="1" max="32767" attributes="0"/>
-                      <Component id="auditablePanel" alignment="0" max="32767" attributes="0"/>
+                      <Component id="auditablePanel" alignment="0" pref="407" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -101,11 +110,11 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Component id="pnlOperations" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="pnlForm" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="auditablePanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="35" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -265,7 +274,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="lblSave" min="-2" pref="250" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnSave" pref="123" max="32767" attributes="0"/>
+                              <Component id="btnSave" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="lblUpdate" min="-2" pref="250" max="-2" attributes="0"/>
@@ -328,7 +337,8 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="txtAccountName"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Nombre de Cuenta:"/>
+                <Property name="text" type="java.lang.String" value="Nombre de cuenta:"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtAccountName">
@@ -339,7 +349,8 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="txtAccountId"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="C&#xf3;digo de Cuenta:"/>
+                <Property name="text" type="java.lang.String" value="C&#xf3;digo de cuenta:"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lblAccountTypeId">
@@ -361,7 +372,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="cbxAccountType"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Tipo De Cuenta:"/>
+                <Property name="text" type="java.lang.String" value="Tipo de cuenta:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="cbxAccountType">
@@ -380,7 +391,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="cbxAccountSubtype"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="SubTipo Cuenta:"/>
+                <Property name="text" type="java.lang.String" value="Subtipo de cuenta:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="btnSave">
@@ -415,7 +426,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="btnSave"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;p&gt;Guarda la nueva cuenta registrada en el formulario, en la base de datos&lt;/p&gt;&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;p&gt;Guarda la nueva cuenta registrada en la base de datos&lt;/p&gt;&lt;/html&gt;"/>
                 <Property name="verticalAlignment" type="int" value="1"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[250, 40]"/>
@@ -437,6 +448,13 @@
           </SubComponents>
         </Container>
         <Component class="com.nutrehogar.sistemacontable.ui.component.AuditablePanel" name="auditablePanel">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                <TitledBorder title="Auditor&#xed;a"/>
+              </Border>
+            </Property>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

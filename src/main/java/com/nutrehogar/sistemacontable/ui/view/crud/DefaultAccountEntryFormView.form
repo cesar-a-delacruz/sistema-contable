@@ -65,22 +65,27 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
-                <Column editable="true" title="Title 1" type="java.lang.Object"/>
-                <Column editable="true" title="Title 2" type="java.lang.Object">
+                <Column editable="true" title="Title 1" type="java.lang.Object">
+                  <Data value="1"/>
                   <Data value="a"/>
                   <Data value="null"/>
+                  <Data value="null"/>
+                </Column>
+                <Column editable="true" title="Title 2" type="java.lang.Object">
+                  <Data value="2"/>
+                  <Data value="b"/>
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
                 <Column editable="true" title="Title 3" type="java.lang.Object">
-                  <Data value="null"/>
-                  <Data value="aa"/>
+                  <Data value="3"/>
+                  <Data value="c"/>
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
                 <Column editable="true" title="Title 4" type="java.lang.Object">
-                  <Data value="a"/>
-                  <Data value="null"/>
+                  <Data value="4"/>
+                  <Data value="d"/>
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
@@ -103,7 +108,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="pnlRecordForm" alignment="0" max="32767" attributes="0"/>
                       <Component id="pnlLedgerRecordOperations" alignment="0" max="32767" attributes="0"/>
-                      <Component id="auditablePanel" alignment="1" pref="409" max="32767" attributes="0"/>
+                      <Component id="auditablePanel" alignment="1" min="-2" pref="409" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -116,7 +121,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="pnlRecordForm" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="auditablePanel" min="-2" max="-2" attributes="0"/>
+                  <Component id="auditablePanel" max="32767" attributes="0"/>
                   <EmptySpace pref="19" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -239,7 +244,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title=" Registro Contable "/>
+                <TitledBorder title="Formulario de Registros"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -255,12 +260,12 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="lblRecordAccount" alignment="1" max="32767" attributes="0"/>
                                   <Component id="lblRecordReference" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="lblRecordType" alignment="1" pref="120" max="32767" attributes="0"/>
+                                  <Component id="lblRecordType" alignment="1" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="rbtRecordDebit" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="rbtRecordCredit" pref="72" max="32767" attributes="0"/>
+                              <Component id="rbtRecordCredit" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="123" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
@@ -373,7 +378,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="btnSave"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;p&gt;Agrega el nuevo registro a la entrada contable&lt;/p&gt;&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;p&gt;Agrega el nuevo registro a la entrada&lt;/p&gt;&lt;/html&gt;"/>
                 <Property name="verticalAlignment" type="int" value="1"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[250, 40]"/>
@@ -385,7 +390,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="btnUpdate"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;p&gt;Actualiza los datos de la entrada editada&lt;/p&gt;&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;p&gt;Actualiza los datos del registro editado&lt;/p&gt;&lt;/html&gt;"/>
                 <Property name="verticalAlignment" type="int" value="1"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[250, 40]"/>
@@ -409,7 +414,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="rbtRecordDebit"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Tipo de Registro:"/>
+                <Property name="text" type="java.lang.String" value="Tipo de registro:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="rbtRecordDebit">
@@ -431,6 +436,15 @@
           </SubComponents>
         </Container>
         <Component class="com.nutrehogar.sistemacontable.ui.component.AuditablePanel" name="auditablePanel">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                <TitledBorder title="Auditor&#xed;a"/>
+              </Border>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+            <Property name="name" type="java.lang.String" value="" noResource="true"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
@@ -438,7 +452,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="  Entrada de Diario  "/>
+            <TitledBorder title="Formulario de Entrada"/>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -464,7 +478,7 @@
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                  <Component id="spnEntryDate" min="-2" pref="116" max="-2" attributes="0"/>
+                                  <Component id="spnEntryDate" min="-2" pref="118" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -602,7 +616,7 @@
             <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
               <ComponentRef name="txtEntryDocumentNumber"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Documento No:"/>
+            <Property name="text" type="java.lang.String" value="No Documento:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtEntryDocumentNumber">
@@ -624,7 +638,7 @@
             <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
               <ComponentRef name="txtEntryCheckNumber"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Cheque No:"/>
+            <Property name="text" type="java.lang.String" value="No Cheque:"/>
           </Properties>
         </Component>
         <Component class="com.nutrehogar.sistemacontable.ui.component.LocalDateSpinner" name="spnEntryDate">
@@ -633,7 +647,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Guardar"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
-            <Property name="actionCommand" type="java.lang.String" value="Guardar"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[73, 23]"/>
             </Property>
@@ -676,7 +689,7 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Tipo de Documento"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Cursor Por defecto"/>
+              <Color id="Default Cursor"/>
             </Property>
           </Properties>
           <AccessibilityProperties>
@@ -692,7 +705,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Documentos Fuente"/>
+            <TitledBorder title="Documentos Exportables"/>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>

@@ -26,6 +26,10 @@ public class DefaultAccountEntryFormView extends CRUDView {
      */
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -88,8 +92,8 @@ public class DefaultAccountEntryFormView extends CRUDView {
 
         tblData.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
-                        { null, "a", null, "a" },
-                        { null, null, "aa", null },
+                        { "1", "2", "3", "4" },
+                        { "a", "b", "c", "d" },
                         { null, null, null, null },
                         { null, null, null, null }
                 },
@@ -179,7 +183,7 @@ public class DefaultAccountEntryFormView extends CRUDView {
                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(btnDelete))));
 
-        pnlRecordForm.setBorder(javax.swing.BorderFactory.createTitledBorder(" Registro Contable "));
+        pnlRecordForm.setBorder(javax.swing.BorderFactory.createTitledBorder("Formulario de Registros"));
         pnlRecordForm.setOpaque(false);
 
         lblRecordAmount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -198,12 +202,12 @@ public class DefaultAccountEntryFormView extends CRUDView {
         btnUpdate.setText("Actualizar");
 
         lblSave.setLabelFor(btnSave);
-        lblSave.setText("<html><p>Agrega el nuevo registro a la entrada contable</p></html>");
+        lblSave.setText("<html><p>Agrega el nuevo registro a la entrada</p></html>");
         lblSave.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblSave.setPreferredSize(new java.awt.Dimension(250, 40));
 
         lblUpdate.setLabelFor(btnUpdate);
-        lblUpdate.setText("<html><p>Actualiza los datos de la entrada editada</p></html>");
+        lblUpdate.setText("<html><p>Actualiza los datos del registro editado</p></html>");
         lblUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblUpdate.setPreferredSize(new java.awt.Dimension(250, 40));
 
@@ -213,7 +217,7 @@ public class DefaultAccountEntryFormView extends CRUDView {
 
         lblRecordType.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecordType.setLabelFor(rbtRecordDebit);
-        lblRecordType.setText("Tipo de Registro:");
+        lblRecordType.setText("Tipo de registro:");
 
         bgRecordType.add(rbtRecordDebit);
         rbtRecordDebit.setText("Débito");
@@ -242,13 +246,13 @@ public class DefaultAccountEntryFormView extends CRUDView {
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(lblRecordType,
                                                                 javax.swing.GroupLayout.Alignment.TRAILING,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE, 120,
-                                                                Short.MAX_VALUE))
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(rbtRecordDebit)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(rbtRecordCredit, javax.swing.GroupLayout.DEFAULT_SIZE, 72,
-                                                        Short.MAX_VALUE)
+                                                .addComponent(rbtRecordCredit, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addGap(123, 123, 123))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecordFormLayout
                                                 .createSequentialGroup()
@@ -327,6 +331,10 @@ public class DefaultAccountEntryFormView extends CRUDView {
                                         .addComponent(btnUpdate))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
+        auditablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Auditoría"));
+        auditablePanel.setToolTipText("");
+        auditablePanel.setName(""); // NOI18N
+
         javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);
         pnlAsideLayout.setHorizontalGroup(
@@ -339,7 +347,8 @@ public class DefaultAccountEntryFormView extends CRUDView {
                                         .addComponent(pnlLedgerRecordOperations, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(auditablePanel, javax.swing.GroupLayout.Alignment.TRAILING,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE))
+                                                javax.swing.GroupLayout.PREFERRED_SIZE, 409,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap()));
         pnlAsideLayout.setVerticalGroup(
                 pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -350,11 +359,11 @@ public class DefaultAccountEntryFormView extends CRUDView {
                                 .addComponent(pnlRecordForm, javax.swing.GroupLayout.PREFERRED_SIZE,
                                         javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(auditablePanel, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(auditablePanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addContainerGap(19, Short.MAX_VALUE)));
 
-        pnlEntryForm.setBorder(javax.swing.BorderFactory.createTitledBorder("  Entrada de Diario  "));
+        pnlEntryForm.setBorder(javax.swing.BorderFactory.createTitledBorder("Formulario de Entrada"));
         pnlEntryForm.setOpaque(false);
 
         lblEntryName.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -376,7 +385,7 @@ public class DefaultAccountEntryFormView extends CRUDView {
 
         lblEntryDocumentNumber.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblEntryDocumentNumber.setLabelFor(txtEntryDocumentNumber);
-        lblEntryDocumentNumber.setText("Documento No:");
+        lblEntryDocumentNumber.setText("No Documento:");
 
         lblEntryDate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblEntryDate.setLabelFor(spnEntryDate);
@@ -384,11 +393,10 @@ public class DefaultAccountEntryFormView extends CRUDView {
 
         lblEntryCeckNumber.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblEntryCeckNumber.setLabelFor(txtEntryCheckNumber);
-        lblEntryCeckNumber.setText("Cheque No:");
+        lblEntryCeckNumber.setText("No Cheque:");
 
         btnSaveEntry.setText("Guardar");
         btnSaveEntry.setToolTipText("");
-        btnSaveEntry.setActionCommand("Guardar");
         btnSaveEntry.setMaximumSize(new java.awt.Dimension(73, 23));
         btnSaveEntry.setMinimumSize(new java.awt.Dimension(73, 23));
         btnSaveEntry.setPreferredSize(new java.awt.Dimension(73, 23));
@@ -432,7 +440,7 @@ public class DefaultAccountEntryFormView extends CRUDView {
                                                                         .addGap(0, 0, Short.MAX_VALUE)
                                                                         .addComponent(spnEntryDate,
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                116,
+                                                                                118,
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                         .addPreferredGap(
                                                                                 javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
@@ -550,7 +558,7 @@ public class DefaultAccountEntryFormView extends CRUDView {
 
         cbxEntryDocumentType.getAccessibleContext().setAccessibleName("Tipo de Documento");
 
-        pnlSourceDocuments.setBorder(javax.swing.BorderFactory.createTitledBorder("Documentos Fuente"));
+        pnlSourceDocuments.setBorder(javax.swing.BorderFactory.createTitledBorder("Documentos Exportables"));
         pnlSourceDocuments.setOpaque(false);
 
         btnGeneratePaymentVoucher.setText("Comprobante");

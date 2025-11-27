@@ -34,7 +34,7 @@ public class JournalController extends BusinessController<JournalTableDTO, Journ
 
     @Override
     protected void initialize() {
-        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo Documento", "Cuenta", "Referencia", "Debíto",
+        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo de Documento", "Cuenta", "Referencia", "Débito",
                 "Crédito") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {

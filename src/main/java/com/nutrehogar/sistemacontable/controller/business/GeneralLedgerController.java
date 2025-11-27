@@ -66,7 +66,7 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
 
     @Override
     protected void initialize() {
-        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo Documento", "Cuenta", "Referencia", "Debíto",
+        setTblModel(new CustomTableModel("Fecha", "Comprobante", "Tipo de Documento", "Cuenta", "Referencia", "Débito",
                 "Crédito", "Saldo") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {

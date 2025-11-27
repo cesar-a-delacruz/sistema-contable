@@ -3,6 +3,9 @@
 <Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
     <Property name="opaque" type="boolean" value="false"/>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[524, 664]"/>
+    </Property>
   </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -32,10 +35,10 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                    <Component id="jScrollPane1" alignment="1" max="32767" attributes="0"/>
-                    <Component id="pnlAside" alignment="1" pref="600" max="32767" attributes="0"/>
-                    </Group>
-                <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="1" max="32767" attributes="0"/>
+                  <Component id="pnlAside" alignment="1" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -52,22 +55,27 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
-                <Column editable="true" title="Title 1" type="java.lang.Object"/>
-                <Column editable="true" title="Title 2" type="java.lang.Object">
+                <Column editable="true" title="Title 1" type="java.lang.Object">
+                  <Data value="1"/>
                   <Data value="a"/>
                   <Data value="null"/>
                   <Data value="null"/>
+                </Column>
+                <Column editable="true" title="Title 2" type="java.lang.Object">
+                  <Data value="2"/>
+                  <Data value="b"/>
+                  <Data value=""/>
                   <Data value="null"/>
                 </Column>
                 <Column editable="true" title="Title 3" type="java.lang.Object">
-                  <Data value="null"/>
-                  <Data value="aa"/>
+                  <Data value="3"/>
+                  <Data value="c"/>
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
                 <Column editable="true" title="Title 4" type="java.lang.Object">
-                  <Data value="a"/>
-                  <Data value="null"/>
+                  <Data value="4"/>
+                  <Data value="d"/>
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
@@ -210,7 +218,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="spnStart"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Inicio de Per&#xed;odo:"/>
+                <Property name="text" type="java.lang.String" value="Inicio de per&#xed;odo:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="btnResetStart">
@@ -231,7 +239,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="spnEnd"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="final de Per&#xed;odo:"/>
+                <Property name="text" type="java.lang.String" value="Final de per&#xed;odo:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="btnEdit">
@@ -254,6 +262,13 @@
           </SubComponents>
         </Container>
         <Component class="com.nutrehogar.sistemacontable.ui.component.AuditablePanel" name="auditablePanel">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                <TitledBorder title="Auditor&#xed;a"/>
+              </Border>
+            </Property>
+          </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnGenerateReport">
           <Properties>

@@ -56,7 +56,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
 
     @Override
     protected void initialize() {
-        setTblModel(new CustomTableModel("Referencia", "Cuenta", "Debíto", "Crédito") {
+        setTblModel(new CustomTableModel("Referencia", "Cuenta", "Débito", "Crédito") {
             @Override
             public int getRowCount() {
                 return tblDataList.size();

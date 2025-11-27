@@ -15,6 +15,7 @@ public class DefaultUserView extends CRUDView {
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -48,8 +49,8 @@ public class DefaultUserView extends CRUDView {
 
         tblData.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
-                        { null, "a", null, "a" },
-                        { null, null, "aa", null },
+                        { "1", "2", "3", "4" },
+                        { "a", "b", "c", "d" },
                         { null, null, null, null },
                         { null, null, null, null }
                 },
@@ -71,14 +72,14 @@ public class DefaultUserView extends CRUDView {
         lblAdd.setPreferredSize(new java.awt.Dimension(250, 40));
 
         lblEdit.setLabelFor(btnEdit);
-        lblEdit.setText("<html><p>Editar la cuenta seleccionada</p></html>");
+        lblEdit.setText("<html><p>Editar el usuario seleccionado</p></html>");
         lblEdit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblEdit.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnEdit.setText("Editar");
 
         lblDelete.setLabelFor(btnDelete);
-        lblDelete.setText("<html><p>Elimina la cuenta seleccionada</p></html>");
+        lblDelete.setText("<html><p>Elimina el usuario seleccionado</p></html>");
         lblDelete.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblDelete.setPreferredSize(new java.awt.Dimension(250, 40));
 
@@ -151,7 +152,7 @@ public class DefaultUserView extends CRUDView {
         btnUpdate.setText("Actualizar");
 
         lblSave.setLabelFor(btnSave);
-        lblSave.setText("<html><p>Guarda el nuevo usuario registrada en el formulario, en la base de datos</p></html>");
+        lblSave.setText("<html><p>Guarda el nuevo usuario registrado en la base de datos</p></html>");
         lblSave.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblSave.setPreferredSize(new java.awt.Dimension(250, 40));
 
@@ -261,6 +262,8 @@ public class DefaultUserView extends CRUDView {
                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(btnUpdate))));
+
+        auditablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Auditoría"));
 
         javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);

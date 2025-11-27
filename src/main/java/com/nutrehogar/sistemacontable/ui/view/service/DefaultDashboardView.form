@@ -156,7 +156,8 @@
                 </Component>
                 <Component class="com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton" name="btnShowAccountSubtypeView">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="SubtipoCuentas"/>
+                    <Property name="text" type="java.lang.String" value="Subtipos de Cuentas"/>
+                    <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                 </Component>
                 <Component class="com.nutrehogar.sistemacontable.ui.component.DefaultPanelButton" name="btnShowGeneralLedgerView">
