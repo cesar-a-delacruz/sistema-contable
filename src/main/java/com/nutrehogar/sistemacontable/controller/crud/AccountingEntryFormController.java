@@ -51,6 +51,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         this.journalRepository = journalRepository;
         this.accountRepository = accountRepository;
         loadDataAccount();
+        setNewDocumentNumber();
     }
 
     @Override
@@ -79,9 +80,7 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
             }
         });
         setNewDocumentNumberListener = (e) -> {
-            JournalEntry last = journalRepository
-                    .findLast(DocumentType.valueOf(getCbxEntryDocumentType().getSelectedItem().toString()));
-            getTxtEntryDocumentNumber().setText(String.valueOf(last.getId().getDocumentNumber() + 1));
+            setNewDocumentNumber();
         };
         cbxModelAccount = new CustomComboBoxModel<>(List.of());
         cbxModelDocumentType = new CustomComboBoxModel<>(DocumentType.values());
@@ -575,7 +574,6 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
 
             /**
              * Si el PK si cambio, crear nueva entrada y eliminar la vieja.
-             * 
              * no se si por hibernate o sql, no deja simplemente editar el Id directo,
              * por lo que se crea una copia con el nuevo Id, y lo mismo con los records.
              */
@@ -711,6 +709,12 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         }
         var list = accountRepository.findAll();
         cbxModelAccount.setData(list);
+    }
+
+    private void setNewDocumentNumber() {
+        JournalEntry last = journalRepository
+                .findLast(DocumentType.valueOf(getCbxEntryDocumentType().getSelectedItem().toString()));
+        getTxtEntryDocumentNumber().setText(String.valueOf(last.getId().getDocumentNumber() + 1));
     }
 
     public LedgerRecordRepository getLedgerRecordRepository() {
