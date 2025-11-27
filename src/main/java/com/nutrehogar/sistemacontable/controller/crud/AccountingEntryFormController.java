@@ -366,9 +366,6 @@ public class AccountingEntryFormController extends SimpleController<LedgerRecord
         je.setCheckNumber(getTxtEntryCheckNumber().getText());
         je.setDate(getSpnEntryDate().getValue());
 
-        // TODO no se debe actualizar, se actualiza solo al editar los registros con
-        updateRecord();
-
         je.setLedgerRecords(getData());
 
         for (var record : getData()) {
