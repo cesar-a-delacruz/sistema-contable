@@ -200,58 +200,62 @@ public class GeneralLedgerController extends BusinessController<GeneralLedgerTab
             if (!getRbtSearchText().isSelected()) {
                 Account accountSelectedItem = cbxModelAccount.getSelectedItem();
                 if (accountSelectedItem == null) {
-                    return null;
+                    ledgerRecords = List.of();
+                } else {
+                    ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccount(accountSelectedItem,
+                            spnModelEndPeriod.getValue());
                 }
-                ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccount(accountSelectedItem,
-                        spnModelEndPeriod.getValue());
             } else {
                 if (getTxtId().getText().isBlank() || getTxtId().getText().length() > 5) {
                     showMessage("Inserte un número entre 1 y 5.");
-                    return null;
+                    ledgerRecords = List.of();
+                } else {
+                    ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccountId(
+                            Integer.parseInt(getTxtId().getText()),
+                            spnModelEndPeriod.getValue());
                 }
-                ledgerRecords = ledgerRecordRepository.findByDateRangeAndAccountId(
-                        Integer.parseInt(getTxtId().getText()),
-                        spnModelEndPeriod.getValue());
             }
 
             List<LedgerRecord> lrInRange = ledgerRecords.stream()
                     .filter(record -> !record.getJournalEntry().getDate().isBefore(spnModelStartPeriod.getValue()))
                     .toList();
-            // 🔹 Usar Stream para mapear, ordenar y calcular totales
-            List<GeneralLedgerTableDTO> generalLedgers = lrInRange.stream()
-                    .map(record -> new GeneralLedgerTableDTO(
-                            record.getCreatedBy(),
-                            record.getUpdatedBy(),
-                            record.getCreatedAt(),
-                            record.getUpdatedAt(),
-                            record.getJournalEntry().getId(),
-                            record.getJournalEntry().getDate(),
-                            record.getJournalEntry().getId().getDocumentType(),
-                            record.getAccount().getId(),
-                            record.getAccount().getAccountSubtype().getAccountType(),
-                            record.getJournalEntry().getId().getDocumentNumber(),
-                            record.getReference(),
-                            record.getDebit(),
-                            record.getCredit(),
-                            BigDecimal.ZERO))
-                    .sorted(Comparator.comparing(GeneralLedgerTableDTO::getEntryDate)) // Ordenar por fecha
-                    .toList();
-
-            var debitSumAll = ledgerRecords.stream().map(record -> record.getDebit()).filter(Objects::nonNull)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            var creditSumAll = ledgerRecords.stream().map(record -> record.getCredit()).filter(Objects::nonNull)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             // 🔹 Calcular balances
             var balanceAll = BigDecimal.ZERO;
-            for (LedgerRecord lr : ledgerRecords) {
-                balanceAll = lr.getAccount().getAccountSubtype().getAccountType().getBalance(balanceAll, lr.getCredit(),
-                        lr.getDebit());
+
+            var generalDTOs = new ArrayList<GeneralLedgerTableDTO>(List.of());
+
+            for (var record : lrInRange) {
+                balanceAll = record.getAccount().getAccountSubtype().getAccountType().getBalance(balanceAll,
+                        record.getCredit(),
+                        record.getDebit());
+                generalDTOs.add(new GeneralLedgerTableDTO(
+                        record.getCreatedBy(),
+                        record.getUpdatedBy(),
+                        record.getCreatedAt(),
+                        record.getUpdatedAt(),
+                        record.getJournalEntry().getId(),
+                        record.getJournalEntry().getDate(),
+                        record.getJournalEntry().getId().getDocumentType(),
+                        record.getAccount().getId(),
+                        record.getAccount().getAccountSubtype().getAccountType(),
+                        record.getJournalEntry().getId().getDocumentNumber(),
+                        record.getReference(),
+                        record.getDebit(),
+                        record.getCredit(),
+                        balanceAll));
             }
+            // 🔹 Usar Stream para mapear, ordenar y calcular totales
+            var generalLedgers = new ArrayList<>(generalDTOs.stream()
+                    .toList());
+
+            var debitSumAll = ledgerRecords.stream().map(LedgerRecord::getDebit).filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            var creditSumAll = ledgerRecords.stream().map(LedgerRecord::getCredit).filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             // 🔹 Agregar total al final de la lista
             var totalDTO = new GeneralLedgerTableDTO("TOTAL", debitSumAll, creditSumAll, balanceAll);
-            generalLedgers = new ArrayList<>(generalLedgers);
             generalLedgers.add(totalDTO);
             return generalLedgers;
         }
