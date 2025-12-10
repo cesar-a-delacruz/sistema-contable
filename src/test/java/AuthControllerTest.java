@@ -18,10 +18,13 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
-    @Mock private UserRepository mockUserRepository;
-    @Mock private Context mockContext;
+    @Mock
+    private UserRepository mockUserRepository;
+    @Mock
+    private Context mockContext;
 
-    @Captor private ArgumentCaptor<User> userCaptor;
+    @Captor
+    private ArgumentCaptor<User> userCaptor;
 
     private AuthControllerTestable controllerTestable;
     private User testUserPlain;
@@ -31,7 +34,7 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        controllerTestable = new AuthControllerTestable(mockUserRepository, mockContext);
+        controllerTestable = new AuthControllerTestable(mockContext);
 
         // Usuario con contraseña en texto plano (caso antiguo)
         testUserPlain = new User();

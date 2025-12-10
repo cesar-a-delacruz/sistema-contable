@@ -9,9 +9,12 @@ import com.nutrehogar.sistemacontable.report.ReportService;
 import com.nutrehogar.sistemacontable.ui.builder.*;
 import com.nutrehogar.sistemacontable.ui.view.crud.DefaultAccountSubtypeView;
 
+import lombok.Getter;
+
 import javax.swing.*;
 import javax.swing.text.PlainDocument;
 
+@Getter
 public class AccountSubtypeController extends CRUDController<AccountSubtype, Integer> {
     private CustomComboBoxModel<AccountType> cbxModelAccountType;
     private DocumentSizeFilter documentSizeFilter;
@@ -24,7 +27,7 @@ public class AccountSubtypeController extends CRUDController<AccountSubtype, Int
     }
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         setTblModel(new CustomTableModel("Código", "Nombre", "Tipo de Cuenta") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
@@ -48,13 +51,13 @@ public class AccountSubtypeController extends CRUDController<AccountSubtype, Int
     }
 
     @Override
-    protected void updateView() {
+    public void updateView() {
         getData().sort(new AccountSubtype.Comparator());
         super.updateView();
     }
 
     @Override
-    protected void setupViewListeners() {
+    public void setupViewListeners() {
         super.setupViewListeners();
         getCbxAccountType().setRenderer(new CustomListCellRenderer());
         getCbxAccountType().setModel(cbxModelAccountType);
@@ -72,7 +75,7 @@ public class AccountSubtypeController extends CRUDController<AccountSubtype, Int
     }
 
     @Override
-    protected void prepareToEdit() {
+    public void prepareToEdit() {
         super.prepareToEdit();
         getTxtAccountSubtypeName().setText(getSelected().getName());
         getTxtAccountSubtypeId().setText(getSelected().getCanonicalId());
@@ -83,7 +86,7 @@ public class AccountSubtypeController extends CRUDController<AccountSubtype, Int
     }
 
     @Override
-    protected void prepareToAdd() {
+    public void prepareToAdd() {
         super.prepareToAdd();
         getTxtAccountSubtypeId().setEnabled(true);
         getCbxAccountType().setEnabled(true);
@@ -93,12 +96,12 @@ public class AccountSubtypeController extends CRUDController<AccountSubtype, Int
     }
 
     @Override
-    protected Integer prepareToDelete() {
+    public Integer prepareToDelete() {
         return getSelected().getId();
     }
 
     @Override
-    protected AccountSubtype prepareToSave() {
+    public AccountSubtype prepareToSave() {
         int id;
         try {
             id = Integer.parseInt(getTxtAccountSubtypeId().getText());
@@ -130,7 +133,7 @@ public class AccountSubtypeController extends CRUDController<AccountSubtype, Int
     }
 
     @Override
-    protected AccountSubtype prepareToUpdate() {
+    public AccountSubtype prepareToUpdate() {
         if (getTxtAccountSubtypeName().getText().isBlank()) {
             showMessage("Ningun campo puede estar vacio.");
             return null;

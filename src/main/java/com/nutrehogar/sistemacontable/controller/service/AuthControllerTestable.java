@@ -2,24 +2,22 @@ package com.nutrehogar.sistemacontable.controller.service;
 
 import com.nutrehogar.sistemacontable.application.config.Context;
 import com.nutrehogar.sistemacontable.application.config.PasswordHasher;
-import com.nutrehogar.sistemacontable.base.domain.repository.UserRepository;
 import com.nutrehogar.sistemacontable.domain.model.User;
 
 /**
- * Versión simplificada del AuthController diseñada específicamente para pruebas unitarias.
- * No utiliza componentes Swing ni ventanas, y expone directamente los valores relevantes
+ * Versión simplificada del AuthController diseñada específicamente para pruebas
+ * unitarias.
+ * No utiliza componentes Swing ni ventanas, y expone directamente los valores
+ * relevantes
  * para poder validar la lógica sin depender de la interfaz gráfica.
  */
 public class AuthControllerTestable {
-
-    private final UserRepository userRepository;
     private final Context context;
 
     public User authenticatedUser;
     public String lastMessage;
 
-    public AuthControllerTestable(UserRepository userRepository, Context context) {
-        this.userRepository = userRepository;
+    public AuthControllerTestable(Context context) {
         this.context = context;
     }
 
@@ -46,7 +44,7 @@ public class AuthControllerTestable {
 
         if (passwordCorrect) {
             authenticatedUser = user;
-            context.registerBean(User.class, user);  // Efecto equivalente al AuthController real
+            context.registerBean(User.class, user); // Efecto equivalente al AuthController real
         } else {
             authenticatedUser = null;
             lastMessage = "Contraseña Incorrecta.";

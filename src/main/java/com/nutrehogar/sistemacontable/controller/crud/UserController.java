@@ -9,11 +9,14 @@ import com.nutrehogar.sistemacontable.ui.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui.view.crud.DefaultUserView;
 
+import lombok.Getter;
+
 import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class UserController extends CRUDController<User, Integer> {
-    private CustomComboBoxModel<PermissionType> cbxModelPermissions;
+    public CustomComboBoxModel<PermissionType> cbxModelPermissions;
 
     public UserController(UserRepository repository, DefaultUserView view, ReportService reportService, User user) {
         super(repository, view, reportService, user);
@@ -21,7 +24,7 @@ public class UserController extends CRUDController<User, Integer> {
     }
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         setTblModel(new CustomTableModel("Nombre", "Contraseña", "Habilitado", "Permiso") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
@@ -49,14 +52,14 @@ public class UserController extends CRUDController<User, Integer> {
     }
 
     @Override
-    protected void setupViewListeners() {
+    public void setupViewListeners() {
         super.setupViewListeners();
         getCbxPermissions().setRenderer(new CustomListCellRenderer());
         getCbxPermissions().setModel(cbxModelPermissions);
     }
 
     @Override
-    protected void prepareToEdit() {
+    public void prepareToEdit() {
         super.prepareToEdit();
         getTxtUsername().setText(getSelected().getUsername());
         getTxtPassword().setText(getSelected().getPassword());
@@ -65,7 +68,7 @@ public class UserController extends CRUDController<User, Integer> {
     }
 
     @Override
-    protected void prepareToAdd() {
+    public void prepareToAdd() {
         super.prepareToAdd();
         getCbxPermissions().setSelectedIndex(0);
         getChkIsEnable().setSelected(true);
@@ -74,26 +77,26 @@ public class UserController extends CRUDController<User, Integer> {
     }
 
     @Override
-    protected Integer prepareToDelete() {
+    public Integer prepareToDelete() {
         return getSelected().getId();
     }
 
     @Override
-    protected User prepareToSave() {
+    public User prepareToSave() {
         if (!checkFields())
             return null;
         return getByForm(new User());
     }
 
     @Override
-    protected User prepareToUpdate() {
+    public User prepareToUpdate() {
         if (!checkFields())
             return null;
         getByForm(getSelected());
         return getSelected();
     }
 
-    private @NotNull User getByForm(User user) {
+    public @NotNull User getByForm(User user) {
         if (user == null)
             user = new User();
         user.setUser(this.user);

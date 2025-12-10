@@ -55,7 +55,7 @@ public class BackupController extends Controller {
     }
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         setTblModel(new BackupTableModel());
         getTblData().setModel(getTblModel());
         getTblData().setDefaultRenderer(Object.class, new CustomTableCellRenderer());
@@ -64,7 +64,7 @@ public class BackupController extends Controller {
         setupViewListeners();
     }
 
-    protected void loadData() {
+    public void loadData() {
         try (var stream = Files.list(ConfigLoader.Props.DIR_BACKUP_NAME.getPath())) {
             data = stream
                     .filter(Files::isRegularFile)
@@ -85,7 +85,7 @@ public class BackupController extends Controller {
     }
 
     @Override
-    protected void setupViewListeners() {
+    public void setupViewListeners() {
         getBtnAdd().addActionListener(e -> createBackup(""));
         getBtnRestore().addActionListener(e -> restoreBackup());
         getTblData().addMouseListener(new MouseAdapter() {
@@ -112,7 +112,7 @@ public class BackupController extends Controller {
         dialog.setVisible(true);
     }
 
-    private int createBackup(String fileName) {
+    public int createBackup(String fileName) {
         var inputFileName = new JTextField(fileName == null ? "" : fileName + createNameByDate());
         var contentPanel = new JPanel();
         contentPanel.add(new Label("Nombre:"));
@@ -140,7 +140,7 @@ public class BackupController extends Controller {
         return response;
     }
 
-    private void restoreBackup() {
+    public void restoreBackup() {
         var response = JOptionPane.showConfirmDialog(
                 getView(),
                 "Debe crear una copia de seguridad con los datos actuales.",
@@ -165,11 +165,11 @@ public class BackupController extends Controller {
         System.exit(1);// terminar proceso
     }
 
-    protected void updateView() {
+    public void updateView() {
         SwingUtilities.invokeLater(getTblModel()::fireTableDataChanged);
     }
 
-    protected void setElementSelected(@NotNull MouseEvent e) {
+    public void setElementSelected(@NotNull MouseEvent e) {
         int row = getTblData().rowAtPoint(e.getPoint());
         if (row != -1) {
             int selectedRow = getTblData().getSelectedRow();
@@ -182,15 +182,15 @@ public class BackupController extends Controller {
         }
     }
 
-    private @NotNull String createFilePathForBackup(String fileName) {
+    public @NotNull String createFilePathForBackup(String fileName) {
         return ConfigLoader.Props.DIR_BACKUP_NAME.getPath().toString() + File.separator + fileName + ".sqlite";
     }
 
-    private @NotNull String createNameByDate() {
+    public @NotNull String createNameByDate() {
         return LocalDateTime.now().format(FILE_DATE_FORMATTER);
     }
 
-    private String getModificationDate(Path path) {
+    public String getModificationDate(Path path) {
         try {
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
             long millis = attrs.lastModifiedTime().toMillis();
@@ -202,7 +202,7 @@ public class BackupController extends Controller {
 
     public class BackupTableModel extends AbstractTableModel {
 
-        private final String[] COLUMN_NAMES = { "Nombre", "Última Modificación" };
+        public final String[] COLUMN_NAMES = { "Nombre", "Última Modificación" };
 
         @Override
         public int getRowCount() {

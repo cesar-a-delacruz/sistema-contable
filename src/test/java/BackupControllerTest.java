@@ -1,7 +1,6 @@
 import com.nutrehogar.sistemacontable.base.domain.repository.BackupRepository;
 import com.nutrehogar.sistemacontable.base.ui.view.service.BackupView;
 import com.nutrehogar.sistemacontable.controller.service.BackupController;
-import com.nutrehogar.sistemacontable.exception.ReportException;
 import org.hibernate.Session;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,14 +27,22 @@ import static org.mockito.Mockito.*;
 class BackupControllerTest {
 
     // Dependencias simuladas del controlador
-    @Mock private BackupRepository mockRepository;
-    @Mock private BackupView mockView;
-    @Mock private Session mockSession;
-    @Mock private JFrame mockFrame;
-    @Mock private JTable mockTblData;
-    @Mock private JButton mockBtnAdd;
-    @Mock private JButton mockBtnEdit;
-    @Mock private JButton mockBtnRestore;
+    @Mock
+    private BackupRepository mockRepository;
+    @Mock
+    private BackupView mockView;
+    @Mock
+    private Session mockSession;
+    @Mock
+    private JFrame mockFrame;
+    @Mock
+    private JTable mockTblData;
+    @Mock
+    private JButton mockBtnAdd;
+    @Mock
+    private JButton mockBtnEdit;
+    @Mock
+    private JButton mockBtnRestore;
 
     private BackupController controller;
 

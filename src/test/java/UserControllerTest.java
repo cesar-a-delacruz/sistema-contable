@@ -22,20 +22,31 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
-    @Mock private UserRepository mockRepo;
-    @Mock private ReportService mockReport;
-    @Mock private User mockCurrentUser;
+    @Mock
+    private UserRepository mockRepo;
+    @Mock
+    private ReportService mockReport;
+    @Mock
+    private User mockCurrentUser;
 
-    @Mock private DefaultUserView mockView;
-    @Mock private JComboBox<PermissionType> mockCbxPermissions;
-    @Mock private JTextField mockTxtUsername;
-    @Mock private JTextField mockTxtPassword;
-    @Mock private JCheckBox mockChkIsEnable;
+    @Mock
+    private DefaultUserView mockView;
+    @Mock
+    private JComboBox<PermissionType> mockCbxPermissions;
+    @Mock
+    private JTextField mockTxtUsername;
+    @Mock
+    private JTextField mockTxtPassword;
+    @Mock
+    private JCheckBox mockChkIsEnable;
 
-    @Mock private JButton mockBtnAdd, mockBtnEdit, mockBtnDelete, mockBtnSave, mockBtnUpdate;
-    @Mock private JTable mockTable;
+    @Mock
+    private JButton mockBtnAdd, mockBtnEdit, mockBtnDelete, mockBtnSave, mockBtnUpdate;
+    @Mock
+    private JTable mockTable;
 
-    @Mock private CustomComboBoxModel<PermissionType> cbxModelPermissions;
+    @Mock
+    private CustomComboBoxModel<PermissionType> cbxModelPermissions;
 
     private UserController controller;
     private User testUser;
@@ -72,7 +83,8 @@ class UserControllerTest {
 
         lenient().doReturn(cbxModelPermissions).when(controller).getCbxModelPermissions();
 
-        // Restablecemos contadores para evitar verificaciones falsas después del constructor
+        // Restablecemos contadores para evitar verificaciones falsas después del
+        // constructor
         reset(mockCbxPermissions, mockTxtUsername, mockTxtPassword, mockChkIsEnable);
 
         // Usuario base utilizado en varios tests

@@ -19,7 +19,6 @@ import org.mockito.quality.Strictness;
 
 import javax.swing.*;
 import javax.swing.text.PlainDocument;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,22 +28,36 @@ import static org.mockito.Mockito.*;
 class AccountSubtypeControllerTest {
 
     // --- Dependencias de la vista y servicios ---
-    @Mock private AccountSubtypeRepository mockRepository;
-    @Mock private DefaultAccountSubtypeView mockView;
-    @Mock private ReportService mockReportService;
-    @Mock private User mockUser;
+    @Mock
+    private AccountSubtypeRepository mockRepository;
+    @Mock
+    private DefaultAccountSubtypeView mockView;
+    @Mock
+    private ReportService mockReportService;
+    @Mock
+    private User mockUser;
 
     // --- Componentes de la vista ---
-    @Mock private JComboBox<AccountType> mockCbxAccountType;
-    @Mock private JTextField mockTxtAccountSubtypeId;
-    @Mock private JTextField mockTxtAccountSubtypeName;
-    @Mock private JTable mockTblData;
-    @Mock private JButton mockBtnAdd;
-    @Mock private JButton mockBtnEdit;
-    @Mock private JButton mockBtnDelete;
-    @Mock private JButton mockBtnSave;
-    @Mock private JLabel mockLblAccountTypeId;
-    @Mock private PlainDocument mockPlainDocument;
+    @Mock
+    private JComboBox<AccountType> mockCbxAccountType;
+    @Mock
+    private JTextField mockTxtAccountSubtypeId;
+    @Mock
+    private JTextField mockTxtAccountSubtypeName;
+    @Mock
+    private JTable mockTblData;
+    @Mock
+    private JButton mockBtnAdd;
+    @Mock
+    private JButton mockBtnEdit;
+    @Mock
+    private JButton mockBtnDelete;
+    @Mock
+    private JButton mockBtnSave;
+    @Mock
+    private JLabel mockLblAccountTypeId;
+    @Mock
+    private PlainDocument mockPlainDocument;
 
     // --- Controlador probado (Spy) ---
     private AccountSubtypeController controller;
@@ -86,8 +99,8 @@ class AccountSubtypeControllerTest {
         when(testSubtype.getAccountType()).thenReturn(AccountType.ASSETS);
 
         // Spy del controlador real
-        AccountSubtypeController realController =
-                new AccountSubtypeController(mockRepository, mockView, mockReportService, mockUser);
+        AccountSubtypeController realController = new AccountSubtypeController(mockRepository, mockView,
+                mockReportService, mockUser);
 
         controller = Mockito.spy(realController);
 
@@ -109,7 +122,7 @@ class AccountSubtypeControllerTest {
     }
 
     // =========================================================================
-    //      PRUEBAS DE LA LÓGICA DE CREACIÓN (prepareToSave)
+    // PRUEBAS DE LA LÓGICA DE CREACIÓN (prepareToSave)
     // =========================================================================
     @Nested
     @DisplayName("Lógica de Creación (prepareToSave)")
@@ -156,7 +169,7 @@ class AccountSubtypeControllerTest {
     }
 
     // =========================================================================
-    //      PRUEBAS DE UPDATE, DELETE Y FLUJO DE VISTA
+    // PRUEBAS DE UPDATE, DELETE Y FLUJO DE VISTA
     // =========================================================================
     @Nested
     @DisplayName("Edición, Eliminación y Flujo de Vista")

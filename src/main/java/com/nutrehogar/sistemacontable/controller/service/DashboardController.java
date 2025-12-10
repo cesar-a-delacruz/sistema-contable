@@ -21,7 +21,7 @@ public class DashboardController extends Controller {
     }
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         this.user = context.getBean(User.class);
         SwingUtilities.invokeLater(() -> {
             getPnlNav().setVisible(false);
@@ -44,7 +44,7 @@ public class DashboardController extends Controller {
         }
     }
 
-    protected void setupViewListeners() {
+    public void setupViewListeners() {
         getBtnShowFormView()
                 .addActionListener(e -> setContent(context.getBean(AccountingEntryFormController.class).getView()));
         getBtnShowAccountSubtypeView()
