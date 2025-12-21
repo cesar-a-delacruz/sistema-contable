@@ -1,0 +1,18 @@
+jpackage `
+--input .\..\target\lib `
+--name "Sistema Contable - Create Cache" `
+--main-jar SistemaContable-2.0.jar `
+--main-class com.nutrehogar.sistemacontable.application.Main `
+--type exe `
+--java-options "-XX:AOTCacheOutput=cache.aot" `
+--icon .\icon\icon.ico `
+--vendor "Universidad Tecnológica de Panamá - LIC. EN DESARROLLO DE SOFTWARE (2016-M)" `
+--description "Sistema de Contabilidad para Nutre Hogar" `
+--app-version 2.0 `
+--win-shortcut `
+--win-menu `
+--win-dir-chooser `
+--runtime-image "C:\Users\Calci\.jdks\corretto-25" `
+--app-content .\resource\template `
+--app-content .\resource\app_data_base.sqlite `
+--install-dir "Sistema_Contable"
