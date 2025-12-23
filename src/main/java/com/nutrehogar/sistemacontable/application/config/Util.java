@@ -6,7 +6,6 @@ import java.util.function.Function;
 
 public class Util {
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.00");
-    public static final LocalDate CURRENT_DATE = LocalDate.now();
     public static final String NA = "N/A";
 
     // Convierte cualquier objeto a String de forma segura

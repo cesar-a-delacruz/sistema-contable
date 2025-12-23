@@ -1,10 +1,9 @@
 package com.nutrehogar.sistemacontable.controller.business;
 
-import com.nutrehogar.sistemacontable.base.controller.BusinessController;
+import com.nutrehogar.sistemacontable.controller.BusinessController;
 import com.nutrehogar.sistemacontable.base.domain.repository.*;
-import com.nutrehogar.sistemacontable.base.ui.view.business.GeneralLedgerView;
+import com.nutrehogar.sistemacontable.ui.view.business.GeneralLedgerView;
 import com.nutrehogar.sistemacontable.controller.business.dto.GeneralLedgerTableDTO;
-import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.AccountType;
 import com.nutrehogar.sistemacontable.domain.type.DocumentType;
 import com.nutrehogar.sistemacontable.ui.builder.*;

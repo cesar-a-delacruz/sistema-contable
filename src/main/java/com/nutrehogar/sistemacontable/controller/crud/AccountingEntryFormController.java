@@ -1,9 +1,8 @@
 package com.nutrehogar.sistemacontable.controller.crud;
 
-import com.nutrehogar.sistemacontable.base.controller.SimpleController;
+import com.nutrehogar.sistemacontable.controller.SimpleController;
 import com.nutrehogar.sistemacontable.base.domain.repository.*;
 import com.nutrehogar.sistemacontable.controller.crud.dto.LedgerRecordDTO;
-import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.DocumentType;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.report.*;

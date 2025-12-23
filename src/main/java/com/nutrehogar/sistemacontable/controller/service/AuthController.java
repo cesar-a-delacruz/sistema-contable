@@ -2,9 +2,9 @@ package com.nutrehogar.sistemacontable.controller.service;
 
 import com.nutrehogar.sistemacontable.application.config.Context;
 import com.nutrehogar.sistemacontable.application.config.PasswordHasher;
-import com.nutrehogar.sistemacontable.base.controller.Controller;
+import com.nutrehogar.sistemacontable.controller.Controller;
 import com.nutrehogar.sistemacontable.base.domain.repository.UserRepository;
-import com.nutrehogar.sistemacontable.base.ui.view.service.AuthView;
+import com.nutrehogar.sistemacontable.ui.view.service.AuthView;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 

@@ -1,6 +1,6 @@
 package com.nutrehogar.sistemacontable.controller.crud;
 
-import com.nutrehogar.sistemacontable.base.controller.CRUDController;
+import com.nutrehogar.sistemacontable.controller.CRUDController;
 import com.nutrehogar.sistemacontable.base.domain.repository.AccountSubtypeRepository;
 import com.nutrehogar.sistemacontable.domain.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.domain.model.User;

@@ -1,6 +1,5 @@
 package com.nutrehogar.sistemacontable.report;
 
-import com.nutrehogar.sistemacontable.base.report.Report;
 import com.nutrehogar.sistemacontable.exception.ReportException;
 import com.nutrehogar.sistemacontable.report.dto.JournalEntryReportDTO;
 

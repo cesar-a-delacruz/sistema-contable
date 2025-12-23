@@ -1,7 +1,6 @@
 package com.nutrehogar.sistemacontable.report;
 
 import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
-import com.nutrehogar.sistemacontable.base.report.Report;
 import com.nutrehogar.sistemacontable.domain.model.User;
 import com.nutrehogar.sistemacontable.exception.ReportException;
 

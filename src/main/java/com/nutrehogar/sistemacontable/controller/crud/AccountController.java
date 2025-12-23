@@ -1,9 +1,8 @@
 package com.nutrehogar.sistemacontable.controller.crud;
 
-import com.nutrehogar.sistemacontable.base.controller.CRUDController;
+import com.nutrehogar.sistemacontable.controller.CRUDController;
 import com.nutrehogar.sistemacontable.base.domain.repository.AccountRepository;
 import com.nutrehogar.sistemacontable.base.domain.repository.AccountSubtypeRepository;
-import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.AccountType;
 import com.nutrehogar.sistemacontable.report.ReportService;
 import com.nutrehogar.sistemacontable.ui.builder.*;

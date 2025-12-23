@@ -1,9 +1,8 @@
 package com.nutrehogar.sistemacontable.controller.business;
 
-import com.nutrehogar.sistemacontable.base.controller.BusinessController;
+import com.nutrehogar.sistemacontable.controller.BusinessController;
 import com.nutrehogar.sistemacontable.base.domain.repository.JournalEntryRepository;
 import com.nutrehogar.sistemacontable.controller.business.dto.TrialBalanceTableDTO;
-import com.nutrehogar.sistemacontable.domain.model.*;
 import com.nutrehogar.sistemacontable.domain.type.DocumentType;
 import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.report.ReportService;

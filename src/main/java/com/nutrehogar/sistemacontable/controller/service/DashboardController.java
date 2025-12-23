@@ -1,8 +1,8 @@
 package com.nutrehogar.sistemacontable.controller.service;
 
 import com.nutrehogar.sistemacontable.application.config.Context;
-import com.nutrehogar.sistemacontable.base.controller.Controller;
-import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
+import com.nutrehogar.sistemacontable.controller.Controller;
+import com.nutrehogar.sistemacontable.ui.view.service.DashboardView;
 import com.nutrehogar.sistemacontable.controller.business.*;
 import com.nutrehogar.sistemacontable.controller.crud.*;
 import com.nutrehogar.sistemacontable.domain.model.User;

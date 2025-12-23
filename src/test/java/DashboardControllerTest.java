@@ -1,18 +1,18 @@
 import com.nutrehogar.sistemacontable.application.config.Context;
-import com.nutrehogar.sistemacontable.base.ui.view.service.DashboardView;
+import com.nutrehogar.sistemacontable.ui_2.view.service.DashboardView;
 import com.nutrehogar.sistemacontable.controller.crud.*;
 import com.nutrehogar.sistemacontable.controller.business.*;
 import com.nutrehogar.sistemacontable.controller.service.BackupController;
 import com.nutrehogar.sistemacontable.controller.service.DashboardController;
 import com.nutrehogar.sistemacontable.domain.model.User;
-import com.nutrehogar.sistemacontable.base.ui.view.service.BackupView;
-import com.nutrehogar.sistemacontable.ui.view.crud.DefaultAccountEntryFormView;
-import com.nutrehogar.sistemacontable.ui.view.crud.DefaultAccountSubtypeView;
-import com.nutrehogar.sistemacontable.ui.view.crud.DefaultAccountView;
-import com.nutrehogar.sistemacontable.ui.view.crud.DefaultUserView;
-import com.nutrehogar.sistemacontable.ui.view.business.DefaultJournalView;
-import com.nutrehogar.sistemacontable.ui.view.business.DefaultTrialBalanceView;
-import com.nutrehogar.sistemacontable.ui.view.business.DefaultGeneralLedgerView;
+import com.nutrehogar.sistemacontable.ui_2.view.service.BackupView;
+import com.nutrehogar.sistemacontable.ui_2.view.crud.DefaultAccountEntryFormView;
+import com.nutrehogar.sistemacontable.ui_2.view.crud.DefaultAccountSubtypeView;
+import com.nutrehogar.sistemacontable.ui_2.view.crud.DefaultAccountView;
+import com.nutrehogar.sistemacontable.ui_2.view.crud.DefaultUserView;
+import com.nutrehogar.sistemacontable.ui_2.view.business.DefaultJournalView;
+import com.nutrehogar.sistemacontable.ui_2.view.business.DefaultTrialBalanceView;
+import com.nutrehogar.sistemacontable.ui_2.view.business.DefaultGeneralLedgerView;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
