@@ -6,6 +6,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
+import static com.formdev.flatlaf.util.UIScale.scale;
+
 public class Theme {
     public static final int ICON_SM = scale(30);
     public static final int ICON_MD = scale(40);
@@ -55,9 +57,6 @@ public class Theme {
         FlatLightLaf.setup();
     }
 
-    public static int scale(int value) {
-        return UIScale.scale(value);
-    }
 
     // 🔹 Configuración de Tipografías
     public static class Typography {
@@ -128,17 +127,5 @@ public class Theme {
         public static final Color SOLITUDE_900 = new Color(9, 69, 113);
         public static final Color SOLITUDE_950 = new Color(6, 43, 75);
 
-        // 🎨 Gris (Gray)
-        public static final Color GRAY_50 = new Color(250, 250, 250);
-        public static final Color GRAY_100 = new Color(245, 245, 245);
-        public static final Color GRAY_200 = new Color(229, 229, 229);
-        public static final Color GRAY_300 = new Color(212, 212, 212);
-        public static final Color GRAY_400 = new Color(163, 163, 163);
-        public static final Color GRAY_500 = new Color(115, 115, 115);
-        public static final Color GRAY_600 = new Color(82, 82, 82);
-        public static final Color GRAY_700 = new Color(64, 64, 64);
-        public static final Color GRAY_800 = new Color(38, 38, 38);
-        public static final Color GRAY_900 = new Color(23, 23, 23);
-        public static final Color GRAY_950 = new Color(12, 12, 12);
     }
 }
