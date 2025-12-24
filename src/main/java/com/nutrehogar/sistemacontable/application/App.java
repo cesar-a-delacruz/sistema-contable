@@ -4,6 +4,12 @@ import com.nutrehogar.sistemacontable.application.config.Theme;
 import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javax.swing.*;
+
+import com.nutrehogar.sistemacontable.model.AccountSubtype;
+import com.nutrehogar.sistemacontable.model.AccountType;
+import com.nutrehogar.sistemacontable.model.Permission;
+import com.nutrehogar.sistemacontable.model.User;
+import com.nutrehogar.sistemacontable.ui.AccountSubtypeView;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -11,8 +17,16 @@ public class App {
     private JFrame frame;
 
     public App() {
+        var user = new User("0922","Root",true, Permission.ADMIN,"Roo");
+//        Thread.startVirtualThread(()->{
+//            HibernateUtil.getSessionFactory().inTransaction(session -> {
+//                session.persist(new AccountSubtype("Ejemlo1",AccountType.ASSETS,user.getUsername()));
+//                session.persist(new AccountSubtype("Ejemlo2",AccountType.ASSETS,user.getUsername()));
+//                session.persist(new AccountSubtype("Ejemlo3",AccountType.ASSETS,user.getUsername()));
+//                session.persist(new AccountSubtype("Ejemlo4",AccountType.ASSETS,user.getUsername()));
+//            });
+//        });
 
-        Thread.startVirtualThread(() ->HibernateUtil.getSessionFactory());
 
         Thread.startVirtualThread(() -> Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             HibernateUtil.shutdown();
@@ -20,6 +34,7 @@ public class App {
         })));
 
 //        var context = new Context();
+
 
         try {
 //            AppConfig.setup(context);
@@ -32,6 +47,7 @@ public class App {
             frame.setLocationRelativeTo(null);
             frame.getRootPane().setBackground(Theme.Palette.SOLITUDE_50);
 //            frame.add(context.getBean(DashboardView.class));
+            frame.add(new AccountSubtypeView(new User()));
             frame.setVisible(true);
 //            context.getBean(AuthView.class).setVisible(true);
 //            var user = context.getBean(AuthController.class).getAuthenticatedUser();

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 
@@ -14,22 +15,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public abstract class AuditableEntity {
 
-    @NotNull
+    @Nullable
     @Basic(optional = false)
     @Column(name = "created_by")
     protected String createdBy;
 
-    @NotNull
+    @Nullable
     @Basic(optional = false)
     @Column(name = "updated_by")
     protected String updatedBy;
 
-    @NotNull
+    @Nullable
     @Column(name = "created_at")
     @Basic(optional = false)
     protected LocalDateTime createdAt;
 
-    @NotNull
+    @Nullable
     @Basic(optional = false)
     @Column(name = "updated_at")
     protected LocalDateTime updatedAt;

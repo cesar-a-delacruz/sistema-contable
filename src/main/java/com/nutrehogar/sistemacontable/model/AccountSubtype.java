@@ -39,7 +39,7 @@ public class AccountSubtype extends AuditableEntity {
     @NotNull
     Set<Account> accounts = new HashSet<>();
 
-    public AccountSubtype(@NotNull String updatedBy, @NotNull String name, @NotNull AccountType type) {
+    public AccountSubtype( @NotNull String name, @NotNull AccountType type,@NotNull String updatedBy) {
         super(updatedBy);
         this.name = name;
         this.type = type;

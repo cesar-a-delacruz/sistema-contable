@@ -45,7 +45,6 @@ public abstract class SimpleController<T, R> extends Controller {
     }
 
     public abstract class DataLoader extends SwingWorker<List<T>, Void> {
-
         @Override
         protected void done() {
             try {
