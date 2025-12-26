@@ -38,10 +38,13 @@ public abstract class SimpleView<Entity> extends JPanel {
         showMessage(message, "Message");
     }
 
-    public void showError(@NotNull String message,@Nullable AppException cause) {
+    public void showError(@NotNull String message,@Nullable Exception cause) {
+        showError(message, "Error", cause);
+    }
+    public void showError(@NotNull String message,@NotNull String title, @Nullable Exception cause) {
         if (cause != null)
             log.error(cause.getMessage(), cause);
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
     public void showError(@NotNull String message) {

@@ -1,5 +1,6 @@
 package com.nutrehogar.sistemacontable.model;
 
+import jakarta.annotation.Nonnull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -68,7 +69,9 @@ public enum AccountType {
     /**
      * Es el id con el que esta registrado en la base de datos
      */
+    @NotNull
     int id;
+    @NotNull
     String name;
 
     public static @NotNull AccountType fromId(int id) {

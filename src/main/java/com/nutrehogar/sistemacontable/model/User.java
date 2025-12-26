@@ -21,27 +21,27 @@ public class User extends AuditableEntity {
 
     @Basic(optional = false)
     @Column(nullable = false)
-    @NonNull
+    @NotNull
     String password;
 
     @Basic(optional = false)
     @Column(nullable = false, unique = true)
     @NaturalId
-    @NonNull
+    @NotNull
     String username;
 
     @Basic(optional = false)
     @Column(name = "enabled", nullable = false)
-    @NonNull
+    @NotNull
     Boolean enabled;
 
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @NonNull
+    @NotNull
     Permission permissions;
 
-    public User(@NonNull String password, @NonNull String username, @NonNull Boolean enabled, @NonNull Permission permissions, @NotNull String updatedBy) {
+    public User(@NotNull String password, @NotNull String username, @NotNull Boolean enabled, @NotNull Permission permissions, @NotNull String updatedBy) {
         super(updatedBy);
         this.password = password;
         this.username = username;
@@ -58,5 +58,9 @@ public class User extends AuditableEntity {
     @Override
     public int hashCode() {
         return username.hashCode();
+    }
+
+    public boolean isAdmin(){
+        return permissions.equals(Permission.ADMIN);
     }
 }

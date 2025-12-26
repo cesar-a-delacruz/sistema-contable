@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.NaturalId;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,18 +26,32 @@ public class Account extends AuditableEntity {
     @Column(nullable = false, unique = true)
     @Basic(optional = false)
     @NotNull
-    @NaturalId
+    @NaturalId(mutable = true)
+    Integer number;
+
+    @Column(nullable = false, unique = true)
+    @Basic(optional = false)
+    @NotNull
     String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @Enumerated(EnumType.STRING)
+    @Basic(optional = false)
     @NotNull
+    @Column(name = "account_type", nullable = false)
+    AccountType type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Nullable
     AccountSubtype subtype;
 
     @OneToMany(mappedBy = LedgerRecord_.ACCOUNT, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @NotNull
     Set<LedgerRecord> records = new HashSet<>();
 
-    public Account(@NotNull String updatedBy, @NotNull AccountSubtype subtype, @NotNull String name) {
+    public Account(@NotNull String updatedBy) {
+        super(updatedBy);
+    }
+    public Account(@NotNull String name, @NotNull String updatedBy,@Nullable AccountSubtype subtype) {
         super(updatedBy);
         this.subtype = subtype;
         this.name = name;
@@ -53,14 +68,20 @@ public class Account extends AuditableEntity {
         return name.hashCode();
     }
 
-    public String getCanonicalId() {
-        int subtypeIdLength = subtype.getId().toString().length();
-        return id.toString().substring(subtypeIdLength);
+    public void setNumber(@NotNull String subNumber, @NotNull AccountType type) {
+        int remaining = 4 - subNumber.length();
+        this.number = Integer.valueOf(type.getId() + (remaining == 0 ? subNumber : subNumber + "0".repeat(remaining)));
+    }
+    public String getSubNumber() {
+        return number.toString().substring(1);
     }
 
-    public String getFormattedId() {
-        return subtype.getFormattedId() + getCanonicalId();
+
+    public String getFormattedNumber() {
+        var subNumber = number.toString().substring(1);
+        return type.getId()+"."+subNumber;
     }
+
 
     public static @NotNull String getCellRenderer(Integer id) {
         if (id == null)

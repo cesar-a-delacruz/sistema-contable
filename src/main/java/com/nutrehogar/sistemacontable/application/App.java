@@ -9,7 +9,8 @@ import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.AccountType;
 import com.nutrehogar.sistemacontable.model.Permission;
 import com.nutrehogar.sistemacontable.model.User;
-import com.nutrehogar.sistemacontable.ui.AccountSubtypeView;
+import com.nutrehogar.sistemacontable.ui.crud.AccountSubtypeView;
+import com.nutrehogar.sistemacontable.ui.DashboardView;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -47,7 +48,8 @@ public class App {
             frame.setLocationRelativeTo(null);
             frame.getRootPane().setBackground(Theme.Palette.SOLITUDE_50);
 //            frame.add(context.getBean(DashboardView.class));
-            frame.add(new AccountSubtypeView(new User()));
+//            frame.add(new AccountSubtypeView(user));
+            frame.add(new DashboardView(user));
             frame.setVisible(true);
 //            context.getBean(AuthView.class).setVisible(true);
 //            var user = context.getBean(AuthController.class).getAuthenticatedUser();

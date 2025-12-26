@@ -4,15 +4,12 @@ import javax.swing.*;
 
 import com.nutrehogar.sistemacontable.application.Main;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
-import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
 import org.hibernate.jpa.HibernatePersistenceConfiguration;
 import org.hibernate.tool.schema.Action;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * HibernateUtil es una clase de utilidad que gestiona la configuración de
@@ -32,7 +29,7 @@ public class HibernateUtil {
     private HibernateUtil() {
         throw new IllegalStateException("Utility class");
     }
-    @NonNull
+    @NotNull
     @Getter
     private static final SessionFactory sessionFactory = buildSessionFactory();
     /**

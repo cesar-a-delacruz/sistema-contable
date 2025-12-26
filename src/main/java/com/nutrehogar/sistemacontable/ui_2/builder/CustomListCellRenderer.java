@@ -16,9 +16,8 @@ public class CustomListCellRenderer extends DefaultListCellRenderer {
         var label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         label.setText(switch (value) {
             case AccountType accountType -> AccountType.getCellRenderer(accountType);
-            case AccountSubtype tipoCuenta -> tipoCuenta.getType().getId() + "." + tipoCuenta.getCanonicalId()
-                    + " " + tipoCuenta.getName();
-            case Account account -> account.getFormattedId();
+            case AccountSubtype tipoCuenta -> tipoCuenta.getFormattedNumber() + " " + tipoCuenta.getName();
+            case Account account -> account.getFormattedNumber();
             case DocumentType documentType -> documentType.getName();
             case Permission permissions -> permissions.getName();
             case null -> "";

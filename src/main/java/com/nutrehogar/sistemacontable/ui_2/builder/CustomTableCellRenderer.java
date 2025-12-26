@@ -42,7 +42,7 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
                 setText(AccountType.getCellRenderer(accountType));
             }
             case AccountSubtype tipoCuenta -> {
-                setText(tipoCuenta.getType().getId() + "." + tipoCuenta.getCanonicalId() + " "
+                setText( tipoCuenta.getFormattedNumber() + " "
                         + tipoCuenta.getName());
             }
             case Account account -> {
