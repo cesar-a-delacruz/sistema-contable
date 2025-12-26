@@ -31,11 +31,17 @@ public class CustomComboBoxModel<E> extends DefaultComboBoxModel<E> {
      */
     public void setData(List<E> data) {
         this.removeAllElements();
-        if (data != null) {
-            for (E e : data) {
-                this.addElement(e);
-            }
-            setSelectedItem(data.getFirst());
+
+        if (data == null) return;
+
+        for (var e : data) {
+            this.addElement(e);
         }
+
+//        if (data.isEmpty()) return;
+
+//        setSelectedItem(data.getFirst());
+
+//        fireContentsChanged(this, 0, data.size());
     }
 }

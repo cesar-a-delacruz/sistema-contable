@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -105,4 +106,16 @@ public class AccountSubtype extends AuditableEntity {
 //            }
 //        }
 //    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof AccountSubtype that)) return false;
+
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

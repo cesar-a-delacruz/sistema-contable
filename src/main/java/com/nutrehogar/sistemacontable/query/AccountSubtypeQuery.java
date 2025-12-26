@@ -1,6 +1,7 @@
 package com.nutrehogar.sistemacontable.query;
 
 import com.nutrehogar.sistemacontable.model.AccountSubtype;
+import com.nutrehogar.sistemacontable.model.AccountType;
 import org.hibernate.annotations.processing.Find;
 
 import java.util.List;
@@ -17,4 +18,7 @@ public interface AccountSubtypeQuery extends Query {
 
     @Find
     Optional<AccountSubtype> findById(Integer id);
+
+    @Find
+    List<AccountSubtype> findByType(AccountType type);
 }

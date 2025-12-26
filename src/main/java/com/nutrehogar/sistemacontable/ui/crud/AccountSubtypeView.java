@@ -162,7 +162,11 @@ public class AccountSubtypeView extends CRUDView<AccountSubtype> {
     @Override
     protected List<AccountSubtype> findEntities() {
         AtomicReference<List<AccountSubtype>> list = new AtomicReference<>(List.of());
-        HibernateUtil.getSessionFactory().inStatelessTransaction(statelessSession -> list.set(statelessSession.createQuery("select a from AccountSubtype a", AccountSubtype.class).list()));
+        try{
+            HibernateUtil.getSessionFactory().inStatelessTransaction(statelessSession -> list.set(statelessSession.createQuery("select a from AccountSubtype a", AccountSubtype.class).list()));
+        } catch (Exception e) {
+            showError("Error al obtener los datos", e);
+        }
         return list.get();
     }
 

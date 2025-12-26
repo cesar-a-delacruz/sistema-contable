@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -57,16 +58,6 @@ public class Account extends AuditableEntity {
         this.name = name;
     }
 
-    @Override
-    public final boolean equals(Object o) {
-        if (!(o instanceof Account account)) return false;
-        return account.getName().equals(this.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
 
     public void setNumber(@NotNull String subNumber, @NotNull AccountType type) {
         int remaining = 4 - subNumber.length();
@@ -95,4 +86,15 @@ public class Account extends AuditableEntity {
         return id.charAt(0) + "." + id.substring(1);
     }
 
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Account account)) return false;
+
+        return Objects.equals(id, account.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

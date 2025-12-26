@@ -26,7 +26,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPane1" pref="204" max="32767" attributes="0"/>
-                  <Component id="lblTitle" alignment="0" max="32767" attributes="0"/>
+                  <Component id="lblTitle" alignment="0" pref="93" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="pnlAside" min="-2" max="-2" attributes="0"/>
@@ -38,7 +38,7 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="pnlAside" pref="662" max="32767" attributes="0"/>
+                  <Component id="pnlAside" pref="675" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="lblTitle" min="-2" pref="50" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -131,25 +131,31 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="txtName" max="32767" attributes="0"/>
                                   <Component id="cbxType" alignment="0" max="32767" attributes="0"/>
-                                  <Group type="102" attributes="0">
-                                      <Component id="lblAccountTypeId" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="txtNumber" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                  </Group>
                                   <Component id="cbxSubtype" alignment="0" max="32767" attributes="0"/>
                                   <Component id="sepaSection1" max="32767" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Component id="lblAccountTypeId" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="txtNumber" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="rbAddSubtype" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="lblSave" min="-2" pref="250" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="lblSave" max="32767" attributes="0"/>
+                                  <Component id="lblUpdate" max="32767" attributes="0"/>
+                              </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnSave" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="lblUpdate" min="-2" pref="250" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="btnUpdate" pref="123" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="btnUpdate" pref="123" max="32767" attributes="0"/>
+                                  <Component id="btnSave" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -175,6 +181,8 @@
                           <Component id="lblAccountType" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="cbxType" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="rbAddSubtype" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -206,7 +214,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="txtName"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Nombre de cuenta:"/>
+                <Property name="text" type="java.lang.String" value="Nombre:"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
@@ -218,7 +226,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="txtNumber"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="C&#xf3;digo de cuenta:"/>
+                <Property name="text" type="java.lang.String" value="Numero:"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
@@ -236,7 +244,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="cbxType"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Tipo de cuenta:"/>
+                <Property name="text" type="java.lang.String" value="Tipo:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="cbxType">
@@ -266,7 +274,7 @@
             <Component class="javax.swing.JComboBox" name="cbxSubtype">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;()" type="code"/>
+                  <Connection code="cbxModelAccountSubtype" type="code"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -313,6 +321,11 @@
                 </Property>
               </Properties>
             </Component>
+            <Component class="javax.swing.JRadioButton" name="rbAddSubtype">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Agregar subtipo"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
         <Component class="com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel" name="auditablePanel">
@@ -325,9 +338,6 @@
           </Properties>
         </Component>
         <Component class="com.nutrehogar.sistemacontable.ui_2.component.OperationPanel" name="operationPanel1">
-          <Properties>
-            <Property name="opaque" type="boolean" value="false"/>
-          </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName)"/>
           </AuxValues>
