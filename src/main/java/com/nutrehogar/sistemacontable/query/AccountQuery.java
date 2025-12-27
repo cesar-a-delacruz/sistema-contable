@@ -10,13 +10,13 @@ import java.util.Optional;
 
 public interface AccountQuery extends Query {
 
-    @Find
+    @HQL("select distinct a from Account a order by a.number asc")
     List<Account> findAll();
 
     @Find
     Optional<Account> findById(Integer id);
 
-    @HQL("select distinct a from Account a left join fetch a.subtype")
+    @HQL("select distinct a from Account a left join fetch a.subtype order by a.number asc")
     List<Account> findAccountsAndSubtypes();
 
 }

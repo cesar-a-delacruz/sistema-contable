@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +43,8 @@ public class Account extends AuditableEntity {
     @Column(name = "account_type", nullable = false)
     AccountType type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @Nullable
     AccountSubtype subtype;
 
@@ -52,7 +55,8 @@ public class Account extends AuditableEntity {
     public Account(@NotNull String updatedBy) {
         super(updatedBy);
     }
-    public Account(@NotNull String name, @NotNull String updatedBy,@Nullable AccountSubtype subtype) {
+
+    public Account(@NotNull String name, @NotNull String updatedBy, @Nullable AccountSubtype subtype) {
         super(updatedBy);
         this.subtype = subtype;
         this.name = name;
@@ -63,6 +67,7 @@ public class Account extends AuditableEntity {
         int remaining = 4 - subNumber.length();
         this.number = Integer.valueOf(type.getId() + (remaining == 0 ? subNumber : subNumber + "0".repeat(remaining)));
     }
+
     public String getSubNumber() {
         return number.toString().substring(1);
     }
@@ -70,7 +75,7 @@ public class Account extends AuditableEntity {
 
     public String getFormattedNumber() {
         var subNumber = number.toString().substring(1);
-        return type.getId()+"."+subNumber;
+        return type.getId() + "." + subNumber;
     }
 
 
@@ -90,7 +95,7 @@ public class Account extends AuditableEntity {
     public final boolean equals(Object o) {
         if (!(o instanceof Account account)) return false;
 
-        return Objects.equals(id, account.id);
+        return Objects.equals(id, account.getId());
     }
 
     @Override

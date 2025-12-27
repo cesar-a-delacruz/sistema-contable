@@ -101,7 +101,17 @@ public class AccountView extends CRUDView<Account> {
 
     @Override
     protected void delete() {
-        selected.ifPresentOrElse(entity-> HibernateUtil.getSessionFactory().inStatelessTransaction(statelessSession -> statelessSession.delete(entity)),()->showMessage("Seleccione un elemento de la tabla"));
+        if(selected.isEmpty()){
+            showMessage("Seleccione un elemento de la tabla");
+            return;
+        }
+        var response = JOptionPane.showConfirmDialog(this, "<html><p>Seguro que desea eliminar el Subtipo de cuenta, a las cuentas que esten vinculadas no se eliminaran</p></html>", "Eliminar" + selected.get().getFormattedNumber(), JOptionPane.OK_CANCEL_OPTION);
+        if (response == JOptionPane.OK_OPTION) {
+            HibernateUtil
+                    .getSessionFactory()
+                    .inStatelessTransaction(statelessSession ->
+                            statelessSession.delete(selected.get()));
+        }
         loadData();
     }
 
@@ -110,7 +120,18 @@ public class AccountView extends CRUDView<Account> {
         try{
             HibernateUtil
                     .getSessionFactory()
-                    .inTransaction(session -> session.persist(setEntityDataFromForm(new Account(user.getUsername()))));
+                    .inTransaction(session -> {
+                        var account = setEntityDataFromForm(new Account(user.getUsername()));
+                        if(account.getSubtype()!=null){
+                            var subtipo = new AccountSubtypeQuery_(session).findById(account.getSubtype().getId());
+                            if(subtipo.isEmpty()){
+                                showError("Debe Seleccionar una Subtipo de Cuenta si el check esta activo!");
+                                throw new ApplicationException("subtype null");
+                            }
+                            account.setSubtype(subtipo.get());
+                        }
+                        session.persist(account);
+                    });
         } catch (ConstraintViolationException cve) {
             // mostrar advertencia de validación al usuario
             showError("Error al guardar los datos", cve);

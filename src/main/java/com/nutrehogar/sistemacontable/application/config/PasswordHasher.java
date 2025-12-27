@@ -1,25 +1,16 @@
 package com.nutrehogar.sistemacontable.application.config;
 
+import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class PasswordHasher {
     private static final int BCRYPT_ROUNDS = 12;
 
-    public static String hashPassword(String plainPassword) {
-        if (plainPassword == null || plainPassword.isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be null or empty");
-        }
+    public static @NotNull String hashPassword(@NotNull String plainPassword) {
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt(BCRYPT_ROUNDS));
     }
 
-    public static boolean verifyPassword(String plainPassword, String hashedPassword) {
-        if (plainPassword == null || hashedPassword == null) {
-            return false;
-        }
-        try {
-            return BCrypt.checkpw(plainPassword, hashedPassword);
-        } catch (Exception e) {
-            return false;
-        }
+    public static boolean verifyPassword(@NotNull String plainPassword,@NotNull String hashedPassword) {
+        return BCrypt.checkpw(plainPassword, hashedPassword);
     }
 }

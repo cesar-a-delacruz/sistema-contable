@@ -3,6 +3,7 @@ package com.nutrehogar.sistemacontable.query;
 import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.AccountType;
 import org.hibernate.annotations.processing.Find;
+import org.hibernate.annotations.processing.HQL;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +11,7 @@ public interface AccountSubtypeQuery extends Query {
 //    @HQL("select AccountSubtype")
 //    List<AccountSubtype> FindAll();
 
-    @Find
+    @HQL("select distinct a from AccountSubtype a order by a.number asc")
     List<AccountSubtype> findAll();
 
 //    @HQL("select distinct a from Account a left join fetch a.subtype")
@@ -19,6 +20,6 @@ public interface AccountSubtypeQuery extends Query {
     @Find
     Optional<AccountSubtype> findById(Integer id);
 
-    @Find
+    @HQL("select distinct a from AccountSubtype a where a.type = :type order by a.number asc")
     List<AccountSubtype> findByType(AccountType type);
 }

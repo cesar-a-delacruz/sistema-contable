@@ -6,6 +6,8 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.NaturalId;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @ToString
@@ -26,7 +28,6 @@ public class User extends AuditableEntity {
 
     @Basic(optional = false)
     @Column(nullable = false, unique = true)
-    @NaturalId
     @NotNull
     String username;
 
@@ -41,6 +42,10 @@ public class User extends AuditableEntity {
     @NotNull
     Permission permissions;
 
+    public User(@NotNull String updatedBy) {
+        super(updatedBy);
+    }
+
     public User(@NotNull String password, @NotNull String username, @NotNull Boolean enabled, @NotNull Permission permissions, @NotNull String updatedBy) {
         super(updatedBy);
         this.password = password;
@@ -52,15 +57,22 @@ public class User extends AuditableEntity {
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof User user)) return false;
-        return user.getUsername().equals(this.username);
+
+        return Objects.equals(id, user.getId());
     }
 
     @Override
     public int hashCode() {
-        return username.hashCode();
+        return Objects.hashCode(id);
     }
 
     public boolean isAdmin(){
         return permissions.equals(Permission.ADMIN);
+    }
+    public boolean isContributor() {
+        return permissions.equals(Permission.CONTRIBUTE);
+    }
+    public boolean isAudit() {
+        return permissions.equals(Permission.AUDIT);
     }
 }

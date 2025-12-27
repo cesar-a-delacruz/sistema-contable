@@ -11,14 +11,17 @@ import com.nutrehogar.sistemacontable.model.Permission;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.ui.crud.AccountSubtypeView;
 import com.nutrehogar.sistemacontable.ui.DashboardView;
+import com.nutrehogar.sistemacontable.ui.service.AuthView;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 @Slf4j
 public class App {
+    @NotNull
     private JFrame frame;
 
     public App() {
-        var user = new User("0922","Root",true, Permission.ADMIN,"Roo");
+        var adminUser = new User("0922","Root",true, Permission.ADMIN,"Roo");
 //        Thread.startVirtualThread(()->{
 //            HibernateUtil.getSessionFactory().inTransaction(session -> {
 //                session.persist(new AccountSubtype("Ejemlo1",AccountType.ASSETS,user.getUsername()));
@@ -49,11 +52,19 @@ public class App {
             frame.getRootPane().setBackground(Theme.Palette.SOLITUDE_50);
 //            frame.add(context.getBean(DashboardView.class));
 //            frame.add(new AccountSubtypeView(user));
-            frame.add(new DashboardView(user));
+            var dashBoard = new DashboardView(adminUser);
+            frame.add(dashBoard);
             frame.setVisible(true);
+
+            var authView = new AuthView(frame,true, adminUser);
+            authView.setVisible(true);
+            var authUser = authView.getAutenicateUser();
+            dashBoard.setUser(authUser);
+            IO.println("AuthView");
+
 //            context.getBean(AuthView.class).setVisible(true);
 //            var user = context.getBean(AuthController.class).getAuthenticatedUser();
-//            frame.setTitle("Sistema Contable - " + user.getUsername());
+            frame.setTitle("Sistema Contable - " + authUser.getUsername());
 //            AppConfig.init(context, HibernateUtil.getSession(), user, frame);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

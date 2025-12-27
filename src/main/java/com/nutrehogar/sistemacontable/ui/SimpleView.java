@@ -73,11 +73,7 @@ public abstract class SimpleView<Entity> extends JPanel {
         @Override
         protected void done() {
             try {
-                if (get() == null || get().isEmpty() || get().getFirst() == null) {
-                    data = List.of();
-                    return;
-                }
-                data = get();
+                data = (get() == null || get().isEmpty() || get().getFirst() == null) ? List.of() : get();
                 tblModel.fireTableDataChanged();
             } catch (Exception e) {
                 showError("Error al cargar datos", new ApplicationException("Failure to find", e));

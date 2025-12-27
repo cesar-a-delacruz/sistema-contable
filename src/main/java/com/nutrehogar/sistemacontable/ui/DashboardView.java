@@ -5,6 +5,7 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.nutrehogar.sistemacontable.application.config.Theme;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.ui.crud.AccountView;
+import com.nutrehogar.sistemacontable.ui.crud.UserView;
 import com.nutrehogar.sistemacontable.ui_2.component.UserListPanel;
 
 import org.jetbrains.annotations.Contract;
@@ -14,9 +15,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DashboardView extends JPanel {
+    @NotNull
     private User user;
-    public DashboardView(User user) {
-        this.user = user;
+    public DashboardView(@NotNull User adminUser) {
+        this.user = adminUser;
         initComponents();
         btnHome.setIcon(new FlatSVGIcon("svgs/home.svg", Theme.ICON_MD, Theme.ICON_MD));
         btnShowFormView.setIcon(getIcon("svgs/form.svg"));
@@ -29,7 +31,7 @@ public class DashboardView extends JPanel {
         btnShowUserView.setIcon(UserListPanel.UserListElement.userIcon.derive(Theme.ICON_LG, Theme.ICON_LG));
         pnlNav.setVisible(false);
         pnlContent.setOpaque(false);
-        ButtonPermissionSettings();
+        buttonPermissionSettings();
         setupViewListeners();
     }
 
@@ -38,17 +40,15 @@ public class DashboardView extends JPanel {
         return new FlatSVGIcon(iconName, Theme.ICON_LG, Theme.ICON_LG);
     }
 
-
-    public void setUser(User user) {
+    public void setUser(@NotNull User user) {
         this.user = user;
-        ButtonPermissionSettings();
+        buttonPermissionSettings();
     }
 
-    private void ButtonPermissionSettings() {
-        if (!user.isAdmin()) {
-            btnShowUserView.setVisible(false);
-            btnShowBackupView.setEnabled(false);
-        }
+    private void buttonPermissionSettings() {
+        if (user.isAdmin()) return;
+        btnShowUserView.setVisible(false);
+        btnShowBackupView.setEnabled(false);
     }
 
     public void setupViewListeners() {
@@ -56,6 +56,7 @@ public class DashboardView extends JPanel {
 //                .addActionListener(e -> setContent(context.getBean(AccountingEntryFormController.class).getView()));
         btnShowAccountSubtypeView.addActionListener(_ -> setContent(new AccountSubtypeView(user)));
         btnShowAccountView.addActionListener(_->setContent(new AccountView(user)));
+        btnShowUserView.addActionListener(_->setContent(new UserView(user)));
 //        getBtnShowAccountView().addActionListener(e -> {
 //            setContent(context.getBean(AccountController.class).getView());
 //            context.getBean(AccountController.class).loadData();

@@ -4,12 +4,17 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REMOVE;
 
 @Getter
 @Setter
@@ -43,15 +48,16 @@ public class AccountSubtype extends AuditableEntity {
     @Column(name = "account_type", nullable = false)
     AccountType type;
 
-    @OneToMany(mappedBy = Account_.SUBTYPE, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = Account_.SUBTYPE, fetch = FetchType.LAZY, cascade = {PERSIST})
     @NotNull
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     Set<Account> accounts = new HashSet<>();
 
     public AccountSubtype(@NotNull String updatedBy) {
         super(updatedBy);
     }
 
-    public AccountSubtype(@NotNull Integer number, @NotNull String name, @NotNull AccountType type,@NotNull String updatedBy) {
+    public AccountSubtype(@NotNull Integer number, @NotNull String name, @NotNull AccountType type, @NotNull String updatedBy) {
         super(updatedBy);
         this.number = number;
         this.name = name;
@@ -75,7 +81,7 @@ public class AccountSubtype extends AuditableEntity {
 
     public String getFormattedNumber() {
         var subNumber = number.toString().substring(1);
-        return type.getId()+"."+subNumber;
+        return type.getId() + "." + subNumber;
     }
 
 //    public static class Comparator implements java.util.Comparator<AccountSubtype> {
@@ -110,8 +116,7 @@ public class AccountSubtype extends AuditableEntity {
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof AccountSubtype that)) return false;
-
-        return Objects.equals(id, that.id);
+        return Objects.equals(id, that.getId());
     }
 
     @Override
