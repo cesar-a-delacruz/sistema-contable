@@ -2,6 +2,7 @@ package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.model.AccountNumber;
 import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.AccountType;
 
@@ -11,22 +12,21 @@ import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
 import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
-import jakarta.validation.ConstraintViolationException;
-import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class AccountSubtypeView extends CRUDView<AccountSubtype> {
+public class AccountSubtypeView extends CRUDView<AccountSubtype, AccountSubtypeFormData> {
 
     private final CustomComboBoxModel<AccountType> cbxModelAccountType;
+
     public AccountSubtypeView(User user) {
-        super(user,"Subtipo de Cuenta");
+        super(user, "Subtipo de Cuenta");
         this.cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
         this.tblModel = new CustomTableModel("Numero de Cuenta", "Nombre", "Tipo de Cuenta") {
             @Override
@@ -54,79 +54,78 @@ public class AccountSubtypeView extends CRUDView<AccountSubtype> {
         loadData();
         btnSave.addActionListener(_ -> save());
         btnUpdate.addActionListener(_ -> update());
-        cbxType.addActionListener(_-> lblAccountTypeId.setText(((AccountType)cbxType.getSelectedItem()).getId()+"."));
-        lblTitle.setFont(Theme.Typography.FONT_BASE.deriveFont(Font.PLAIN,30));
+        cbxType.addActionListener(_ -> lblAccountTypeId.setText(((AccountType) cbxType.getSelectedItem()).getId() + "."));
+        lblTitle.setFont(Theme.Typography.FONT_BASE.deriveFont(Font.PLAIN, 30));
     }
-
-
 
     @Override
     protected void delete() {
-        if(selected.isEmpty()){
+        if (selected.isEmpty()) {
             showMessage("Seleccione un elemento de la tabla");
             return;
         }
-        var response = JOptionPane.showConfirmDialog(this, "<html><p>Seguro que desea eliminar "+selected.get().getFormattedNumber()+" - " +selected.get().getName()+"</p> <p>Las cuentas que esten vinculadas no se eliminaran</p></html>", "Eliminar", JOptionPane.OK_CANCEL_OPTION);
-        if (response == JOptionPane.OK_OPTION) {
-            HibernateUtil
-                    .getSessionFactory()
-                    .inStatelessTransaction(statelessSession ->
-                            statelessSession.delete(selected.get()));
-        }
-        loadData();
+        new DeleteAccountSubtypeWorker(selected.get()).execute();
     }
-
     @Override
     protected void save() {
-        try{
-            HibernateUtil
-                    .getSessionFactory()
-                    .inTransaction(session -> session.persist(setEntityDataFromForm(new AccountSubtype(user.getUsername()))));
-        } catch (ConstraintViolationException cve) {
-            // mostrar advertencia de validación al usuario
-            showError("Error al guardar los datos", cve);
-        } catch (HibernateException he) {
-            // error general de persistencia
-            showError("Error al guardar los datos", he);
-        } catch (Exception e) {
-            // fallback general
-            showError("Error al actualizar los datos", e);
-        }
-        loadData();
+        var dto = getDataFromForm();
+        new SaveAccountSubtypeWorker(dto).execute();
     }
-
     @Override
     protected void update() {
         if (selected.isEmpty() || selected.get().getId() == null) {
             showMessage("Seleccione un elemento de la tabla");
             return;
         }
-        try{
-            HibernateUtil.getSessionFactory()
-                    .inTransaction(session -> {
-                        var repo = new AccountSubtypeQuery_(session);
-                        repo.findById(selected.get().getId()).ifPresent(this::setEntityDataFromForm);
-                    });
-        } catch (ConstraintViolationException cve) {
-            // mostrar advertencia de validación al usuario
-            showError("Error al actualizar los datos", cve);
-        } catch (HibernateException he) {
-            // error general de persistencia
-            showError("Error al actualizar los datos", he);
-        } catch (Exception e) {
-            // fallback general
-            showError("Error al actualizar los datos", e);
+        var dto = getDataFromForm();
+        new EditAccountSubtypeWorker(selected.get(), dto).execute();
+    }
+    private final class EditAccountSubtypeWorker extends EditWorker {
+
+        public EditAccountSubtypeWorker(@NotNull AccountSubtype entity, @NotNull AccountSubtypeFormData dto) {
+            super(entity, dto);
         }
-        loadData();
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            var entity = session.merge(this.entity);
+            entity.setUpdatedBy(dto.username());
+            entity.setNumber(dto.number());
+            entity.setName(dto.name());
+            entity.setType(dto.type());
+        }
+    }
+    private final class SaveAccountSubtypeWorker extends SaveWorker {
+
+        public SaveAccountSubtypeWorker(@NotNull AccountSubtypeFormData dto) {
+            super(dto);
+        }
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            session.persist(new AccountSubtype(dto.number(), dto.name(), dto.type(), dto.username()));
+        }
+    }
+    private final class DeleteAccountSubtypeWorker extends DeleteWorker {
+        public DeleteAccountSubtypeWorker(@NotNull AccountSubtype entity) {
+            super(entity);
+        }
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            session.remove(session.merge(this.entity));
+        }
     }
 
     @Override
-    protected @NotNull AccountSubtype setEntityDataFromForm(@NotNull AccountSubtype entity) {
-        entity.setName(txtName.getText());
-        entity.setNumber(txtNumber.getText(), (AccountType) cbxType.getSelectedItem());
-        entity.setType((AccountType) cbxType.getSelectedItem());
-        entity.setUpdatedBy(user.getUsername());
-        return entity;
+    protected @NotNull AccountSubtypeFormData getDataFromForm() {
+        var type = (AccountType) cbxType.getSelectedItem();
+        return new AccountSubtypeFormData(
+                txtName.getText(),
+                AccountNumber.generateNumber(txtNumber.getText(), type),
+                type,
+                user.getUsername()
+        );
     }
 
     @Override
@@ -135,12 +134,12 @@ public class AccountSubtypeView extends CRUDView<AccountSubtype> {
         txtNumber.setText("");
         cbxType.setSelectedItem(AccountType.ASSETS);
     }
+
     @Override
-    protected @NotNull AccountSubtype setEntityDataInForm(@NotNull AccountSubtype entity) {
+    protected void setEntityDataInForm(@NotNull AccountSubtype entity) {
         txtName.setText(entity.getName());
         txtNumber.setText(entity.getSubNumber());
         cbxType.setSelectedItem(entity.getType());
-        return entity;
     }
 
     @Override
@@ -170,11 +169,10 @@ public class AccountSubtypeView extends CRUDView<AccountSubtype> {
     @Override
     protected List<AccountSubtype> findEntities() {
         AtomicReference<List<AccountSubtype>> list = new AtomicReference<>(List.of());
-        try{
-            HibernateUtil.getSessionFactory().inStatelessTransaction(statelessSession -> list.set(statelessSession.createQuery("select a from AccountSubtype a", AccountSubtype.class).list()));
-        } catch (Exception e) {
-            showError("Error al obtener los datos", e);
-        }
+        HibernateUtil
+                .getSessionFactory()
+                .inTransaction(session ->
+                        list.set(new AccountSubtypeQuery_(session).findAll()));
         return list.get();
     }
 
@@ -214,12 +212,12 @@ public class AccountSubtypeView extends CRUDView<AccountSubtype> {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 591, Short.MAX_VALUE)
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 591, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 473, Short.MAX_VALUE)
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 473, Short.MAX_VALUE)
         );
 
         setOpaque(false);
@@ -258,79 +256,79 @@ public class AccountSubtypeView extends CRUDView<AccountSubtype> {
         btnUpdate.setText("Actualizar");
 
         lblSave.setLabelFor(btnSave);
-        lblSave.setText("<html><p>Guarda el nuevo "+entityName+"</p></html>");
+        lblSave.setText("<html><p>Guarda el nuevo " + entityName + "</p></html>");
         lblSave.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblSave.setPreferredSize(new java.awt.Dimension(250, 40));
 
         lblUpdate.setLabelFor(btnUpdate);
-        lblUpdate.setText("<html><p>Actualiza los datos del "+entityName+" seleccionado con los datos del formulario</p></html>");
+        lblUpdate.setText("<html><p>Actualiza los datos del " + entityName + " seleccionado con los datos del formulario</p></html>");
         lblUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblUpdate.setPreferredSize(new java.awt.Dimension(250, 40));
 
         javax.swing.GroupLayout pnlFormLayout = new javax.swing.GroupLayout(pnlForm);
         pnlForm.setLayout(pnlFormLayout);
         pnlFormLayout.setHorizontalGroup(
-            pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlFormLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlFormLayout.createSequentialGroup()
-                        .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(lblType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblNumber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbxType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(pnlFormLayout.createSequentialGroup()
-                                .addComponent(lblAccountTypeId, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFormLayout.createSequentialGroup()
-                        .addComponent(labelSection1)
-                        .addGap(18, 18, 18)
-                        .addComponent(sepaSection1))
-                    .addGroup(pnlFormLayout.createSequentialGroup()
-                        .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE))))
-                .addContainerGap())
+                pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                        .addComponent(lblType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblNumber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(cbxType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                                                .addComponent(lblAccountTypeId, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(0, 0, Short.MAX_VALUE))))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFormLayout.createSequentialGroup()
+                                                .addComponent(labelSection1)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(sepaSection1))
+                                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(lblSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE))))
+                                .addContainerGap())
         );
         pnlFormLayout.setVerticalGroup(
-            pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlFormLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblName)
-                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblNumber)
-                    .addComponent(lblAccountTypeId)
-                    .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblType)
-                    .addComponent(cbxType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(labelSection1)
-                    .addComponent(sepaSection1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSave)
-                    .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdate))
-                .addContainerGap())
+                pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblName)
+                                        .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblNumber)
+                                        .addComponent(lblAccountTypeId)
+                                        .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblType)
+                                        .addComponent(cbxType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(labelSection1)
+                                        .addComponent(sepaSection1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnSave)
+                                        .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnUpdate))
+                                .addContainerGap())
         );
 
         auditablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Auditoría"));
@@ -338,24 +336,24 @@ public class AccountSubtypeView extends CRUDView<AccountSubtype> {
         javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);
         pnlAsideLayout.setHorizontalGroup(
-            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlForm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(auditablePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(operationPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlAsideLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(pnlForm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(auditablePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(operationPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
         );
         pnlAsideLayout.setVerticalGroup(
-            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addComponent(operationPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(auditablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlAsideLayout.createSequentialGroup()
+                                .addComponent(operationPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnlForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(auditablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         lblTitle.setText("Subtipos de Cuentas");
@@ -363,26 +361,26 @@ public class AccountSubtypeView extends CRUDView<AccountSubtype> {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                                        .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1)))
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jScrollPane1)))
+                                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -278,7 +278,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;AccountSubtype&gt;"/>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;AccountSubtypeMinData&gt;"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="labelSection1">

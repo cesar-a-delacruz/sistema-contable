@@ -56,39 +56,29 @@ public class Account extends AuditableEntity {
         super(updatedBy);
     }
 
-    public Account(@NotNull String name, @NotNull String updatedBy, @Nullable AccountSubtype subtype) {
+    public Account(@NotNull Integer number, @NotNull String name, @NotNull AccountType type, @NotNull String updatedBy) {
+        super(updatedBy);
+        this.number = number;
+        this.name = name;
+        this.type = type;
+    }
+
+    public Account(@NotNull String name, @Nullable AccountSubtype subtype, @NotNull String updatedBy) {
         super(updatedBy);
         this.subtype = subtype;
         this.name = name;
     }
 
-
     public void setNumber(@NotNull String subNumber, @NotNull AccountType type) {
-        int remaining = 4 - subNumber.length();
-        this.number = Integer.valueOf(type.getId() + (remaining == 0 ? subNumber : subNumber + "0".repeat(remaining)));
+        this.number = AccountNumber.generateNumber(subNumber, type);
     }
 
     public String getSubNumber() {
-        return number.toString().substring(1);
+        return AccountNumber.getSubNumber(number);
     }
-
 
     public String getFormattedNumber() {
-        var subNumber = number.toString().substring(1);
-        return type.getId() + "." + subNumber;
-    }
-
-
-    public static @NotNull String getCellRenderer(Integer id) {
-        if (id == null)
-            return "";
-        return getCellRenderer(id.toString());
-    }
-
-    public static @NotNull String getCellRenderer(String id) {
-        if (id == null)
-            return "";
-        return id.charAt(0) + "." + id.substring(1);
+        return AccountNumber.getFormattedNumber(number);
     }
 
     @Override

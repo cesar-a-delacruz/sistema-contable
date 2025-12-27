@@ -1,8 +1,11 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
+import com.nutrehogar.sistemacontable.application.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.application.config.PasswordHasher;
 import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.exception.ApplicationException;
+import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.Permission;
 
 import javax.swing.JButton;
@@ -16,15 +19,17 @@ import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
 import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.security.Permissions;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
-public class UserView extends CRUDView<User> {
+public class UserView extends CRUDView<User,UserFormData> {
 
     private final CustomComboBoxModel<Permission> cbxModelPermision;
     public UserView(User user) {
@@ -68,66 +73,83 @@ public class UserView extends CRUDView<User> {
 
     @Override
     protected void delete() {
-        selected.ifPresentOrElse(entity -> HibernateUtil
-                .getSessionFactory()
-                .inStatelessTransaction(statelessSession -> statelessSession
-                        .delete(entity)), () -> showMessage("Seleccione un elemento de la tabla"));
-        loadData();
+        if (selected.isEmpty()) {
+            showMessage("Seleccione un elemento de la tabla");
+            return;
+        }
+        new DeleteUserWorker(selected.get()).execute();
     }
-
     @Override
     protected void save() {
-        try{
-            HibernateUtil
-                    .getSessionFactory()
-                    .inTransaction(session -> session.persist(setEntityDataFromForm(new User(user.getUsername()))));
-        } catch (ConstraintViolationException cve) {
-            // mostrar advertencia de validación al usuario
-            showError("Error al guardar los datos", cve);
-        } catch (HibernateException he) {
-            // error general de persistencia
-            showError("Error al guardar los datos", he);
-        } catch (Exception e) {
-            // fallback general
-            showError("Error al actualizar los datos", e);
+        var dto = getDataFromForm();
+        if(dto.password().isEmpty()){
+            showMessage(LabelBuilder.build("La contraseña es requerida"));
+            return;
         }
-        loadData();
+        new SaveUserWorker(dto).execute();
     }
-
     @Override
     protected void update() {
         if (selected.isEmpty() || selected.get().getId() == null) {
             showMessage("Seleccione un elemento de la tabla");
             return;
         }
-        try{
-            HibernateUtil.getSessionFactory()
-                    .inTransaction(session -> {
-                        var repo = new UserQuery_(session);
-                        repo.findById(selected.get().getId()).ifPresent(this::setEntityDataFromForm);
-                    });
-        } catch (ConstraintViolationException cve) {
-            // mostrar advertencia de validación al usuario
-            showError("Error al actualizar los datos", cve);
-        } catch (HibernateException he) {
-            // error general de persistencia
-            showError("Error al actualizar los datos", he);
-        } catch (Exception e) {
-            // fallback general
-            showError("Error al actualizar los datos", e);
+        var dto = getDataFromForm();
+        new EditUserWorker(selected.get(), dto).execute();
+    }
+    private final class EditUserWorker extends EditWorker {
+
+        public EditUserWorker(@NotNull User entity, @NotNull UserFormData dto) {
+            super(entity, dto);
         }
-        loadData();
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            var entity = session.merge(this.entity);
+            entity.setUpdatedBy(dto.updatedBy());
+            entity.setEnabled(dto.isEnable());
+            dto.password().ifPresent(entity::setPassword);
+            entity.setPermissions(dto.permission());
+        }
+    }
+    private final class SaveUserWorker extends SaveWorker {
+
+        public SaveUserWorker(@NotNull UserFormData dto) {
+            super(dto);
+        }
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            if(dto.password().isEmpty()){
+                throw new ApplicationException(LabelBuilder.build("La contraseña es requerida"));
+            }
+            session.persist(new User(dto.password().get(), dto.username(), dto.isEnable(),dto.permission(),dto.updatedBy()));
+        }
+    }
+    private final class DeleteUserWorker extends DeleteWorker {
+        public DeleteUserWorker(@NotNull User entity) {
+            super(entity);
+        }
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            session.remove(session.merge(this.entity));
+        }
     }
 
     @Override
-    protected @NotNull User setEntityDataFromForm(@NotNull User entity) {
-        entity.setUsername(txtName.getText());
-        entity.setPermissions((Permission) cbxPermissions.getSelectedItem());
-        entity.setUpdatedBy(user.getUsername());
-        entity.setEnabled(chkIsEnable.isSelected());
-        if(txtPassword.getText().isBlank()) return entity;
-        entity.setPassword(PasswordHasher.hashPassword(getTxtPassword().getText()));
-        return entity;
+    protected UserFormData getDataFromForm() {
+        Optional<String> pass = txtPassword.getText().isBlank()
+                ? Optional.empty()
+                : Optional.of(PasswordHasher.hashPassword(getTxtPassword().getText()));
+
+        return new UserFormData(
+                txtName.getText(),
+                chkIsEnable.isSelected(),
+                (Permission) cbxPermissions.getSelectedItem(),
+                pass,
+                user.getUsername()
+        );
     }
 
     @Override
@@ -138,12 +160,11 @@ public class UserView extends CRUDView<User> {
         cbxPermissions.setSelectedItem(Permission.ADMIN);
     }
     @Override
-    protected @NotNull User setEntityDataInForm(@NotNull User entity) {
+    protected void setEntityDataInForm(@NotNull User entity) {
         txtName.setText(entity.getUsername());
         chkIsEnable.setSelected(entity.getEnabled());
         txtPassword.setText("");
         cbxPermissions.setSelectedItem(entity.getPermissions());
-        return entity;
     }
 
     @Override
@@ -171,13 +192,11 @@ public class UserView extends CRUDView<User> {
     }
 
     @Override
-    protected java.util.List<User> findEntities() {
-        AtomicReference<java.util.List<User>> list = new AtomicReference<>(List.of());
-        try{
-            HibernateUtil.getSessionFactory().inStatelessTransaction(statelessSession -> list.set(statelessSession.createQuery("select a from User a", User.class).list()));
-        } catch (Exception e) {
-            showError("Error al obtener los datos", e);
-        }
+    protected List<User> findEntities() {
+        AtomicReference<List<User>> list = new AtomicReference<>(List.of());
+            HibernateUtil
+                    .getSessionFactory()
+                    .inTransaction(session -> list.set(new UserQuery_(session).findAll()));
         return list.get();
     }
 

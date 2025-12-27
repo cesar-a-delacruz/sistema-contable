@@ -10,7 +10,7 @@ public class AccountListCellRenderer extends DefaultListCellRenderer {
             boolean cellHasFocus) {
         var label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         label.setText(switch (value) {
-            case Account account -> Account.getCellRenderer(account.getId()) + " " + account.getName();
+            case Account account -> account.getFormattedNumber() + " " + account.getName();
             case null -> "";
             default -> value.toString();
         });

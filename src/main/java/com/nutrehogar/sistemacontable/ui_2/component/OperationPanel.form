@@ -81,7 +81,7 @@
     <Component class="javax.swing.JLabel" name="lblDelete">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="&quot;&lt;html&gt;&lt;p&gt;Elimina la &quot;+entityName+&quot; seleccionada&lt;/p&gt;&lt;/html&gt;&quot;" type="code"/>
+          <Connection code="LabelBuilder.build(&quot;Elimina la &quot;+entityName+&quot; seleccionada&quot;)" type="code"/>
         </Property>
         <Property name="verticalAlignment" type="int" value="1"/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -97,7 +97,7 @@
     <Component class="javax.swing.JLabel" name="lblEdit">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="&quot;&lt;html&gt;&lt;p&gt;Prepara el formualrio para editar una &quot;+ entityName +&quot;&lt;/p&gt;&lt;/html&gt;&quot;" type="code"/>
+          <Connection code="LabelBuilder.build(&quot;Prepara el formualrio para editar una &quot;+ entityName)" type="code"/>
         </Property>
         <Property name="verticalAlignment" type="int" value="1"/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -113,7 +113,7 @@
     <Component class="javax.swing.JLabel" name="lblAdd">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="&quot;&lt;html&gt;&lt;p&gt;Prepara el formualrio para crear una nueva &quot;+ entityName +&quot;&lt;/p&gt;&lt;/html&gt;&quot;" type="code"/>
+          <Connection code="LabelBuilder.build(&quot;Prepara el formualrio para crear una nueva &quot;+ entityName)" type="code"/>
         </Property>
         <Property name="verticalAlignment" type="int" value="1"/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

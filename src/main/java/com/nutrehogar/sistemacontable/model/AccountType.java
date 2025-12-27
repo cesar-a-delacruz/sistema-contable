@@ -83,6 +83,10 @@ public enum AccountType {
         return ASSETS;
     }
 
+    public @NotNull String getCellRenderer() {
+        return AccountType.getCellRenderer(this);
+    }
+
     public static @NotNull String getCellRenderer(@NotNull AccountType tipo) {
         return tipo.getId() + " " + tipo.getName();
     }

@@ -71,17 +71,15 @@ public class AccountSubtype extends AuditableEntity {
     }
 
     public void setNumber(@NotNull String subNumber, @NotNull AccountType type) {
-        int remaining = 4 - subNumber.length();
-        this.number = Integer.valueOf(type.getId() + (remaining <= 0 ? subNumber : subNumber + "0".repeat(remaining)));
+        this.number = AccountNumber.generateNumber(subNumber, type);
     }
 
     public String getSubNumber() {
-        return number.toString().substring(1);
+        return AccountNumber.getSubNumber(number);
     }
 
     public String getFormattedNumber() {
-        var subNumber = number.toString().substring(1);
-        return type.getId() + "." + subNumber;
+        return AccountNumber.getFormattedNumber(number);
     }
 
 //    public static class Comparator implements java.util.Comparator<AccountSubtype> {

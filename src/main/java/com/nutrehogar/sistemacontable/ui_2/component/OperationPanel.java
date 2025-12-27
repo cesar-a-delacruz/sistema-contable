@@ -4,6 +4,7 @@
  */
 package com.nutrehogar.sistemacontable.ui_2.component;
 
+import com.nutrehogar.sistemacontable.application.config.LabelBuilder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,19 +50,19 @@ public class OperationPanel extends javax.swing.JPanel {
 
         btnDelete.setText("Eliminar");
 
-        lblDelete.setText("<html><p>Elimina la "+entityName+" seleccionada</p></html>");
+        lblDelete.setText(LabelBuilder.build("Elimina la "+entityName+" seleccionada"));
         lblDelete.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblDelete.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnPrepareToEdit.setText("Editar");
 
-        lblEdit.setText("<html><p>Prepara el formualrio para editar una "+ entityName +"</p></html>");
+        lblEdit.setText(LabelBuilder.build("Prepara el formualrio para editar una "+ entityName));
         lblEdit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblEdit.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnPrepareToAdd.setText("Crear");
 
-        lblAdd.setText("<html><p>Prepara el formualrio para crear una nueva "+ entityName +"</p></html>");
+        lblAdd.setText(LabelBuilder.build("Prepara el formualrio para crear una nueva "+ entityName));
         lblAdd.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblAdd.setPreferredSize(new java.awt.Dimension(250, 40));
 

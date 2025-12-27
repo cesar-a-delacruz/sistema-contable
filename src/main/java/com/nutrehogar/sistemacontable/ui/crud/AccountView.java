@@ -1,15 +1,12 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
+import com.nutrehogar.sistemacontable.application.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.application.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
-import com.nutrehogar.sistemacontable.model.Account;
-import com.nutrehogar.sistemacontable.model.User;
+import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.query.AccountQuery_;
 import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
-import com.nutrehogar.sistemacontable.ui.crud.CRUDView;
-import com.nutrehogar.sistemacontable.model.AccountSubtype;
-import com.nutrehogar.sistemacontable.model.AccountType;
 
 import javax.swing.*;
 
@@ -20,21 +17,25 @@ import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
 import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
-public class AccountView extends CRUDView<Account> {
+public class AccountView extends CRUDView<Account, AccountFormData> {
 
     private final CustomComboBoxModel<AccountType> cbxModelAccountType;
-    private final CustomComboBoxModel<AccountSubtype> cbxModelAccountSubtype;
-    private final ArrayList<Runnable> onFindSubtypes = new ArrayList<>();
+    private final CustomComboBoxModel<AccountSubtypeMinData> cbxModelAccountSubtype;
+    private Optional<Runnable> onFindSubtypes = Optional.empty();
+
     public AccountView(User user) {
-        super(user,"Cuenta");
+        super(user, "Cuenta");
         this.cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
         this.cbxModelAccountSubtype = new CustomComboBoxModel<>(List.of());
         this.tblModel = new CustomTableModel("Numero", "Nombre", "Tipo de Cuenta", "Subtipo de Cuenta") {
@@ -65,84 +66,25 @@ public class AccountView extends CRUDView<Account> {
         loadData();
         btnSave.addActionListener(_ -> save());
         btnUpdate.addActionListener(_ -> update());
-        cbxType.addActionListener(_-> lblAccountTypeId.setText(((AccountType)cbxType.getSelectedItem()).getId()+"."));
-        cbxType.addActionListener(_-> new CbxModelAccountSubtypeDataLoader().execute());
-        rbAddSubtype.addActionListener(_->cbxSubtype.setEnabled(rbAddSubtype.isSelected()));
-        lblTitle.setFont(Theme.Typography.FONT_BASE.deriveFont(Font.PLAIN,30));
-    }
-
-    protected class CbxModelAccountSubtypeDataLoader extends SwingWorker<List<AccountSubtype>, Void> {
-        @Override
-        protected@NotNull List<AccountSubtype> doInBackground() {
-            AtomicReference<List<AccountSubtype>> list = new AtomicReference<>(List.of());
-            try{
-                HibernateUtil.getSessionFactory().inTransaction(session -> list.set(new AccountSubtypeQuery_(session).findByType((AccountType) cbxType.getSelectedItem())));
-            } catch (Exception e) {
-                showError("Error al obtener los subtipos de cuentas", e);
-            }
-            return list.get();
-        }
-
-        @Override
-        protected void done() {
-            try {
-                if (get() == null || get().isEmpty() || get().getFirst() == null) {
-                    cbxModelAccountSubtype.setData(List.of());
-                    return;
-                }
-                cbxModelAccountSubtype.setData(get());
-                onFindSubtypes.forEach(Runnable::run);
-                onFindSubtypes.clear();
-            } catch (Exception e) {
-                showError("Error al cargar datos", new ApplicationException("Failure to find", e));
-            }
-        }
+        cbxType.addActionListener(_ -> lblAccountTypeId.setText(((AccountType) cbxType.getSelectedItem()).getId() + "."));
+        cbxType.addActionListener(_ -> new CbxModelAccountSubtypeDataLoader((AccountType) cbxType.getSelectedItem()).execute());
+        rbAddSubtype.addActionListener(_ -> cbxSubtype.setEnabled(rbAddSubtype.isSelected()));
+        lblTitle.setFont(Theme.Typography.FONT_BASE.deriveFont(Font.PLAIN, 30));
     }
 
     @Override
     protected void delete() {
-        if(selected.isEmpty()){
+        if (selected.isEmpty()) {
             showMessage("Seleccione un elemento de la tabla");
             return;
         }
-        var response = JOptionPane.showConfirmDialog(this, "<html><p>Seguro que desea eliminar el Subtipo de cuenta, a las cuentas que esten vinculadas no se eliminaran</p></html>", "Eliminar" + selected.get().getFormattedNumber(), JOptionPane.OK_CANCEL_OPTION);
-        if (response == JOptionPane.OK_OPTION) {
-            HibernateUtil
-                    .getSessionFactory()
-                    .inStatelessTransaction(statelessSession ->
-                            statelessSession.delete(selected.get()));
-        }
-        loadData();
+        new DeleteAccountWorker(selected.get()).execute();
     }
 
     @Override
     protected void save() {
-        try{
-            HibernateUtil
-                    .getSessionFactory()
-                    .inTransaction(session -> {
-                        var account = setEntityDataFromForm(new Account(user.getUsername()));
-                        if(account.getSubtype()!=null){
-                            var subtipo = new AccountSubtypeQuery_(session).findById(account.getSubtype().getId());
-                            if(subtipo.isEmpty()){
-                                showError("Debe Seleccionar una Subtipo de Cuenta si el check esta activo!");
-                                throw new ApplicationException("subtype null");
-                            }
-                            account.setSubtype(subtipo.get());
-                        }
-                        session.persist(account);
-                    });
-        } catch (ConstraintViolationException cve) {
-            // mostrar advertencia de validación al usuario
-            showError("Error al guardar los datos", cve);
-        } catch (HibernateException he) {
-            // error general de persistencia
-            showError("Error al guardar los datos", he);
-        } catch (Exception e) {
-            // fallback general
-            showError("Error al actualizar los datos", e);
-        }
-        loadData();
+        var dto = getDataFromForm();
+        new SaveAccountWorker(dto).execute();
     }
 
     @Override
@@ -151,46 +93,170 @@ public class AccountView extends CRUDView<Account> {
             showMessage("Seleccione un elemento de la tabla");
             return;
         }
-        try{
-            HibernateUtil.getSessionFactory()
-                    .inTransaction(session -> {
-                        var repo = new AccountQuery_(session);
-                        repo.findById(selected.get().getId()).ifPresent(this::setEntityDataFromForm);
-                    });
-        } catch (ConstraintViolationException cve) {
-            // mostrar advertencia de validación al usuario
-            showError("Error al actualizar los datos", cve);
-        } catch (HibernateException he) {
-            // error general de persistencia
-            showError("Error al actualizar los datos", he);
-        } catch (Exception e) {
-            // fallback general
-            showError("Error al actualizar los datos", e);
-        }
-        loadData();
+        var dto = getDataFromForm();
+        new EditAccountWorker(selected.get(), dto).execute();
     }
 
+    private final class EditAccountWorker extends EditWorker {
+
+        public EditAccountWorker(@NotNull Account entity, @NotNull AccountFormData dto) {
+            super(entity, dto);
+        }
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            IO.println("se busca");
+            var entity = session.merge(this.entity);
+            entity.setUpdatedBy(dto.username());
+            entity.setNumber(dto.number());
+            entity.setName(dto.name());
+            entity.setType(dto.type());
+
+            IO.println("is empty");
+            if (dto.subtypeId().isEmpty()) return;
+            IO.println("sis equals");
+
+            if (entity.getSubtype() != null
+                    && entity.getSubtype().getId() != null
+                    && entity.getSubtype().getId().equals(dto.subtypeId().get()))
+                return;
+            IO.println("se busca 2");
+            var subtype = new AccountSubtypeQuery_(session).findById(dto.subtypeId().get());
+
+            IO.println("isempty");
+            if (subtype.isEmpty()) {
+                throw new ApplicationException(
+                        LabelBuilder.of("El subtipo de cuenta no fue encontrado.")
+                                .p("Si no quiere agregar un subtipo, desmarque el check.")
+                                .p("Si es un error debe")
+                                .build());
+            }
+            IO.println("se pone");
+            entity.setSubtype(subtype.get());
+        }
+    }
+
+    private final class SaveAccountWorker extends SaveWorker {
+
+        public SaveAccountWorker(@NotNull AccountFormData dto) {
+            super(dto);
+        }
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            var account = new Account(dto.number(), dto.name(), dto.type(), dto.username());
+            if (dto.subtypeId().isPresent()) {
+                var subtype = new AccountSubtypeQuery_(session).findById(dto.subtypeId().get());
+                if (subtype.isEmpty()) {
+                    throw new ApplicationException(
+                            LabelBuilder.of("El subtipo de cuenta no fue encontrado.")
+                                    .p("Si no quiere agregar un subtipo, desmarque el check.")
+                                    .p("Si es un error debe")
+                                    .build());
+                }
+                account.setSubtype(subtype.get());
+            }
+            session.persist(account);
+        }
+    }
+
+    private final class DeleteAccountWorker extends DeleteWorker {
+        public DeleteAccountWorker(@NotNull Account entity) {
+            super(entity);
+        }
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            session.remove(session.merge(this.entity));
+        }
+    }
+
+    private final class CbxModelAccountSubtypeDataLoader extends SwingWorker<List<AccountSubtypeMinData>, Void> {
+        @NotNull
+        private final AccountType type;
+        @Nullable
+        private ApplicationException error;
+
+        private CbxModelAccountSubtypeDataLoader(@NotNull AccountType type) {
+            this.type = type;
+        }
+
+        @Override
+        protected @NotNull List<AccountSubtypeMinData> doInBackground() {
+            AtomicReference<List<AccountSubtypeMinData>> list = new AtomicReference<>(List.of());
+            try {
+                HibernateUtil
+                        .getSessionFactory()
+                        .inTransaction(session -> list.set(new AccountSubtypeQuery_(session).findMinDataByType(type)));
+            } catch (ConstraintViolationException cve) {
+                error = new ApplicationException(
+                        LabelBuilder.of("Los datos ingresados son inválidos.")
+                                .p("Por favor revise qe no alla cambos único que se repitan, ejm: Nombres, Números de Cuentas")
+                                .build(),
+                        cve);
+            } catch (HibernateException he) {
+                error = new ApplicationException(
+                        LabelBuilder.of("Ocurrió un error en la base de datos, inténtelo nuevamente")
+                                .p("Si el problema persiste valla al inicio y regrese")
+                                .p("Si el problema persiste, cierre el programa y vuelva a intentarlo.")
+                                .build(),
+                        he);
+            } catch (Exception e) {
+                error = new ApplicationException(
+                        LabelBuilder.of("Ocurrió un error inesperado, por favor inténtelo de nuevo.")
+                                .p("Si el problema persiste, cierre el programa y vuelva a intentarlo.")
+                                .build(),
+                        e);
+            }
+            return list.get();
+        }
+
+        @Override
+        protected void done() {
+            List<AccountSubtypeMinData> list = List.of();
+
+            try {
+                if (get() == null) {
+                    error = new ApplicationException(LabelBuilder.build("Error al optener la lista de subtipos de cuentas"));
+                }
+                if (get().isEmpty() || get().getFirst() == null) {
+                    error = new ApplicationException(LabelBuilder.of("La lista esta vacía.")
+                            .p("Para agregar un subtipo de cuenta debe seleccionar un tipo de cuenta que tenga subtipos.")
+                            .build()
+                    );
+                }
+                list = get();
+            } catch (Exception e) {
+                error = new ApplicationException(LabelBuilder.build("Error al optener la lista de subtipos de cuentas"), e);
+            }
+
+            if (error != null) {
+                cbxModelAccountSubtype.setData(List.of());
+                showError(error.getMessage(), error);
+                return;
+            }
+            cbxModelAccountSubtype.setData(list);
+            onFindSubtypes.ifPresent(Runnable::run);
+            onFindSubtypes = Optional.empty();
+        }
+    }
+
+
     @Override
-    protected @NotNull Account setEntityDataFromForm(@NotNull Account entity) {
-        var accountType = (AccountType) cbxType.getSelectedItem();
-        entity.setName(txtName.getText());
-        entity.setNumber(txtNumber.getText(), accountType);
-        entity.setType(accountType);
-        entity.setUpdatedBy(user.getUsername());
-        if(!rbAddSubtype.isSelected()){
-            entity.setSubtype(null);
-            return entity;
-        }
+    protected @NotNull AccountFormData getDataFromForm() {
+        var type = (AccountType) cbxType.getSelectedItem();
 
-        var subtype = (AccountSubtype) cbxSubtype.getSelectedItem();
+        Optional<Integer> subtypeId = rbAddSubtype.isSelected()
+                ? Optional.of(((AccountSubtypeMinData) cbxSubtype.getSelectedItem()).id())
+                : Optional.empty();
 
-        if(subtype == null){
-            showError("Debe Seleccionar una Subtipo de Cuenta si el check esta activo!");
-            throw new ApplicationException("subtype null");
-        }
-
-        entity.setSubtype(subtype);
-        return entity;
+        return new AccountFormData(
+                txtName.getText(),
+                AccountNumber.generateNumber(txtNumber.getText(), type),
+                type,
+                subtypeId,
+                user.getUsername()
+        );
     }
 
     @Override
@@ -201,31 +267,28 @@ public class AccountView extends CRUDView<Account> {
         cbxSubtype.setEnabled(false);
         cbxType.setSelectedItem(AccountType.ASSETS);
     }
-    @Override
-    protected @NotNull Account setEntityDataInForm(@NotNull Account entity) {
 
+    @Override
+    protected void setEntityDataInForm(@NotNull Account entity) {
         txtName.setText(entity.getName());
         txtNumber.setText(entity.getSubNumber());
-
         cbxType.setSelectedItem(entity.getType());
 
-        if(entity.getSubtype() == null) {
+        if (entity.getSubtype() == null) {
             rbAddSubtype.setSelected(false);
             cbxSubtype.setEnabled(false);
             btnUpdate.setEnabled(true);
-            return entity;
+            return;
         }
 
         rbAddSubtype.setSelected(true);
         cbxSubtype.setEnabled(false);
 
-        onFindSubtypes.add(()->{
+        onFindSubtypes = Optional.of(() -> {
             cbxModelAccountSubtype.setSelectedItem(entity.getSubtype());
             cbxSubtype.setEnabled(true);
             btnUpdate.setEnabled(true);
         });
-
-        return entity;
     }
 
     @Override
@@ -341,12 +404,12 @@ public class AccountView extends CRUDView<Account> {
         btnUpdate.setText("Actualizar");
 
         lblSave.setLabelFor(btnSave);
-        lblSave.setText("<html><p>Guarda la nueva "+entityName+"</p></html>");
+        lblSave.setText("<html><p>Guarda la nueva " + entityName + "</p></html>");
         lblSave.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblSave.setPreferredSize(new java.awt.Dimension(250, 40));
 
         lblUpdate.setLabelFor(btnUpdate);
-        lblUpdate.setText("<html><p>Actualiza los datos de la "+entityName+" seleccionada con los datos del formulario</p></html>");
+        lblUpdate.setText("<html><p>Actualiza los datos de la " + entityName + " seleccionada con los datos del formulario</p></html>");
         lblUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblUpdate.setPreferredSize(new java.awt.Dimension(250, 40));
 
@@ -355,75 +418,75 @@ public class AccountView extends CRUDView<Account> {
         javax.swing.GroupLayout pnlFormLayout = new javax.swing.GroupLayout(pnlForm);
         pnlForm.setLayout(pnlFormLayout);
         pnlFormLayout.setHorizontalGroup(
-            pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlFormLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFormLayout.createSequentialGroup()
-                        .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(labelSection1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblAccountType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblAccountId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblAccountName, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtName)
-                            .addComponent(cbxType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbxSubtype, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(sepaSection1)
-                            .addGroup(pnlFormLayout.createSequentialGroup()
+                pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                .addContainerGap()
                                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(pnlFormLayout.createSequentialGroup()
-                                        .addComponent(lblAccountTypeId)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(rbAddSubtype))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(pnlFormLayout.createSequentialGroup()
-                        .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                            .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFormLayout.createSequentialGroup()
+                                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                        .addComponent(labelSection1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblAccountType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblAccountId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblAccountName, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(txtName)
+                                                        .addComponent(cbxType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(cbxSubtype, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(sepaSection1)
+                                                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                                                                .addComponent(lblAccountTypeId)
+                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                        .addComponent(rbAddSubtype))
+                                                                .addGap(0, 0, Short.MAX_VALUE))))
+                                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(lblSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(lblUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+                                                        .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addContainerGap())
         );
         pnlFormLayout.setVerticalGroup(
-            pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlFormLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblAccountName)
-                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblAccountId)
-                    .addComponent(lblAccountTypeId)
-                    .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblAccountType)
-                    .addComponent(cbxType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(rbAddSubtype)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(cbxSubtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(labelSection1)
-                    .addComponent(sepaSection1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSave)
-                    .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdate)))
+                pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlFormLayout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblAccountName)
+                                        .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblAccountId)
+                                        .addComponent(lblAccountTypeId)
+                                        .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblAccountType)
+                                        .addComponent(cbxType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(rbAddSubtype)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel1)
+                                        .addComponent(cbxSubtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(labelSection1)
+                                        .addComponent(sepaSection1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnSave)
+                                        .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnUpdate)))
         );
 
         auditablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Auditoría"));
@@ -431,25 +494,25 @@ public class AccountView extends CRUDView<Account> {
         javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);
         pnlAsideLayout.setHorizontalGroup(
-            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlForm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(auditablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
-                    .addComponent(operationPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlAsideLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(pnlForm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(auditablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
+                                        .addComponent(operationPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
         );
         pnlAsideLayout.setVerticalGroup(
-            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(operationPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(auditablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlAsideLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(operationPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnlForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(auditablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         lblTitle.setText("Cuentas");
@@ -457,25 +520,25 @@ public class AccountView extends CRUDView<Account> {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                                        .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, 675, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1))))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, 675, Short.MAX_VALUE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jScrollPane1))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -483,7 +546,7 @@ public class AccountView extends CRUDView<Account> {
     private com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel auditablePanel;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JComboBox<AccountSubtype> cbxSubtype;
+    private javax.swing.JComboBox<AccountSubtypeMinData> cbxSubtype;
     private javax.swing.JComboBox<AccountType> cbxType;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
