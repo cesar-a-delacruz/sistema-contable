@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class AuditableEntity {
+public abstract class AuditableEntity implements AuditableFields {
 
     @Nullable
     @Basic(optional = false)

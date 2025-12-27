@@ -1,6 +1,7 @@
 package com.nutrehogar.sistemacontable.ui_2.component;
 
 import com.nutrehogar.sistemacontable.model.AuditableEntity;
+import com.nutrehogar.sistemacontable.model.AuditableFields;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +12,7 @@ public class AuditablePanel extends javax.swing.JPanel {
     public AuditablePanel() {
         initComponents();
     }
-    public <Entity extends AuditableEntity> void setAuditableFields(@NotNull Entity entity){
+    public <Entity extends AuditableFields> void setAuditableFields(@NotNull Entity entity){
         lblCreateAt.setText(toStringSafe(entity.getCreatedAt(),date->date.format(AUDITABLE_DATE_FORMATTER),NA));
         lblUpdateAt.setText(toStringSafe(entity.getUpdatedAt(),date->date.format(AUDITABLE_DATE_FORMATTER),NA));
         lblCreateBy.setText(toStringSafe(entity.getCreatedBy(),NA));

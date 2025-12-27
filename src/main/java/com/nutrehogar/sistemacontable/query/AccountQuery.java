@@ -4,6 +4,7 @@ import com.nutrehogar.sistemacontable.model.Account;
 import com.nutrehogar.sistemacontable.ui.crud.AccountData;
 import org.hibernate.annotations.processing.Find;
 import org.hibernate.annotations.processing.HQL;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +19,7 @@ public interface AccountQuery extends Query {
     @HQL("select distinct a from Account a left join fetch a.subtype order by a.number asc")
     List<Account> findAccountsAndSubtypes();
 
-    @HQL("select distinct new AccountData(a.id, a.number, a.name, a.type, new com.nutrehogar.sistemacontable.ui.crud.AccountSubtypeMinData(s.id,s.name,s.number), a.createdBy, a.updatedBy, a.createdAt, a.updatedAt) from Account a left join a.subtype s order by a.number asc")
+    @HQL("select distinct new AccountData(a.id, a.number, a.name, a.type, s.id, s.name, a.createdBy, a.updatedBy, a.createdAt, a.updatedAt, a.version) from Account a left join a.subtype s order by a.number asc")
     List<AccountData> findAllDataAndSubtypes();
 
 }

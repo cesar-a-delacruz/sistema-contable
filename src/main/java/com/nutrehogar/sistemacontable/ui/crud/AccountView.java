@@ -22,31 +22,32 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
-public class AccountView extends CRUDView<Account, AccountFormData> {
+public class AccountView extends CRUDView<AccountData, AccountFormData> {
 
     private final CustomComboBoxModel<AccountType> cbxModelAccountType;
+    private List<AccountSubtypeMinData> accountSubtypeMinData;
     private final CustomComboBoxModel<AccountSubtypeMinData> cbxModelAccountSubtype;
     private Optional<Runnable> onFindSubtypes = Optional.empty();
 
     public AccountView(User user) {
         super(user, "Cuenta");
         this.cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
-        this.cbxModelAccountSubtype = new CustomComboBoxModel<>(List.of());
+        this.accountSubtypeMinData = List.of();
+        this.cbxModelAccountSubtype = new CustomComboBoxModel<>(accountSubtypeMinData);
         this.tblModel = new CustomTableModel("Numero", "Nombre", "Tipo de Cuenta", "Subtipo de Cuenta") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var dto = data.get(rowIndex);
                 return switch (columnIndex) {
-                    case 0 -> dto.getFormattedNumber();
-                    case 1 -> dto.getName();
-                    case 2 -> dto.getType();
-                    case 3 -> dto.getSubtype() == null ? null : dto.getSubtype().getName();
+                    case 0 -> AccountNumber.getFormattedNumber(dto.number());
+                    case 1 -> dto.name();
+                    case 2 -> dto.type();
+                    case 3 -> dto.subtypeName() == null ? null : dto.subtypeName();
                     default -> "que haces?";
                 };
             }
@@ -89,7 +90,7 @@ public class AccountView extends CRUDView<Account, AccountFormData> {
 
     @Override
     protected void update() {
-        if (selected.isEmpty() || selected.get().getId() == null) {
+        if (selected.isEmpty()) {
             showMessage("Seleccione un elemento de la tabla");
             return;
         }
@@ -99,14 +100,20 @@ public class AccountView extends CRUDView<Account, AccountFormData> {
 
     private final class EditAccountWorker extends EditWorker {
 
-        public EditAccountWorker(@NotNull Account entity, @NotNull AccountFormData dto) {
+        public EditAccountWorker(@NotNull AccountData entity, @NotNull AccountFormData dto) {
             super(entity, dto);
         }
 
         @Override
         protected void inTransaction(@NotNull Session session) {
             IO.println("se busca");
-            var entity = session.merge(this.entity);
+            var response = new AccountQuery_(session).findById(this.entity.id());
+
+            if(response.isEmpty()){
+                throw new ApplicationException(LabelBuilder.build("Cunta no ncontrada"));
+            }
+            var entity = response.get();
+
             entity.setUpdatedBy(dto.username());
             entity.setNumber(dto.number());
             entity.setName(dto.name());
@@ -161,7 +168,7 @@ public class AccountView extends CRUDView<Account, AccountFormData> {
     }
 
     private final class DeleteAccountWorker extends DeleteWorker {
-        public DeleteAccountWorker(@NotNull Account entity) {
+        public DeleteAccountWorker(@NotNull AccountData entity) {
             super(entity);
         }
 
@@ -213,7 +220,7 @@ public class AccountView extends CRUDView<Account, AccountFormData> {
 
         @Override
         protected void done() {
-            List<AccountSubtypeMinData> list = List.of();
+            accountSubtypeMinData = List.of();
 
             try {
                 if (get() == null) {
@@ -225,17 +232,18 @@ public class AccountView extends CRUDView<Account, AccountFormData> {
                             .build()
                     );
                 }
-                list = get();
+                accountSubtypeMinData = get();
             } catch (Exception e) {
                 error = new ApplicationException(LabelBuilder.build("Error al optener la lista de subtipos de cuentas"), e);
             }
 
+            cbxModelAccountSubtype.setData(accountSubtypeMinData);
+
             if (error != null) {
-                cbxModelAccountSubtype.setData(List.of());
                 showError(error.getMessage(), error);
                 return;
             }
-            cbxModelAccountSubtype.setData(list);
+
             onFindSubtypes.ifPresent(Runnable::run);
             onFindSubtypes = Optional.empty();
         }
@@ -269,12 +277,12 @@ public class AccountView extends CRUDView<Account, AccountFormData> {
     }
 
     @Override
-    protected void setEntityDataInForm(@NotNull Account entity) {
-        txtName.setText(entity.getName());
-        txtNumber.setText(entity.getSubNumber());
-        cbxType.setSelectedItem(entity.getType());
+    protected void setEntityDataInForm(@NotNull AccountData entity) {
+        txtName.setText(entity.name());
+        txtNumber.setText(AccountNumber.getSubNumber(entity.number()));
+        cbxType.setSelectedItem(entity.type());
 
-        if (entity.getSubtype() == null) {
+        if (entity.subtypeId() == null) {
             rbAddSubtype.setSelected(false);
             cbxSubtype.setEnabled(false);
             btnUpdate.setEnabled(true);
@@ -285,7 +293,11 @@ public class AccountView extends CRUDView<Account, AccountFormData> {
         cbxSubtype.setEnabled(false);
 
         onFindSubtypes = Optional.of(() -> {
-            cbxModelAccountSubtype.setSelectedItem(entity.getSubtype());
+            accountSubtypeMinData
+                    .stream()
+                    .filter(e -> e.id().equals(entity.subtypeId()))
+                    .findFirst()
+                    .ifPresent(cbxModelAccountSubtype::setSelectedItem);
             cbxSubtype.setEnabled(true);
             btnUpdate.setEnabled(true);
         });
@@ -316,9 +328,9 @@ public class AccountView extends CRUDView<Account, AccountFormData> {
     }
 
     @Override
-    protected java.util.List<Account> findEntities() {
-        AtomicReference<java.util.List<Account>> list = new AtomicReference<>(List.of());
-        HibernateUtil.getSessionFactory().inTransaction(session -> list.set(new AccountQuery_(session).findAccountsAndSubtypes()));
+    protected List<AccountData> findEntities() {
+        AtomicReference<List<AccountData>> list = new AtomicReference<>(List.of());
+        HibernateUtil.getSessionFactory().inTransaction(session -> list.set(new AccountQuery_(session).findAllDataAndSubtypes()));
         return list.get();
     }
 
