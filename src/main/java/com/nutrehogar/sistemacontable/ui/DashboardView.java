@@ -27,11 +27,7 @@ public class DashboardView extends Background {
         pnlContent.setOpaque(false);
         buttonPermissionSettings();
         setupViewListeners();
-    }
 
-    @Contract(value = "_ -> new", pure = true)
-    private @NotNull FlatSVGIcon getIcon(@NotNull String iconName) {
-        return new FlatSVGIcon(iconName, Theme.ICON_LG, Theme.ICON_LG);
     }
 
     public void setUser(@NotNull User user) {
@@ -51,6 +47,7 @@ public class DashboardView extends Background {
         btnUser.addActionListener(_ -> setContent(new UserView(user)));
         btnAccountingPeriod.addActionListener(_ -> setContent(new AccountingPeriodView(user)));
         btnHome.addActionListener(_ -> setContent(pnlHome));
+        btnForm.addActionListener(_->setContent(new NewJPanel()));
     }
 
     public void setContent(JPanel p) {
@@ -112,29 +109,29 @@ public class DashboardView extends Background {
 
         pnlGroupBtn.setOpaque(false);
 
-        btnForm.setIcon(getIcon("svgs/form.svg"));
+        btnForm.setIcon(Theme.SVGs.FORM.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
         btnForm.setText("Formulario");
 
-        btnAccount.setIcon(getIcon("svgs/account.svg"));
+        btnAccount.setIcon(Theme.SVGs.ACCOUNT.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
         btnAccount.setText("Cuentas");
 
-        btnTrialBalance.setIcon(getIcon("svgs/trial_balance.svg"));
+        btnTrialBalance.setIcon(Theme.SVGs.TRIAL_BALANCE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
         btnTrialBalance.setText("Balance de Comprobación");
 
-        btnAccountSubtype.setIcon(getIcon("svgs/account_subtype.svg"));
+        btnAccountSubtype.setIcon(Theme.SVGs.ACCOUNT_SUBTYPE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
         btnAccountSubtype.setText("Subtipos de Cuentas");
         btnAccountSubtype.setToolTipText("");
 
-        btnGeneralLedger.setIcon(getIcon("svgs/general_ledger.svg"));
+        btnGeneralLedger.setIcon(Theme.SVGs.GENERAL_LEDGER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
         btnGeneralLedger.setText("Mayor General");
 
-        btnJournal.setIcon(getIcon("svgs/journal.svg"));
+        btnJournal.setIcon(Theme.SVGs.JOURNAL.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
         btnJournal.setText("Libro Diario");
 
-        btnUser.setIcon(getIcon("svgs/user.svg"));
+        btnUser.setIcon(Theme.SVGs.USER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
         btnUser.setText("Usuarios");
 
-        btnAccountingPeriod.setIcon(getIcon("svgs/journal2.svg"));
+        btnAccountingPeriod.setIcon(Theme.SVGs.ACCOUNTING_PERIOD.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
         btnAccountingPeriod.setText("Periodos Contables");
 
         javax.swing.GroupLayout pnlGroupBtnLayout = new javax.swing.GroupLayout(pnlGroupBtn);
@@ -213,12 +210,12 @@ public class DashboardView extends Background {
 
         pnlNav.setOpaque(false);
 
-        btnBackup.setIcon(getIcon("svgs/backup.svg"));
+        btnBackup.setIcon(Theme.SVGs.BACKUP.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
         btnBackup.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnBackup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnBackup.setVerticalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        btnHome.setIcon(new FlatSVGIcon("svgs/home.svg", Theme.ICON_MD, Theme.ICON_MD));
+        btnHome.setIcon(Theme.SVGs.HOME.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
         btnHome.setText("Inicio");
         btnHome.setVerticalTextPosition(javax.swing.SwingConstants.CENTER);
 

@@ -3,6 +3,7 @@ package com.nutrehogar.sistemacontable.ui.service;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.config.PasswordHasher;
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.UserQuery_;
@@ -40,24 +41,21 @@ public class AuthView extends JDialog {
         initComponents();
         new UserListDataLoader().execute();
 
-        setIconImage(icon.getImage());
-        lblPing.setIcon(icon);
-        lstUser.setCellRenderer(new UserListCellRenderer());
-        lstUser.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        var cancelName = "cancel";
 
-        String cancelName = "cancel";
+        getRootPane().setBackground(getBackground());
 
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        getRootPane()
+                .getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
 
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-
-        ActionMap actionMap = getRootPane().getActionMap();
-
-        actionMap.put(cancelName, new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                closeDialog(null);
-            }
-        });
+        getRootPane()
+                .getActionMap()
+                .put(cancelName, new AbstractAction() {
+                    public void actionPerformed(ActionEvent e) {
+                        closeDialog(null);
+                    }
+                });
 
         BtnCancel.addActionListener(_ -> {
             log.info("System.exit");
@@ -65,7 +63,6 @@ public class AuthView extends JDialog {
         });
 
         lstUser.addListSelectionListener(_-> txtPing.grabFocus());
-
         txtPing.addActionListener(_->btnOk.doClick());
 
 
@@ -76,17 +73,23 @@ public class AuthView extends JDialog {
 
             if(selectedUser == null) return;
 
+            var insertPass = String.valueOf(txtPing.getPassword());
+
             if(selectedUser.isAdmin()
-                    && selectedUser.getUsername().equals(adminUser.getUsername())
-                    && selectedUser.getPassword().equals(adminUser.getPassword())) {
+                    && selectedUser.getUsername().equals(adminUser.getUsername())) {
+                if (!insertPass.equals(adminUser.getPassword())) {
+                    showError("Contraseña Incorrecta.", new ApplicationException("incorrect Password"));
+                    return;
+                }
                 autenicateUser = adminUser;
                 setVisible(false);
                 dispose();
                 IO.println("bien termino-admin");
                 return;
+
             }
 
-            if(!PasswordHasher.verifyPassword(String.valueOf(txtPing.getPassword()),  selectedUser.getPassword())){
+            if(!PasswordHasher.verifyPassword(insertPass, selectedUser.getPassword())) {
                 showError("Contraseña Incorrecta.", new ApplicationException("incorrect Password"));
                 return;
             }
@@ -143,6 +146,7 @@ public class AuthView extends JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        background1 = new com.nutrehogar.sistemacontable.ui_2.component.Background();
         btnOk = new javax.swing.JButton();
         BtnCancel = new javax.swing.JButton();
         scrollPanel1 = new com.nutrehogar.sistemacontable.ui_2.component.ScrollPanel();
@@ -152,71 +156,90 @@ public class AuthView extends JDialog {
         lblPing = new javax.swing.JLabel();
 
         setTitle("Ingrese su PING");
-        setIconImage(null);
+        setBackground(new java.awt.Color(239, 248, 255));
+        setIconImage(Theme.SVGs.KEY.getIcon().getImage());
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }
         });
 
+        background1.setColor1(new java.awt.Color(229, 243, 255));
+        background1.setColor2(new java.awt.Color(239, 248, 255));
+        background1.setColor3(new java.awt.Color(255, 255, 255));
+        background1.setColor4(new java.awt.Color(255, 255, 255));
+        background1.setFundType(com.nutrehogar.sistemacontable.ui_2.component.Background.FundType.LINEAL);
+
         btnOk.setText("OK");
 
         BtnCancel.setText("Cancelar");
 
         lstUser.setModel(userListModel);
+        lstUser.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        lstUser.setCellRenderer(new UserListCellRenderer());
+        lstUser.setOpaque(false);
         scrollPanel1.setViewportView(lstUser);
 
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitle.setText("Usuarios");
 
         lblPing.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblPing.setIcon(Theme.SVGs.KEY.getIcon());
         lblPing.setText("Ping:");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout background1Layout = new javax.swing.GroupLayout(background1);
+        background1.setLayout(background1Layout);
+        background1Layout.setHorizontalGroup(
+            background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(background1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblTitle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(scrollPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
                         .addGap(16, 16, 16)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
+                        .addGroup(background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(background1Layout.createSequentialGroup()
                                 .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(BtnCancel))
-                            .addGroup(layout.createSequentialGroup()
+                            .addGroup(background1Layout.createSequentialGroup()
                                 .addComponent(lblPing)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtPing)))
                         .addGap(13, 13, 13)))
                 .addContainerGap())
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BtnCancel, btnOk});
-
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        background1Layout.setVerticalGroup(
+            background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtPing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblPing))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnCancel)
                     .addComponent(btnOk))
                 .addContainerGap())
         );
 
         getRootPane().setDefaultButton(btnOk);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(background1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(background1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
 
         pack();
         setLocationRelativeTo(null);
@@ -231,6 +254,7 @@ public class AuthView extends JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnCancel;
+    private com.nutrehogar.sistemacontable.ui_2.component.Background background1;
     private javax.swing.JButton btnOk;
     private javax.swing.JLabel lblPing;
     private javax.swing.JLabel lblTitle;

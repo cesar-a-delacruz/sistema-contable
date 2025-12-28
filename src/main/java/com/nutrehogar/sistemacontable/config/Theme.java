@@ -1,7 +1,10 @@
 package com.nutrehogar.sistemacontable.config;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.util.UIScale;
+import lombok.Getter;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -126,6 +129,25 @@ public class Theme {
         public static final Color SOLITUDE_800 = new Color(3, 82, 137);
         public static final Color SOLITUDE_900 = new Color(9, 69, 113);
         public static final Color SOLITUDE_950 = new Color(6, 43, 75);
+    }
 
+    public enum SVGs {
+        FORM(new FlatSVGIcon("svgs/form.svg")),
+        JOURNAL(new FlatSVGIcon("svgs/journal.svg")),
+        ACCOUNT(new FlatSVGIcon("svgs/account.svg")),
+        TRIAL_BALANCE(new FlatSVGIcon("svgs/trial_balance.svg")),
+        ACCOUNT_SUBTYPE(new FlatSVGIcon("svgs/account_subtype.svg")),
+        GENERAL_LEDGER(new FlatSVGIcon("svgs/general_ledger.svg")),
+        USER(new FlatSVGIcon("svgs/user.svg")),
+        ACCOUNTING_PERIOD(new FlatSVGIcon("svgs/accounting_period.svg")),
+        KEY(new FlatSVGIcon("svgs/key.svg")),
+        HOME(new FlatSVGIcon("svgs/home.svg")),
+        BACKUP(new FlatSVGIcon("svgs/backup.svg"));
+@Getter
+        private final FlatSVGIcon icon;
+
+        SVGs(FlatSVGIcon icon) {
+            this.icon = icon;
+        }
     }
 }

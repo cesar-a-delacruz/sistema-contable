@@ -161,7 +161,7 @@
                 <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnForm">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getIcon(&quot;svgs/form.svg&quot;)" type="code"/>
+                      <Connection code="Theme.SVGs.FORM.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Formulario"/>
                   </Properties>
@@ -169,7 +169,7 @@
                 <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnAccount">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getIcon(&quot;svgs/account.svg&quot;)" type="code"/>
+                      <Connection code="Theme.SVGs.ACCOUNT.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Cuentas"/>
                   </Properties>
@@ -177,7 +177,7 @@
                 <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnTrialBalance">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getIcon(&quot;svgs/trial_balance.svg&quot;)" type="code"/>
+                      <Connection code="Theme.SVGs.TRIAL_BALANCE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Balance de Comprobaci&#xf3;n"/>
                   </Properties>
@@ -185,7 +185,7 @@
                 <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnAccountSubtype">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getIcon(&quot;svgs/account_subtype.svg&quot;)" type="code"/>
+                      <Connection code="Theme.SVGs.ACCOUNT_SUBTYPE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Subtipos de Cuentas"/>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -194,7 +194,7 @@
                 <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnGeneralLedger">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getIcon(&quot;svgs/general_ledger.svg&quot;)" type="code"/>
+                      <Connection code="Theme.SVGs.GENERAL_LEDGER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Mayor General"/>
                   </Properties>
@@ -202,7 +202,7 @@
                 <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnJournal">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getIcon(&quot;svgs/journal.svg&quot;)" type="code"/>
+                      <Connection code="Theme.SVGs.JOURNAL.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Libro Diario"/>
                   </Properties>
@@ -210,7 +210,7 @@
                 <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnUser">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getIcon(&quot;svgs/user.svg&quot;)" type="code"/>
+                      <Connection code="Theme.SVGs.USER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Usuarios"/>
                   </Properties>
@@ -218,7 +218,7 @@
                 <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnAccountingPeriod">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getIcon(&quot;svgs/journal2.svg&quot;)" type="code"/>
+                      <Connection code="Theme.SVGs.ACCOUNTING_PERIOD.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Periodos Contables"/>
                   </Properties>
@@ -263,7 +263,7 @@
         <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnBackup">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="getIcon(&quot;svgs/backup.svg&quot;)" type="code"/>
+              <Connection code="Theme.SVGs.BACKUP.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -273,7 +273,7 @@
         <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnHome">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new FlatSVGIcon(&quot;svgs/home.svg&quot;, Theme.ICON_MD, Theme.ICON_MD)" type="code"/>
+              <Connection code="Theme.SVGs.HOME.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Inicio"/>
             <Property name="verticalTextPosition" type="int" value="0"/>
