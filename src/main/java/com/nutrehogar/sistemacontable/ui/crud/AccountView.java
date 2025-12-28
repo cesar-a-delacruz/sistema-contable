@@ -174,7 +174,7 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
 
         @Override
         protected void inTransaction(@NotNull Session session) {
-            session.remove(session.merge(this.entity));
+            new AccountQuery_(session).findById(this.entity.id()).ifPresent(session::remove);
         }
     }
 

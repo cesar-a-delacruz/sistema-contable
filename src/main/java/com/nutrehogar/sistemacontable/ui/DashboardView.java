@@ -7,7 +7,9 @@ import com.nutrehogar.sistemacontable.model.User;
 //import com.nutrehogar.sistemacontable.ui.crud.AccountView;
 //import com.nutrehogar.sistemacontable.ui.crud.UserView;
 import com.nutrehogar.sistemacontable.ui.crud.AccountView;
+import com.nutrehogar.sistemacontable.ui.crud.AccountingPeriodView;
 import com.nutrehogar.sistemacontable.ui.crud.UserView;
+import com.nutrehogar.sistemacontable.ui_2.component.Background;
 import com.nutrehogar.sistemacontable.ui_2.component.UserListPanel;
 
 import org.jetbrains.annotations.Contract;
@@ -16,21 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class DashboardView extends JPanel {
+public class DashboardView extends Background {
     @NotNull
     private User user;
     public DashboardView(@NotNull User adminUser) {
         this.user = adminUser;
         initComponents();
-        btnHome.setIcon(new FlatSVGIcon("svgs/home.svg", Theme.ICON_MD, Theme.ICON_MD));
-        btnShowFormView.setIcon(getIcon("svgs/form.svg"));
-        btnShowJournalView.setIcon(getIcon("svgs/journal.svg"));
-        btnShowTrialBalanceView.setIcon(getIcon("svgs/trial_balance.svg"));
-        btnShowGeneralLedgerView.setIcon(getIcon("svgs/general_ledger.svg"));
-        btnShowAccountView.setIcon(getIcon("svgs/account.svg"));
-        btnShowAccountSubtypeView.setIcon(getIcon("svgs/account_subtype.svg"));
-        btnShowBackupView.setIcon(getIcon("svgs/backup.svg"));
-        btnShowUserView.setIcon(UserListPanel.UserListElement.userIcon.derive(Theme.ICON_LG, Theme.ICON_LG));
         pnlNav.setVisible(false);
         pnlContent.setOpaque(false);
         buttonPermissionSettings();
@@ -49,36 +42,16 @@ public class DashboardView extends JPanel {
 
     private void buttonPermissionSettings() {
         if (user.isAdmin()) return;
-        btnShowUserView.setVisible(false);
-        btnShowBackupView.setEnabled(false);
+        btnUser.setVisible(false);
+        btnBackup.setEnabled(false);
     }
 
     public void setupViewListeners() {
-//        getBtnShowFormView()
-//                .addActionListener(e -> setContent(context.getBean(AccountingEntryFormController.class).getView()));
-        btnShowAccountSubtypeView.addActionListener(_ -> setContent(new AccountSubtypeView(user)));
-        btnShowAccountView.addActionListener(_->setContent(new AccountView(user)));
-        btnShowUserView.addActionListener(_->setContent(new UserView(user)));
-//        getBtnShowAccountView().addActionListener(e -> {
-//            setContent(context.getBean(AccountController.class).getView());
-//            context.getBean(AccountController.class).loadData();
-//        });
-//        getBtnShowJournalView().addActionListener(e -> {
-//            setContent(context.getBean(JournalController.class).getView());
-//            context.getBean(JournalController.class).loadData();
-//        });
-//        getBtnShowTrialBalanceView().addActionListener(e -> {
-//            setContent(context.getBean(TrialBalanceController.class).getView());
-//            context.getBean(TrialBalanceController.class).loadData();
-//        });
-//        getBtnShowGeneralLedgerView().addActionListener(e -> {
-//            setContent(context.getBean(GeneralLedgerController.class).getView());
-//            context.getBean(GeneralLedgerController.class).loadDataSubtype();
-//            context.getBean(GeneralLedgerController.class).loadDataAccount();
-//        });
-//        getBtnShowBackupView().addActionListener(e -> context.getBean(BackupController.class).showView());
-            btnHome.addActionListener(_ -> setContent(pnlHome));
-//        getBtnShowUserView().addActionListener(e -> setContent(context.getBean(UserController.class).getView()));
+        btnAccountSubtype.addActionListener(_ -> setContent(new AccountSubtypeView(user)));
+        btnAccount.addActionListener(_ -> setContent(new AccountView(user)));
+        btnUser.addActionListener(_ -> setContent(new UserView(user)));
+        btnAccountingPeriod.addActionListener(_ -> setContent(new AccountingPeriodView(user)));
+        btnHome.addActionListener(_ -> setContent(pnlHome));
     }
 
     public void setContent(JPanel p) {
@@ -87,12 +60,12 @@ public class DashboardView extends JPanel {
                 pnlNav.setVisible(true);
             } else {
                 pnlNav.setVisible(false);
-                btnShowFormView.setBackground(Color.WHITE);
-                btnShowJournalView.setBackground(Color.WHITE);
-                btnShowTrialBalanceView.setBackground(Color.WHITE);
-                btnShowGeneralLedgerView.setBackground(Color.WHITE);
-                btnShowAccountView.setBackground(Color.WHITE);
-                btnShowAccountSubtypeView.setBackground(Color.WHITE);
+                btnForm.setBackground(Color.WHITE);
+                btnJournal.setBackground(Color.WHITE);
+                btnTrialBalance.setBackground(Color.WHITE);
+                btnGeneralLedger.setBackground(Color.WHITE);
+                btnAccount.setBackground(Color.WHITE);
+                btnAccountSubtype.setBackground(Color.WHITE);
             }
             pnlContent.removeAll();
             pnlContent.setLayout(new BorderLayout());
@@ -115,18 +88,24 @@ public class DashboardView extends JPanel {
         pnlContent = new javax.swing.JPanel();
         pnlHome = new javax.swing.JPanel();
         pnlGroupBtn = new javax.swing.JPanel();
-        btnShowFormView = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnShowAccountView = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnShowTrialBalanceView = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnShowAccountSubtypeView = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnShowGeneralLedgerView = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnShowJournalView = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnShowUserView = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnForm = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnAccount = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnTrialBalance = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnAccountSubtype = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnGeneralLedger = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnJournal = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnUser = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnAccountingPeriod = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
         pnlNav = new javax.swing.JPanel();
-        btnShowBackupView = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnBackup = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
         btnHome = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setColor1(new java.awt.Color(184, 255, 255));
+        setColor2(new java.awt.Color(229, 243, 255));
+        setColor3(new java.awt.Color(239, 248, 255));
+        setColor4(new java.awt.Color(255, 255, 255));
+        setNumberOfColors(com.nutrehogar.sistemacontable.ui_2.component.Background.NumberOfColors.FOUR);
 
         pnlContent.setOpaque(false);
 
@@ -134,20 +113,30 @@ public class DashboardView extends JPanel {
 
         pnlGroupBtn.setOpaque(false);
 
-        btnShowFormView.setText("Formulario");
+        btnForm.setIcon(getIcon("svgs/form.svg"));
+        btnForm.setText("Formulario");
 
-        btnShowAccountView.setText("Cuentas");
+        btnAccount.setIcon(getIcon("svgs/account.svg"));
+        btnAccount.setText("Cuentas");
 
-        btnShowTrialBalanceView.setText("Balance de Comprobación");
+        btnTrialBalance.setIcon(getIcon("svgs/trial_balance.svg"));
+        btnTrialBalance.setText("Balance de Comprobación");
 
-        btnShowAccountSubtypeView.setText("Subtipos de Cuentas");
-        btnShowAccountSubtypeView.setToolTipText("");
+        btnAccountSubtype.setIcon(getIcon("svgs/account_subtype.svg"));
+        btnAccountSubtype.setText("Subtipos de Cuentas");
+        btnAccountSubtype.setToolTipText("");
 
-        btnShowGeneralLedgerView.setText("Mayor General");
+        btnGeneralLedger.setIcon(getIcon("svgs/general_ledger.svg"));
+        btnGeneralLedger.setText("Mayor General");
 
-        btnShowJournalView.setText("Libro Diario");
+        btnJournal.setIcon(getIcon("svgs/journal.svg"));
+        btnJournal.setText("Libro Diario");
 
-        btnShowUserView.setText("Usuarios");
+        btnUser.setIcon(getIcon("svgs/user.svg"));
+        btnUser.setText("Usuarios");
+
+        btnAccountingPeriod.setIcon(getIcon("svgs/journal2.svg"));
+        btnAccountingPeriod.setText("Periodos Contables");
 
         javax.swing.GroupLayout pnlGroupBtnLayout = new javax.swing.GroupLayout(pnlGroupBtn);
         pnlGroupBtn.setLayout(pnlGroupBtnLayout);
@@ -155,35 +144,38 @@ public class DashboardView extends JPanel {
             pnlGroupBtnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlGroupBtnLayout.createSequentialGroup()
                 .addGroup(pnlGroupBtnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnShowUserView, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnShowAccountView, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnShowTrialBalanceView, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnShowFormView, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAccount, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnTrialBalance, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnForm, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(15, 15, 15)
                 .addGroup(pnlGroupBtnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnShowAccountSubtypeView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnShowGeneralLedgerView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnShowJournalView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(btnAccountSubtype, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGeneralLedger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnJournal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAccountingPeriod, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         pnlGroupBtnLayout.setVerticalGroup(
             pnlGroupBtnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlGroupBtnLayout.createSequentialGroup()
                 .addGroup(pnlGroupBtnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlGroupBtnLayout.createSequentialGroup()
-                        .addComponent(btnShowFormView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnForm, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnShowTrialBalanceView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnTrialBalance, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnShowAccountView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))
                     .addGroup(pnlGroupBtnLayout.createSequentialGroup()
-                        .addComponent(btnShowJournalView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnJournal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnShowGeneralLedgerView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnGeneralLedger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnShowAccountSubtypeView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btnAccountSubtype, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(5, 5, 5)
-                .addComponent(btnShowUserView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(pnlGroupBtnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnUser, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                    .addComponent(btnAccountingPeriod, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout pnlHomeLayout = new javax.swing.GroupLayout(pnlHome);
@@ -222,10 +214,12 @@ public class DashboardView extends JPanel {
 
         pnlNav.setOpaque(false);
 
-        btnShowBackupView.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btnShowBackupView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnShowBackupView.setVerticalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnBackup.setIcon(getIcon("svgs/backup.svg"));
+        btnBackup.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnBackup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnBackup.setVerticalTextPosition(javax.swing.SwingConstants.CENTER);
 
+        btnHome.setIcon(new FlatSVGIcon("svgs/home.svg", Theme.ICON_MD, Theme.ICON_MD));
         btnHome.setText("Inicio");
         btnHome.setVerticalTextPosition(javax.swing.SwingConstants.CENTER);
 
@@ -237,7 +231,7 @@ public class DashboardView extends JPanel {
                 .addContainerGap()
                 .addGroup(pnlNavLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnHome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnShowBackupView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlNavLayout.setVerticalGroup(
@@ -246,7 +240,7 @@ public class DashboardView extends JPanel {
                 .addContainerGap()
                 .addComponent(btnHome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 385, Short.MAX_VALUE)
-                .addComponent(btnShowBackupView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -267,15 +261,16 @@ public class DashboardView extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnAccount;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnAccountSubtype;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnAccountingPeriod;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnBackup;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnForm;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnGeneralLedger;
     private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnHome;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnShowAccountSubtypeView;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnShowAccountView;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnShowBackupView;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnShowFormView;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnShowGeneralLedgerView;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnShowJournalView;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnShowTrialBalanceView;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnShowUserView;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnJournal;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnTrialBalance;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnUser;
     private javax.swing.JPanel pnlContent;
     private javax.swing.JPanel pnlGroupBtn;
     private javax.swing.JPanel pnlHome;

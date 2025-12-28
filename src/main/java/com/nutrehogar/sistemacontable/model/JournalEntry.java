@@ -3,7 +3,10 @@ package com.nutrehogar.sistemacontable.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -57,4 +60,8 @@ public class JournalEntry extends AuditableEntity {
     @OneToMany(mappedBy = LedgerRecord_.ENTRY, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     Set<LedgerRecord> records = new HashSet<>();
 
+    @Nullable
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST})
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    AccountingPeriod period;
 }

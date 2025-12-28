@@ -5,6 +5,21 @@
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="ff" green="ff" red="ff" type="rgb"/>
     </Property>
+    <Property name="color1" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+      <Color blue="ff" green="ff" red="b8" type="rgb"/>
+    </Property>
+    <Property name="color2" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+      <Color blue="ff" green="f3" red="e5" type="rgb"/>
+    </Property>
+    <Property name="color3" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+      <Color blue="ff" green="f8" red="ef" type="rgb"/>
+    </Property>
+    <Property name="color4" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+    </Property>
+    <Property name="numberOfColors" type="com.nutrehogar.sistemacontable.ui_2.component.Background$NumberOfColors" editor="org.netbeans.modules.form.editors.EnumEditor">
+      <Value id="FOUR"/>
+    </Property>
   </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -98,16 +113,17 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="btnShowUserView" alignment="0" max="32767" attributes="0"/>
-                              <Component id="btnShowAccountView" alignment="0" max="32767" attributes="0"/>
-                              <Component id="btnShowTrialBalanceView" alignment="0" max="32767" attributes="0"/>
-                              <Component id="btnShowFormView" alignment="0" max="32767" attributes="0"/>
+                              <Component id="btnUser" max="32767" attributes="0"/>
+                              <Component id="btnAccount" alignment="0" max="32767" attributes="0"/>
+                              <Component id="btnTrialBalance" alignment="0" max="32767" attributes="0"/>
+                              <Component id="btnForm" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="btnShowAccountSubtypeView" max="32767" attributes="0"/>
-                              <Component id="btnShowGeneralLedgerView" max="32767" attributes="0"/>
-                              <Component id="btnShowJournalView" alignment="0" max="32767" attributes="0"/>
+                              <Component id="btnAccountSubtype" max="32767" attributes="0"/>
+                              <Component id="btnGeneralLedger" max="32767" attributes="0"/>
+                              <Component id="btnJournal" alignment="0" max="32767" attributes="0"/>
+                              <Component id="btnAccountingPeriod" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -117,62 +133,94 @@
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="btnShowFormView" max="32767" attributes="0"/>
+                                  <Component id="btnForm" pref="67" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="btnShowTrialBalanceView" max="32767" attributes="0"/>
+                                  <Component id="btnTrialBalance" pref="68" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="btnShowAccountView" max="32767" attributes="0"/>
+                                  <Component id="btnAccount" pref="68" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="btnShowJournalView" max="32767" attributes="0"/>
+                                  <Component id="btnJournal" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="btnShowGeneralLedgerView" max="32767" attributes="0"/>
+                                  <Component id="btnGeneralLedger" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="btnShowAccountSubtypeView" max="32767" attributes="0"/>
+                                  <Component id="btnAccountSubtype" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                          <Component id="btnShowUserView" max="32767" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="btnUser" pref="92" max="32767" attributes="0"/>
+                              <Component id="btnAccountingPeriod" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace pref="65" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowFormView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnForm">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getIcon(&quot;svgs/form.svg&quot;)" type="code"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Formulario"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowAccountView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnAccount">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getIcon(&quot;svgs/account.svg&quot;)" type="code"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Cuentas"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowTrialBalanceView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnTrialBalance">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getIcon(&quot;svgs/trial_balance.svg&quot;)" type="code"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Balance de Comprobaci&#xf3;n"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowAccountSubtypeView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnAccountSubtype">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getIcon(&quot;svgs/account_subtype.svg&quot;)" type="code"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Subtipos de Cuentas"/>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowGeneralLedgerView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnGeneralLedger">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getIcon(&quot;svgs/general_ledger.svg&quot;)" type="code"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Mayor General"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowJournalView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnJournal">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getIcon(&quot;svgs/journal.svg&quot;)" type="code"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Libro Diario"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowUserView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnUser">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getIcon(&quot;svgs/user.svg&quot;)" type="code"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Usuarios"/>
+                  </Properties>
+                </Component>
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnAccountingPeriod">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getIcon(&quot;svgs/journal2.svg&quot;)" type="code"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Periodos Contables"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -193,7 +241,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="btnHome" max="32767" attributes="0"/>
-                      <Component id="btnShowBackupView" max="32767" attributes="0"/>
+                      <Component id="btnBackup" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -205,15 +253,18 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnHome" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="385" max="32767" attributes="0"/>
-                  <Component id="btnShowBackupView" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnBackup" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowBackupView">
+        <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnBackup">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="getIcon(&quot;svgs/backup.svg&quot;)" type="code"/>
+            </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="0"/>
@@ -221,6 +272,9 @@
         </Component>
         <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnHome">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new FlatSVGIcon(&quot;svgs/home.svg&quot;, Theme.ICON_MD, Theme.ICON_MD)" type="code"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Inicio"/>
             <Property name="verticalTextPosition" type="int" value="0"/>
           </Properties>
