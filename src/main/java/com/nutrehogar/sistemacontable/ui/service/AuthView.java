@@ -2,13 +2,9 @@ package com.nutrehogar.sistemacontable.ui.service;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.nutrehogar.sistemacontable.HibernateUtil;
-import com.nutrehogar.sistemacontable.application.config.PasswordHasher;
+import com.nutrehogar.sistemacontable.config.PasswordHasher;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
-import com.nutrehogar.sistemacontable.model.AccountSubtype;
-import com.nutrehogar.sistemacontable.model.AccountType;
 import com.nutrehogar.sistemacontable.model.User;
-import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
-import com.nutrehogar.sistemacontable.query.UserQuery;
 import com.nutrehogar.sistemacontable.query.UserQuery_;
 import com.nutrehogar.sistemacontable.ui_2.builder.UserListCellRenderer;
 
@@ -16,7 +12,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.*;
 import lombok.Getter;

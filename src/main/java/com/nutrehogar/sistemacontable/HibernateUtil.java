@@ -2,7 +2,6 @@ package com.nutrehogar.sistemacontable;
 
 import javax.swing.*;
 
-import com.nutrehogar.sistemacontable.application.Main;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;

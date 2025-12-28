@@ -2,7 +2,7 @@ jpackage `
 --input .\..\target\lib `
 --name "Sistema Contable" `
 --main-jar SistemaContable-2.0.jar `
---main-class com.nutrehogar.sistemacontable.application.Main `
+--main-class com.nutrehogar.sistemacontable.Main `
 --type exe `
 --java-options "-XX:AOTCache=cache.aot" `
 --icon .\icon\icon.ico `

@@ -1,4 +1,4 @@
-package com.nutrehogar.sistemacontable.application.config;
+package com.nutrehogar.sistemacontable.config;
 
 import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;

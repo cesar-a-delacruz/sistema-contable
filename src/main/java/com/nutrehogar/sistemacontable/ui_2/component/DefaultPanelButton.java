@@ -5,7 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 
-import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.config.Theme;
 
 public class DefaultPanelButton extends JButton {
     {

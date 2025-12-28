@@ -1,4 +1,4 @@
-package com.nutrehogar.sistemacontable.application.config;
+package com.nutrehogar.sistemacontable.config;
 
 import java.io.IOException;
 import java.nio.file.Files;

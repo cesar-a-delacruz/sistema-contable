@@ -1,9 +1,8 @@
 package com.nutrehogar.sistemacontable.ui_2.component;
 
-import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.config.Theme;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class ViewTitle extends JLabel {
     {

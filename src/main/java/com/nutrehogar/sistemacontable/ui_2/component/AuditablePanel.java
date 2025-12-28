@@ -1,11 +1,8 @@
 package com.nutrehogar.sistemacontable.ui_2.component;
 
-import com.nutrehogar.sistemacontable.model.AuditableEntity;
 import com.nutrehogar.sistemacontable.model.AuditableFields;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import static com.nutrehogar.sistemacontable.application.config.Util.*;
 
 @Getter
 public class AuditablePanel extends javax.swing.JPanel {

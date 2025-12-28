@@ -1,7 +1,7 @@
 package com.nutrehogar.sistemacontable.ui_2.component;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.User;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

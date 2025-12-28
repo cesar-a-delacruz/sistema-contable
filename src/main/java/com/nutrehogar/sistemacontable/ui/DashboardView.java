@@ -2,7 +2,7 @@ package com.nutrehogar.sistemacontable.ui;
 
 import com.nutrehogar.sistemacontable.ui.crud.AccountSubtypeView;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.User;
 //import com.nutrehogar.sistemacontable.ui.crud.AccountView;
 //import com.nutrehogar.sistemacontable.ui.crud.UserView;
@@ -10,7 +10,6 @@ import com.nutrehogar.sistemacontable.ui.crud.AccountView;
 import com.nutrehogar.sistemacontable.ui.crud.AccountingPeriodView;
 import com.nutrehogar.sistemacontable.ui.crud.UserView;
 import com.nutrehogar.sistemacontable.ui_2.component.Background;
-import com.nutrehogar.sistemacontable.ui_2.component.UserListPanel;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

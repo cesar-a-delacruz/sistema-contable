@@ -1,14 +1,11 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
-import com.nutrehogar.sistemacontable.application.config.LabelBuilder;
-import com.nutrehogar.sistemacontable.application.config.PasswordHasher;
-import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.config.LabelBuilder;
+import com.nutrehogar.sistemacontable.config.PasswordHasher;
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
-import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.Permission;
-
-import javax.swing.JButton;
 
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.UserQuery_;
@@ -16,14 +13,11 @@ import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
 import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
-import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.security.Permissions;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;

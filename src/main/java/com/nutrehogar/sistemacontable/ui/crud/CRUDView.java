@@ -1,9 +1,8 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
-import com.nutrehogar.sistemacontable.application.config.LabelBuilder;
+import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
-import com.nutrehogar.sistemacontable.model.AuditableEntity;
 import com.nutrehogar.sistemacontable.model.AuditableFields;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
@@ -21,8 +20,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class CRUDView<Entity extends AuditableFields, FormData> extends SimpleView<Entity> {
     @NotNull

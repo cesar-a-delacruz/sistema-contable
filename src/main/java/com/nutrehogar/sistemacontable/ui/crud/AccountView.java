@@ -1,8 +1,8 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
-import com.nutrehogar.sistemacontable.application.config.LabelBuilder;
-import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.config.LabelBuilder;
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.query.AccountQuery_;

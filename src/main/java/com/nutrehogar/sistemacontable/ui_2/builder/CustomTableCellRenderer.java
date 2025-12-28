@@ -6,7 +6,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-import static com.nutrehogar.sistemacontable.application.config.Util.DECIMAL_FORMAT;
+import static com.nutrehogar.sistemacontable.config.Util.DECIMAL_FORMAT;
 
 /**
  * Define como se debe renderizar una selda que contenga un tipo especifico de

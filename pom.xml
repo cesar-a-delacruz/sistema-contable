@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
-        <exec.mainClass>com.nutrehogar.sistemacontable.application.Main</exec.mainClass>
+        <exec.mainClass>com.nutrehogar.sistemacontable.Main</exec.mainClass>
         <currentHibernateVersion>7.2.0.Final</currentHibernateVersion>
     </properties>
 

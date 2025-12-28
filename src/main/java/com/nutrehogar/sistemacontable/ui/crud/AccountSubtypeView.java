@@ -1,7 +1,7 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
-import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.AccountNumber;
 import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.AccountType;

@@ -1,14 +1,10 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
-import com.nutrehogar.sistemacontable.application.config.Theme;
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
 
-import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
-import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
-import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
-import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
 import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
 import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;

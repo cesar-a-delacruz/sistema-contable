@@ -1,13 +1,11 @@
-package com.nutrehogar.sistemacontable.application;
+package com.nutrehogar.sistemacontable;
 
-import com.nutrehogar.sistemacontable.application.config.Theme;
-import com.nutrehogar.sistemacontable.HibernateUtil;
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import javax.swing.*;
 
 import com.nutrehogar.sistemacontable.model.*;
-import com.nutrehogar.sistemacontable.ui.crud.AccountSubtypeView;
 import com.nutrehogar.sistemacontable.ui.DashboardView;
 import com.nutrehogar.sistemacontable.ui.service.AuthView;
 import lombok.extern.slf4j.Slf4j;

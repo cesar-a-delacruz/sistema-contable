@@ -4,7 +4,7 @@
  */
 package com.nutrehogar.sistemacontable.ui_2.component;
 
-import com.nutrehogar.sistemacontable.application.config.LabelBuilder;
+import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
