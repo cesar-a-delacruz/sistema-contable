@@ -29,14 +29,10 @@ class AppTest {
     @Test
     void insertSubtypes() {
         HibernateUtil.getSessionFactory().inTransaction(session -> {
-            for (int i = 1000; i < 1500; i++) {
-                session.persist(new AccountSubtype(AccountNumber.generateNumber(String.valueOf(i), AccountType.ASSETS), "activo " + i, AccountType.ASSETS, "Root"));
-            }
-            for (int i = 1000; i < 1500; i++) {
-                session.persist(new AccountSubtype(AccountNumber.generateNumber(String.valueOf(i), AccountType.COST), "costo " + i, AccountType.COST, "Root"));
-            }
-            for (int i = 1000; i < 1500; i++) {
-                session.persist(new AccountSubtype(AccountNumber.generateNumber(String.valueOf(i), AccountType.EQUITY), "patrimonio " + i, AccountType.EQUITY, "Root"));
+            for (var type : AccountType.values()) {
+                for (int i = 1000; i < 9999; i++) {
+                    session.persist(new AccountSubtype(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
+                }
             }
         });
     }
@@ -44,14 +40,10 @@ class AppTest {
     @Test
     void inertAccounts() {
         HibernateUtil.getSessionFactory().inTransaction(session -> {
-            for (int i = 1000; i < 1500; i++) {
-                session.persist(new Account(AccountNumber.generateNumber(String.valueOf(i), AccountType.ASSETS), "activo " + i, AccountType.ASSETS, "Root"));
-            }
-            for (int i = 1000; i < 1500; i++) {
-                session.persist(new Account(AccountNumber.generateNumber(String.valueOf(i), AccountType.COST), "costo " + i, AccountType.COST, "Root"));
-            }
-            for (int i = 1000; i < 1500; i++) {
-                session.persist(new Account(AccountNumber.generateNumber(String.valueOf(i), AccountType.EQUITY), "patrimonio " + i, AccountType.EQUITY, "Root"));
+            for (var type : AccountType.values()) {
+                for (int i = 1000; i < 9999; i++) {
+                    session.persist(new Account(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
+                }
             }
         });
     }
