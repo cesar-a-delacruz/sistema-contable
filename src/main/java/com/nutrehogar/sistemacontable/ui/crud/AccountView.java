@@ -4,6 +4,7 @@ import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
+import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.query.AccountQuery_;
 import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
@@ -35,12 +36,14 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     private List<AccountSubtypeMinData> accountSubtypeMinData;
     private final CustomComboBoxModel<AccountSubtypeMinData> cbxModelAccountSubtype;
     private Optional<Runnable> onFindSubtypes = Optional.empty();
+    private final SpinnerNumberModel spnModelNumber;
 
     public AccountView(User user) {
         super(user, "Cuenta");
         this.cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
         this.accountSubtypeMinData = List.of();
         this.cbxModelAccountSubtype = new CustomComboBoxModel<>(accountSubtypeMinData);
+        this.spnModelNumber = new SpinnerNumberModel(0, 0,9999,1);
         this.tblModel = new CustomTableModel<>("Numero", "Nombre", "Tipo de Cuenta", "Subtipo de Cuenta") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
@@ -63,8 +66,8 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
         loadData();
         cbxType.setRenderer(new CustomListCellRenderer());
         cbxSubtype.setRenderer(new CustomListCellRenderer());
+        spnNumber.setEditor(new JSpinner.NumberEditor(spnNumber, "#"));
         txtName.putClientProperty("JTextField.placeholderText", "Caja Menuda");
-        txtNumber.putClientProperty("JTextField.placeholderText", "11");
 
         tblData.setOnDeselected(this::onDeselected);
         tblData.setOnSelected(this::onSelected);
@@ -73,9 +76,6 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
         btnSave.addActionListener(_ -> save());
         btnUpdate.addActionListener(_ -> update());
         operationPanel.getBtnDelete().addActionListener(_ -> delete());
-
-        btnSave.addActionListener(_ -> save());
-        btnUpdate.addActionListener(_ -> update());
 
 
         cbxType.addActionListener(_ -> lblAccountTypeId.setText((cbxModelAccountType.getSelectedItem()).getId() + "."));
@@ -108,16 +108,25 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     }
 
     @Override
-    public @NotNull AccountFormData getDataFromForm() {
+    public @NotNull AccountFormData getDataFromForm() throws InvalidFieldException {
         var type = cbxModelAccountType.getSelectedItem();
+        var subtype = cbxModelAccountSubtype.getSelectedItem();
 
-        Optional<Integer> subtypeId = rbAddSubtype.isSelected()
-                ? Optional.of(((AccountSubtypeMinData) cbxSubtype.getSelectedItem()).id())
-                : Optional.empty();
+        if (txtName.getText().isBlank())
+            throw new InvalidFieldException("El nombre no puede estar vacío");
+
+        if (type == null)
+            throw new InvalidFieldException("El tipo de cuenta no puede estar vacío");
+
+        if (subtype == null)
+            throw new InvalidFieldException("El subtipo no puede estar vacío");
+
+
+        Optional<Integer> subtypeId = Optional.ofNullable(rbAddSubtype.isSelected() ? subtype.id() : null);
 
         return new AccountFormData(
                 txtName.getText(),
-                AccountNumber.generateNumber(txtNumber.getText(), type),
+                AccountNumber.generateNumber(spnModelNumber.getNumber().intValue(), type),
                 type,
                 subtypeId,
                 user.getUsername()
@@ -127,7 +136,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     @Override
     public void setEntityDataInForm(@NotNull AccountData entity) {
         txtName.setText(entity.name());
-        txtNumber.setText(AccountNumber.getSubNumber(entity.number()));
+        spnModelNumber.setValue(AccountNumber.getSubNumber(entity.number()).toString());
         cbxType.setSelectedItem(entity.type());
 
         if (entity.subtypeId() == null) {
@@ -154,7 +163,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     @Override
     public void prepareToAdd() {
         txtName.setText("");
-        txtNumber.setText("");
+        spnModelNumber.setValue(0);
         rbAddSubtype.setSelected(false);
         cbxSubtype.setEnabled(false);
         cbxType.setSelectedItem(AccountType.ASSETS);
@@ -186,41 +195,52 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
 
     @Override
     public void delete() {
-        tblData
-                .getSelected()
-                .ifPresentOrElse(
-                        accountData ->
-                                new InTransactionWorker(
-                                        session -> new AccountQuery_(session).findById(accountData.id()).ifPresent(session::remove),
-                                        this::loadData,
-                                        this::showError
-                                ).execute(),
-                        () -> showMessage("Seleccione un elemento de la tabla")
-                );
+        try{
+            tblData
+                    .getSelected()
+                    .ifPresentOrElse(
+                            accountData ->
+                                    new InTransactionWorker(
+                                            session -> new AccountQuery_(session).findById(accountData.id()).ifPresent(session::remove),
+                                            this::loadData,
+                                            this::showError
+                                    ).execute(),
+                            () -> {
+                                throw new InvalidFieldException("Seleccione un elemento de la tabla");
+                            }
+                    );
+        }catch (InvalidFieldException e){
+            showWarning(e);
+        }
     }
 
     @Override
     public void save() {
-        var dto = getDataFromForm();
-        new InTransactionWorker(
-                session -> {
-                    var account = new Account(dto.number(), dto.name(), dto.type(), dto.username());
-                    if (dto.subtypeId().isPresent()) {
-                        var subtype = new AccountSubtypeQuery_(session).findById(dto.subtypeId().get());
-                        if (subtype.isEmpty()) {
-                            throw new ApplicationException(
-                                    LabelBuilder.of("El subtipo de cuenta no fue encontrado.")
-                                            .p("Si no quiere agregar un subtipo, desmarque el check.")
-                                            .p("Si es un error debe")
-                                            .build());
+        IO.println("save");
+        try {
+            var dto = getDataFromForm();
+            new InTransactionWorker(
+                    session -> {
+                        var account = new Account(dto.number(), dto.name(), dto.type(), dto.username());
+                        if (dto.subtypeId().isPresent()) {
+                            var subtype = new AccountSubtypeQuery_(session).findById(dto.subtypeId().get());
+                            if (subtype.isEmpty()) {
+                                throw new InvalidFieldException(
+                                        LabelBuilder.of("El subtipo de cuenta no fue encontrado.")
+                                                .p("Si no quiere agregar un subtipo, desmarque el check.")
+                                                .p("Si es un error debe")
+                                                .build());
+                            }
+                            account.setSubtype(subtype.get());
                         }
-                        account.setSubtype(subtype.get());
-                    }
-                    session.persist(account);
-                },
-                this::loadData,
-                this::showError
-        ).execute();
+                        session.persist(account);
+                    },
+                    this::loadData,
+                    this::showError
+            ).execute();
+        }catch (InvalidFieldException e) {
+            showWarning(e);
+        }
     }
 
     @Override
@@ -265,8 +285,9 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
                                         this::loadData,
                                         this::showError
                                 ).execute(),
-                        () -> showMessage("Seleccione un elemento de la tabla")
-                );
+                        () -> {
+                            throw new InvalidFieldException("Seleccione un elemento de la tabla");
+                        });
     }
 
     /**
@@ -288,7 +309,6 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
         txtName = new javax.swing.JTextField();
         lblAccountId = new javax.swing.JLabel();
         lblAccountTypeId = new javax.swing.JLabel();
-        txtNumber = new javax.swing.JTextField();
         lblAccountType = new javax.swing.JLabel();
         cbxType = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -300,6 +320,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
         lblSave = new javax.swing.JLabel();
         lblUpdate = new javax.swing.JLabel();
         rbAddSubtype = new javax.swing.JRadioButton();
+        spnNumber = new javax.swing.JSpinner();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
         operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
         lblTitle = new javax.swing.JLabel();
@@ -321,7 +342,6 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
         lblAccountName.setToolTipText("");
 
         lblAccountId.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblAccountId.setLabelFor(txtNumber);
         lblAccountId.setText("Numero:");
         lblAccountId.setToolTipText("");
 
@@ -358,6 +378,8 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
 
         rbAddSubtype.setText("Agregar subtipo");
 
+        spnNumber.setModel(spnModelNumber);
+
         javax.swing.GroupLayout pnlFormLayout = new javax.swing.GroupLayout(pnlForm);
         pnlForm.setLayout(pnlFormLayout);
         pnlFormLayout.setHorizontalGroup(
@@ -380,11 +402,11 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
                             .addComponent(sepaSection1)
                             .addGroup(pnlFormLayout.createSequentialGroup()
                                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(rbAddSubtype)
                                     .addGroup(pnlFormLayout.createSequentialGroup()
                                         .addComponent(lblAccountTypeId)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(rbAddSubtype))
+                                        .addComponent(spnNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(pnlFormLayout.createSequentialGroup()
                         .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -407,7 +429,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblAccountId)
                     .addComponent(lblAccountTypeId)
-                    .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(spnNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblAccountType)
@@ -512,9 +534,9 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     private javax.swing.JPanel pnlForm;
     private javax.swing.JRadioButton rbAddSubtype;
     private javax.swing.JSeparator sepaSection1;
+    private javax.swing.JSpinner spnNumber;
     private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<AccountData> tblData;
     private javax.swing.JTextField txtName;
-    private javax.swing.JTextField txtNumber;
     // End of variables declaration//GEN-END:variables
 
 }

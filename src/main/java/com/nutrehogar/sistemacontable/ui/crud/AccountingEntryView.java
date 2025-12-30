@@ -1,16 +1,13 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
-import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.ui.View;
 
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import lombok.Getter;
-import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -79,6 +76,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
     public void update() {
 
     }
+
     private final class RecordController implements CRUDView<LedgerRecord, RecordFormData> {
         @NotNull
         public CustomTableModel<LedgerRecord> tblModelRecord;
@@ -191,6 +189,8 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         lblRecordType = new javax.swing.JLabel();
         rbtRDebit = new javax.swing.JRadioButton();
         rbtRCredit = new javax.swing.JRadioButton();
+        sepaSection1 = new javax.swing.JSeparator();
+        labelSection1 = new javax.swing.JLabel();
         ApRecord = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
         OpRecord = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel();
         pnlEntryForm = new javax.swing.JPanel();
@@ -221,6 +221,8 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         jLabel3 = new javax.swing.JLabel();
         lblUpdateBy = new javax.swing.JLabel();
         lblUpdateAt = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        lblVersion = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblRecord = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(recordController.tblModelRecord);
 
@@ -270,6 +272,8 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         bgRecordType.add(rbtRCredit);
         rbtRCredit.setText("Crédito");
 
+        labelSection1.setText("Operaciones");
+
         javax.swing.GroupLayout pnlRecordFormLayout = new javax.swing.GroupLayout(pnlRecordForm);
         pnlRecordForm.setLayout(pnlRecordFormLayout);
         pnlRecordFormLayout.setHorizontalGroup(
@@ -297,11 +301,15 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                                         .addGroup(pnlRecordFormLayout.createSequentialGroup()
                                                 .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(btnRUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addComponent(btnRUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecordFormLayout.createSequentialGroup()
                                                 .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(btnRSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                                .addComponent(btnRSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(pnlRecordFormLayout.createSequentialGroup()
+                                                .addComponent(labelSection1)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(sepaSection1)))
                                 .addContainerGap())
         );
         pnlRecordFormLayout.setVerticalGroup(
@@ -325,6 +333,10 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                                         .addComponent(lblRecordAmount)
                                         .addComponent(txtRAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(labelSection1)
+                                        .addComponent(sepaSection1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(btnRSave)
                                         .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -332,7 +344,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                                 .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(btnRUpdate))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
         );
 
         ApRecord.setBorder(javax.swing.BorderFactory.createTitledBorder("Auditoría"));
@@ -358,7 +370,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(pnlRecordForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ApRecord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ApRecord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -380,6 +392,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         taJConcept.setRows(5);
         taJConcept.setWrapStyleWord(true);
         taJConcept.setMaximumSize(new java.awt.Dimension(400, 400));
+        taJConcept.setPreferredSize(new java.awt.Dimension(232, 40));
         jScrollPane2.setViewportView(taJConcept);
 
         lblEntryDocumentNumber.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -503,21 +516,25 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
 
         btnGenerateRegistrationForm.setText("Formulario");
 
-        lblCreateBy.setText("nadie");
+        lblCreateBy.setText("N/A");
 
         jLabel1.setText("Creado por: ");
 
-        jLabel2.setText("Fecha creación: ");
+        jLabel2.setText("Creacion: ");
 
-        lblCreateAt.setText("nada");
+        lblCreateAt.setText("N/A");
 
         jLabel4.setText("Actualizado por: ");
 
-        jLabel3.setText("Fecha actualización: ");
+        jLabel3.setText("Actualizacion:");
 
-        lblUpdateBy.setText("nadie");
+        lblUpdateBy.setText("N/A");
 
-        lblUpdateAt.setText("nada");
+        lblUpdateAt.setText("N/A");
+
+        jLabel5.setText("Version: ");
+
+        lblVersion.setText("N/A");
 
         javax.swing.GroupLayout pnlSourceDocumentsLayout = new javax.swing.GroupLayout(pnlSourceDocuments);
         pnlSourceDocuments.setLayout(pnlSourceDocumentsLayout);
@@ -543,8 +560,13 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(lblUpdateAt)
-                                        .addComponent(lblUpdateBy))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
+                                                .addComponent(lblUpdateBy)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(lblVersion)))
+                                .addContainerGap(87, Short.MAX_VALUE))
         );
         pnlSourceDocumentsLayout.setVerticalGroup(
                 pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -555,7 +577,10 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                                         .addComponent(jLabel1)
                                         .addComponent(lblCreateBy)
                                         .addComponent(jLabel4)
-                                        .addComponent(lblUpdateBy))
+                                        .addComponent(lblUpdateBy)
+                                        .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jLabel5)
+                                                .addComponent(lblVersion)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(btnGenerateRegistrationForm)
@@ -586,13 +611,13 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addComponent(pnlEntryForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
+                                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(pnlSourceDocuments, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                                .addComponent(pnlSourceDocuments, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -614,8 +639,10 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel labelSection1;
     private javax.swing.JLabel lblConcept;
     private javax.swing.JLabel lblCreateAt;
     private javax.swing.JLabel lblCreateBy;
@@ -631,12 +658,14 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
     private javax.swing.JLabel lblUpdate;
     private javax.swing.JLabel lblUpdateAt;
     private javax.swing.JLabel lblUpdateBy;
+    private javax.swing.JLabel lblVersion;
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlEntryForm;
     private javax.swing.JPanel pnlRecordForm;
     private javax.swing.JPanel pnlSourceDocuments;
     private javax.swing.JRadioButton rbtRCredit;
     private javax.swing.JRadioButton rbtRDebit;
+    private javax.swing.JSeparator sepaSection1;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnJDate;
     private javax.swing.JTextArea taJConcept;
     private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<LedgerRecord> tblRecord;

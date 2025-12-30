@@ -1,5 +1,7 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
+import com.nutrehogar.sistemacontable.exception.ApplicationException;
+import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import org.jetbrains.annotations.NotNull;
 
 public interface CRUDView<Entity, FormData> {
@@ -14,7 +16,7 @@ public interface CRUDView<Entity, FormData> {
      *
      * @return DTO con los datos basicos de la enidad
      */
-    @NotNull FormData getDataFromForm();
+    @NotNull FormData getDataFromForm() throws InvalidFieldException;
 
     /**
      * Inserta los datos de la entidad en el formulario

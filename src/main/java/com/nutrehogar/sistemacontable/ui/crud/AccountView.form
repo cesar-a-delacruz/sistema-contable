@@ -120,12 +120,12 @@
                                   <Component id="sepaSection1" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" attributes="0">
+                                          <Component id="rbAddSubtype" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
                                               <Component id="lblAccountTypeId" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="txtNumber" min="-2" max="-2" attributes="0"/>
+                                              <Component id="spnNumber" min="-2" pref="104" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="rbAddSubtype" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
@@ -159,7 +159,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="lblAccountId" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lblAccountTypeId" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spnNumber" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -209,7 +209,7 @@
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="txtNumber"/>
+                  <ComponentRef name="default"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Numero:"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -220,8 +220,6 @@
                 <Property name="horizontalAlignment" type="int" value="4"/>
                 <Property name="text" type="java.lang.String" value="1."/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="txtNumber">
             </Component>
             <Component class="javax.swing.JLabel" name="lblAccountType">
               <Properties>
@@ -309,6 +307,13 @@
             <Component class="javax.swing.JRadioButton" name="rbAddSubtype">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Agregar subtipo"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JSpinner" name="spnNumber">
+              <Properties>
+                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="spnModelNumber" type="code"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>

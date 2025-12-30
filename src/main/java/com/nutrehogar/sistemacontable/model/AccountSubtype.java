@@ -74,7 +74,7 @@ public class AccountSubtype extends AuditableEntity {
         this.number = AccountNumber.generateNumber(subNumber, type);
     }
 
-    public String getSubNumber() {
+    public Integer getSubNumber() {
         return AccountNumber.getSubNumber(number);
     }
 

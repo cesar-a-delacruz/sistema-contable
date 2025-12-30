@@ -2,6 +2,8 @@ package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
+import com.nutrehogar.sistemacontable.exception.ApplicationException;
+import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.AccountNumber;
 import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.AccountType;
@@ -25,9 +27,11 @@ import java.util.List;
 public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CRUDView<AccountSubtype, AccountSubtypeFormData> {
 
     private final CustomComboBoxModel<AccountType> cbxModelAccountType;
+    private final SpinnerNumberModel spnModelNumber;
     public AccountSubtypeView(User user) {
         super(user,"Subtipo de Cuenta");
         this.cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
+        this.spnModelNumber = new SpinnerNumberModel(0, 0,9999,1);
         this.tblModel = new CustomTableModel<>("Numero de Cuenta", "Nombre", "Tipo de Cuenta") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
@@ -47,9 +51,10 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
         };
         initComponents();
         loadData();
+
         cbxType.setRenderer(new CustomListCellRenderer());
         txtName.putClientProperty("JTextField.placeholderText", "Activos Corrientes");
-        txtNumber.putClientProperty("JTextField.placeholderText", "11");
+        spnNumber.setEditor(new JSpinner.NumberEditor(spnNumber, "#"));
         tblData.setOnDeselected(this::onDeselected);
         tblData.setOnSelected(this::onSelected);
         operationPanel.getBtnPrepareToAdd().addActionListener(_ -> prepareToAdd());
@@ -70,22 +75,28 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
         ).execute();
     }
     @Override
-    public @NotNull AccountSubtypeFormData getDataFromForm() {
+    public @NotNull AccountSubtypeFormData getDataFromForm() throws InvalidFieldException {
         var type = cbxModelAccountType.getSelectedItem();
-        return new AccountSubtypeFormData(txtName.getText(), AccountNumber.generateNumber(txtNumber.getText(), type), type, user.getUsername());
+        if (txtName.getText().isBlank())
+            throw new InvalidFieldException("El nombre no puede estar vacío");
+
+        if (type == null)
+            throw new InvalidFieldException("El tipo de cuenta no puede estar vacío");
+
+        return new AccountSubtypeFormData(txtName.getText(), AccountNumber.generateNumber(spnModelNumber.getNumber().intValue(), type), type, user.getUsername());
     }
 
     @Override
     public void setEntityDataInForm(@NotNull AccountSubtype entity) {
         txtName.setText(entity.getName());
-        txtNumber.setText(entity.getSubNumber());
+        spnModelNumber.setValue(entity.getSubNumber());
         cbxType.setSelectedItem(entity.getType());
     }
 
     @Override
     public void prepareToAdd() {
         txtName.setText("");
-        txtNumber.setText("");
+        spnModelNumber.setValue(0);
         cbxType.setSelectedItem(AccountType.ASSETS);
         btnSave.setEnabled(true);
         btnUpdate.setEnabled(false);
@@ -104,8 +115,8 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
     }
 
     @Override
-    public void onSelected(AccountSubtype accountSubtype) {
-        auditablePanel.setAuditableFields(accountSubtype);
+    public void onSelected(@NotNull AccountSubtype entity) {
+        auditablePanel.setAuditableFields(entity);
         operationPanel.getBtnDelete().setEnabled(true);
         operationPanel.getBtnPrepareToEdit().setEnabled(true);
     }
@@ -118,48 +129,63 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
 
     @Override
     public void delete() {
-        tblData
-                .getSelected()
-                .ifPresentOrElse(
-                        entity ->
-                                new InTransactionWorker(
-                                        session -> session.remove(session.merge(entity)),
-                                        this::loadData,
-                                        this::showError
-                                ).execute(),
-                        () -> showMessage("Seleccione un elemento de la tabla")
-                );
+        try {
+            tblData
+                    .getSelected()
+                    .ifPresentOrElse(
+                            entity ->
+                                    new InTransactionWorker(
+                                            session -> session.remove(session.merge(entity)),
+                                            this::loadData,
+                                            this::showError
+                                    ).execute(),
+                            () -> {
+                                throw new InvalidFieldException("Seleccione un elemento de la tabla");
+                            });
+        } catch (InvalidFieldException e) {
+            showWarning(e);
+        }
     }
 
     @Override
     public void save() {
-        var dto = getDataFromForm();
-        new InTransactionWorker(
-                session -> session.persist(new AccountSubtype(dto.number(), dto.name(), dto.type(), dto.username())),
-                this::loadData,
-                this::showError
-        ).execute();
+        try {
+            var dto = getDataFromForm();
+            new InTransactionWorker(
+                    session -> session.persist(new AccountSubtype(dto.number(), dto.name(), dto.type(), dto.username())),
+                    this::loadData,
+                    this::showError
+            ).execute();
+        } catch (InvalidFieldException e) {
+            showWarning(e);
+        }
     }
 
     @Override
     public void update() {
-        var dto = getDataFromForm();
-        tblData.getSelected()
-                .ifPresentOrElse(
-                        accountSubtype ->
-                                new InTransactionWorker(
-                                        session -> {
-                                            var entity = session.merge(accountSubtype);
-                                            entity.setUpdatedBy(dto.username());
-                                            entity.setNumber(dto.number());
-                                            entity.setName(dto.name());
-                                            entity.setType(dto.type());
-                                        },
-                                        this::loadData,
-                                        this::showError
-                                ).execute(),
-                        () -> showMessage("Seleccione un elemento de la tabla")
-                );
+        try {
+            var dto = getDataFromForm();
+            tblData.getSelected()
+                    .ifPresentOrElse(
+                            accountSubtype ->
+                                    new InTransactionWorker(
+                                            session -> {
+                                                var entity = session.merge(accountSubtype);
+                                                entity.setUpdatedBy(dto.username());
+                                                entity.setNumber(dto.number());
+                                                entity.setName(dto.name());
+                                                entity.setType(dto.type());
+                                            },
+                                            this::loadData,
+                                            this::showError
+                                    ).execute(),
+                            () -> {
+                                throw new InvalidFieldException("Seleccione un elemento de la tabla");
+                            }
+                    );
+        } catch (InvalidFieldException e) {
+            showWarning(e);
+        }
     }
 
 
@@ -180,7 +206,6 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
         txtName = new javax.swing.JTextField();
         lblNumber = new javax.swing.JLabel();
         lblAccountTypeId = new javax.swing.JLabel();
-        txtNumber = new javax.swing.JTextField();
         lblType = new javax.swing.JLabel();
         cbxType = new javax.swing.JComboBox<>();
         btnSave = new javax.swing.JButton();
@@ -189,6 +214,7 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
         btnUpdate = new javax.swing.JButton();
         lblSave = new javax.swing.JLabel();
         lblUpdate = new javax.swing.JLabel();
+        spnNumber = new javax.swing.JSpinner();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
         operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
         lblTitle = new javax.swing.JLabel();
@@ -220,7 +246,6 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
         txtName.setMaximumSize(new java.awt.Dimension(200, 200));
 
         lblNumber.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblNumber.setLabelFor(txtNumber);
         lblNumber.setText("Numero:");
 
         lblAccountTypeId.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -248,6 +273,8 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
         lblUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblUpdate.setPreferredSize(new java.awt.Dimension(250, 40));
 
+        spnNumber.setModel(spnModelNumber);
+
         javax.swing.GroupLayout pnlFormLayout = new javax.swing.GroupLayout(pnlForm);
         pnlForm.setLayout(pnlFormLayout);
         pnlFormLayout.setHorizontalGroup(
@@ -267,7 +294,7 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
                             .addGroup(pnlFormLayout.createSequentialGroup()
                                 .addComponent(lblAccountTypeId, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(spnNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFormLayout.createSequentialGroup()
                         .addComponent(labelSection1)
@@ -294,7 +321,7 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNumber)
                     .addComponent(lblAccountTypeId)
-                    .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(spnNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblType)
@@ -391,9 +418,9 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlForm;
     private javax.swing.JSeparator sepaSection1;
+    private javax.swing.JSpinner spnNumber;
     private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<AccountSubtype> tblData;
     private javax.swing.JTextField txtName;
-    private javax.swing.JTextField txtNumber;
     // End of variables declaration//GEN-END:variables
 
 }

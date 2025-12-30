@@ -1,5 +1,7 @@
 package com.nutrehogar.sistemacontable.ui;
 
+import com.nutrehogar.sistemacontable.exception.AppException;
+import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ public abstract class View extends JPanel {
      */
     @NotNull
     protected final User user;
+
     public View(@NotNull User user) {
         this.user = user;
     }
@@ -29,8 +32,9 @@ public abstract class View extends JPanel {
 
     /**
      * Menage a mostrar al usuario, por lo general, mensages de sugerencias y confirmaciones.
+     *
      * @param message mensaje a mostrar
-     * @param title titulo del dialog
+     * @param title   titulo del dialog
      */
     public void showMessage(@NotNull Object message, @NotNull String title) {
         log.info(title, message);
@@ -43,18 +47,27 @@ public abstract class View extends JPanel {
 
     /**
      * Mustra y registra un mensage de error
+     *
      * @param message texto que se mostrara en el dialog
-     * @param title titulo del dialog
-     * @param cause Error que causo el error, se registrara en logback
+     * @param title   titulo del dialog
+     * @param cause   Error que causo el error, se registrara en logback
      */
     public void showError(@NotNull String message, @NotNull String title, @Nullable Exception cause) {
-        if (cause != null)
+        if (cause != null && !(cause instanceof AppException))
             log.error(cause.getMessage(), cause);
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
-    public void showError(@NotNull Exception cause){
+    public void showError(@NotNull Exception cause) {
+        if (cause instanceof InvalidFieldException i) {
+            showWarning(i);
+            return;
+        }
         showError(cause.getMessage(), cause);
+    }
+
+    public void showWarning(@NotNull InvalidFieldException cause) {
+        JOptionPane.showMessageDialog(this, cause.getMessage(), "Advertencia!", JOptionPane.INFORMATION_MESSAGE);
     }
 
 }
