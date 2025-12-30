@@ -108,7 +108,7 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
                 .getSelected()
                 .ifPresentOrElse(
                         this::setEntityDataInForm,
-                        () -> showMessage("Seleccione un elemento de la tabla")
+                        () -> showWarning("Seleccione un elemento de la tabla")
                 );
         btnSave.setEnabled(false);
         btnUpdate.setEnabled(true);

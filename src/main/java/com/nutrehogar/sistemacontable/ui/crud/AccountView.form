@@ -208,9 +208,6 @@
             <Component class="javax.swing.JLabel" name="lblAccountId">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="default"/>
-                </Property>
                 <Property name="text" type="java.lang.String" value="Numero:"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>

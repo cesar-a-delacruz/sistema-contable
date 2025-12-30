@@ -3,6 +3,7 @@ package com.nutrehogar.sistemacontable.ui.crud;
 import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
+import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
 
 import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
@@ -29,6 +30,8 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
     private final LocalDateSpinnerModel spnModelStartPeriod;
     private final LocalDateSpinnerModel spnModelEndPeriod;
     private final SpinnerNumberModel spnModelYear;
+    private final SpinnerNumberModel spnModelNumber;
+
 
     public AccountingPeriodView(User user) {
         super(user, "Periodo Contable");
@@ -36,6 +39,7 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         this.spnModelStartPeriod = new LocalDateSpinnerModel(LocalDate.of(currentYear, 1, 1));
         this.spnModelEndPeriod = new LocalDateSpinnerModel(LocalDate.of(currentYear, 12, 1));
         this.spnModelYear = new SpinnerNumberModel(currentYear, 1500, null, 1);
+        this.spnModelNumber = new SpinnerNumberModel();
         this.tblModel = new CustomTableModel<>("Numero", "Año", "Cerrado", "Fecha de inicio", "Fecha de cierre") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
@@ -63,7 +67,7 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         initComponents();
         loadData();
         spnYear.setEditor(new JSpinner.NumberEditor(spnYear, "#"));
-        txtNumber.putClientProperty("JTextField.placeholderText", "11");
+        spnNumber.setEditor(new JSpinner.NumberEditor(spnNumber, "#"));
         tblData.setOnDeselected(this::onDeselected);
         tblData.setOnSelected(this::onSelected);
         operationPanel.getBtnPrepareToAdd().addActionListener(_ -> prepareToAdd());
@@ -82,10 +86,10 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         ).execute();
     }
     @Override
-    public @NotNull AccountingPeriodFormData getDataFromForm() {
+    public @NotNull AccountingPeriodFormData getDataFromForm() throws InvalidFieldException {
         return new AccountingPeriodFormData(
                 spnModelYear.getNumber().intValue(),
-                Integer.valueOf(txtNumber.getText()),
+                spnModelNumber.getNumber().intValue(),
                 spnModelStartPeriod.getValue(),
                 spnModelEndPeriod.getValue(),
                 chkClosed.isSelected(),
@@ -95,7 +99,7 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
 
     @Override
     public void setEntityDataInForm(@NotNull AccountingPeriod entity) {
-        txtNumber.setText(entity.getPeriodNumber().toString());
+        spnModelNumber.setValue(entity.getPeriodNumber());
         spnModelYear.setValue(entity.getYear());
         spnModelStartPeriod.setValue(entity.getStartDate());
         spnModelEndPeriod.setValue(entity.getEndDate());
@@ -104,7 +108,7 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
 
     @Override
     public void prepareToAdd() {
-        txtNumber.setText("");
+        spnModelNumber.setValue(0);
         chkClosed.setSelected(false);
         var currentYear = LocalDate.now().getYear();
         spnModelYear.setValue(currentYear);
@@ -123,7 +127,7 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
     }
 
     @Override
-    public void onSelected(AccountingPeriod accountingPeriod) {
+    public void onSelected(@NotNull AccountingPeriod accountingPeriod) {
         auditablePanel.setAuditableFields(accountingPeriod);
         operationPanel.getBtnDelete().setEnabled(true);
         operationPanel.getBtnPrepareToEdit().setEnabled(true);
@@ -146,40 +150,49 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
                                         this::loadData,
                                         this::showError
                                 ).execute(),
-                        () -> showMessage("Seleccione un elemento de la tabla")
+                        () -> showWarning("Seleccione un elemento de la tabla")
                 );
     }
 
     @Override
     public void save() {
-        var dto = getDataFromForm();
-        new InTransactionWorker(
-                session -> session.persist(new AccountingPeriod(dto.year(),dto.periodNumber(),dto.startDate(),dto.endDate(),dto.closed(),dto.username())),
-                this::loadData,
-                this::showError
-        ).execute();    }
+        try{
+            var dto = getDataFromForm();
+            new InTransactionWorker(
+                    session -> session.persist(new AccountingPeriod(dto.year(), dto.periodNumber(), dto.startDate(), dto.endDate(), dto.closed(), dto.username())),
+                    this::loadData,
+                    this::showError
+            ).execute();
+        } catch (InvalidFieldException e) {
+            showWarning(e);
+        }
+    }
 
     @Override
     public void update() {
-        var dto = getDataFromForm();
-        tblData.getSelected()
-                .ifPresentOrElse(
-                        accountingPeriod ->
-                                new InTransactionWorker(
-                                        session -> {
-                                            var entity = session.merge(accountingPeriod);
-                                            entity.setUpdatedBy(dto.username());
-                                            entity.setClosed(dto.closed());
-                                            entity.setStartDate(dto.startDate());
-                                            entity.setEndDate(dto.endDate());
-                                            entity.setPeriodNumber(dto.periodNumber());
-                                            entity.setYear(dto.year());
-                                        },
-                                        this::loadData,
-                                        this::showError
-                                ).execute(),
-                        () -> showMessage("Seleccione un elemento de la tabla")
-                );
+        try {
+            var dto = getDataFromForm();
+            tblData.getSelected()
+                    .ifPresentOrElse(
+                            accountingPeriod ->
+                                    new InTransactionWorker(
+                                            session -> {
+                                                var entity = session.merge(accountingPeriod);
+                                                entity.setUpdatedBy(dto.username());
+                                                entity.setClosed(dto.closed());
+                                                entity.setStartDate(dto.startDate());
+                                                entity.setEndDate(dto.endDate());
+                                                entity.setPeriodNumber(dto.periodNumber());
+                                                entity.setYear(dto.year());
+                                            },
+                                            this::loadData,
+                                            this::showError
+                                    ).execute(),
+                            () -> showWarning("Seleccione un elemento de la tabla")
+                    );
+        }catch (InvalidFieldException e){
+            showWarning(e);
+        }
     }
 
     /**
@@ -196,7 +209,6 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         pnlAside = new javax.swing.JPanel();
         pnlForm = new javax.swing.JPanel();
         lblNumber = new javax.swing.JLabel();
-        txtNumber = new javax.swing.JTextField();
         lblType = new javax.swing.JLabel();
         btnSave = new javax.swing.JButton();
         labelSection1 = new javax.swing.JLabel();
@@ -210,6 +222,7 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         spnEnd = new com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner(spnModelEndPeriod);
         spnYear = new javax.swing.JSpinner();
         chkClosed = new javax.swing.JCheckBox();
+        spnNumber = new javax.swing.JSpinner();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
         operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
         lblTitle = new javax.swing.JLabel();
@@ -235,7 +248,6 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         pnlForm.setOpaque(false);
 
         lblNumber.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblNumber.setLabelFor(txtNumber);
         lblNumber.setText("Numero:");
 
         lblType.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -267,6 +279,8 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
 
         chkClosed.setText("Cerrado");
 
+        spnNumber.setModel(spnModelNumber);
+
         javax.swing.GroupLayout pnlFormLayout = new javax.swing.GroupLayout(pnlForm);
         pnlForm.setLayout(pnlFormLayout);
         pnlFormLayout.setHorizontalGroup(
@@ -295,7 +309,7 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
                                 .addGap(6, 6, 6)
                                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(spnYear)
-                                    .addComponent(txtNumber)))
+                                    .addComponent(spnNumber)))
                             .addGroup(pnlFormLayout.createSequentialGroup()
                                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lblStart, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -312,10 +326,10 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         pnlFormLayout.setVerticalGroup(
             pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlFormLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(9, Short.MAX_VALUE)
                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNumber)
-                    .addComponent(txtNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(spnNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblType)
@@ -423,10 +437,10 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
     private javax.swing.JPanel pnlForm;
     private javax.swing.JSeparator sepaSection1;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnEnd;
+    private javax.swing.JSpinner spnNumber;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnStart;
     private javax.swing.JSpinner spnYear;
     private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<AccountingPeriod> tblData;
-    private javax.swing.JTextField txtNumber;
     // End of variables declaration//GEN-END:variables
 
 }

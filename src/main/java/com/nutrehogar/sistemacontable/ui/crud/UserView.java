@@ -3,6 +3,7 @@ package com.nutrehogar.sistemacontable.ui.crud;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.PasswordHasher;
 import com.nutrehogar.sistemacontable.config.Theme;
+import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
 
 import com.nutrehogar.sistemacontable.query.UserQuery_;
@@ -72,15 +73,15 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
         ).execute();
     }
     @Override
-    public @NotNull UserFormData getDataFromForm() {
-        Optional<String> pass = txtPassword.getText().isBlank()
-                ? Optional.empty()
-                : Optional.of(PasswordHasher.hashPassword(getTxtPassword().getText()));
+    public @NotNull UserFormData getDataFromForm() throws InvalidFieldException {
+        var permision = cbxModelPermision.getSelectedItem();
+        if (permision == null) throw new InvalidFieldException("El permiso no puede estar vacío");
+        Optional<String> pass = Optional.ofNullable(txtPassword.getText().isBlank() ? null : PasswordHasher.hashPassword(getTxtPassword().getText()));
 
         return new UserFormData(
                 txtName.getText(),
                 chkIsEnable.isSelected(),
-                cbxModelPermision.getSelectedItem(),
+                permision,
                 pass,
                 user.getUsername()
         );
@@ -107,13 +108,13 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
     public void prepareToEdit() {
         tblData.getSelected()
                 .ifPresentOrElse(this::setEntityDataInForm,
-                        () -> showMessage("Seleccione un elemento de la tabla"));
+                        () -> showWarning("Seleccione un elemento de la tabla"));
         btnSave.setEnabled(false);
         btnUpdate.setEnabled(true);
     }
 
     @Override
-    public void onSelected(User user) {
+    public void onSelected(@NotNull User user) {
         auditablePanel.setAuditableFields(user);
         operationPanel.getBtnDelete().setEnabled(true);
         operationPanel.getBtnPrepareToEdit().setEnabled(true);
@@ -136,39 +137,48 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
                                         this::loadData,
                                         this::showError
                                 ).execute(),
-                        () -> showMessage("Seleccione un elemento de la tabla")
+                        () -> showWarning("Seleccione un elemento de la tabla")
                 );
     }
 
     @Override
     public void save() {
-        var dto = getDataFromForm();
-        new InTransactionWorker(
-                session -> session.persist(new User(dto.password().get(), dto.username(), dto.isEnable(),dto.permission(),dto.updatedBy())),
-                this::loadData,
-                this::showError
-        ).execute();
+        try{
+            var dto = getDataFromForm();
+            if(dto.password().isEmpty()) throw new  InvalidFieldException("La contraseña no puede estar vacía");
+            new InTransactionWorker(
+                    session -> session.persist(new User(dto.password().get(), dto.username(), dto.isEnable(), dto.permission(), dto.updatedBy())),
+                    this::loadData,
+                    this::showError
+            ).execute();
+        }catch (InvalidFieldException e){
+            showWarning(e);
+        }
     }
 
     @Override
     public void update() {
-        var dto = getDataFromForm();
-        tblData.getSelected()
-                .ifPresentOrElse(
-                        user ->
-                                new InTransactionWorker(
-                                        session -> {
-                                            var entity = session.merge(user);
-                                            entity.setUpdatedBy(dto.updatedBy());
-                                            entity.setEnabled(dto.isEnable());
-                                            dto.password().ifPresent(entity::setPassword);
-                                            entity.setPermissions(dto.permission());
-                                        },
-                                        this::loadData,
-                                        this::showError
-                                ).execute(),
-                        () -> showMessage("Seleccione un elemento de la tabla")
-                );
+        try{
+            var dto = getDataFromForm();
+            tblData.getSelected()
+                    .ifPresentOrElse(
+                            user ->
+                                    new InTransactionWorker(
+                                            session -> {
+                                                var entity = session.merge(user);
+                                                entity.setUpdatedBy(dto.updatedBy());
+                                                entity.setEnabled(dto.isEnable());
+                                                dto.password().ifPresent(entity::setPassword);
+                                                entity.setPermissions(dto.permission());
+                                            },
+                                            this::loadData,
+                                            this::showError
+                                    ).execute(),
+                            () -> showWarning("Seleccione un elemento de la tabla")
+                    );
+        } catch (InvalidFieldException e) {
+            showWarning(e);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated

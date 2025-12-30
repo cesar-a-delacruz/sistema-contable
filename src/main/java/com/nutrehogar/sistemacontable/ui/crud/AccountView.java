@@ -28,21 +28,20 @@ import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 @Getter
 public class AccountView extends SimpleView<AccountData> implements CRUDView<AccountData, AccountFormData> {
 
     private final CustomComboBoxModel<AccountType> cbxModelAccountType;
-    private List<AccountSubtypeMinData> accountSubtypeMinData;
     private final CustomComboBoxModel<AccountSubtypeMinData> cbxModelAccountSubtype;
-    private Optional<Runnable> onFindSubtypes = Optional.empty();
+    private Optional<Consumer<List<AccountSubtypeMinData>>> onFindSubtypes = Optional.empty();
     private final SpinnerNumberModel spnModelNumber;
 
     public AccountView(User user) {
         super(user, "Cuenta");
         this.cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
-        this.accountSubtypeMinData = List.of();
-        this.cbxModelAccountSubtype = new CustomComboBoxModel<>(accountSubtypeMinData);
+        this.cbxModelAccountSubtype = new CustomComboBoxModel<>(List.of());
         this.spnModelNumber = new SpinnerNumberModel(0, 0,9999,1);
         this.tblModel = new CustomTableModel<>("Numero", "Nombre", "Tipo de Cuenta", "Subtipo de Cuenta") {
             @Override
@@ -83,9 +82,9 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
             var type = cbxModelAccountType.getSelectedItem();
             new FromTransactionWorker<>(
                     session -> new AccountSubtypeQuery_(session).findMinDataByType(type),
-                    subtypes->{
+                    subtypes-> {
                         cbxModelAccountSubtype.setData(subtypes);
-                        onFindSubtypes.ifPresent(Runnable::run);
+                        onFindSubtypes.ifPresent(e->e.accept(subtypes));
                         onFindSubtypes = Optional.empty();
                     },
                     this::showError
@@ -136,7 +135,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     @Override
     public void setEntityDataInForm(@NotNull AccountData entity) {
         txtName.setText(entity.name());
-        spnModelNumber.setValue(AccountNumber.getSubNumber(entity.number()).toString());
+        spnModelNumber.setValue(AccountNumber.getSubNumber(entity.number()));
         cbxType.setSelectedItem(entity.type());
 
         if (entity.subtypeId() == null) {
@@ -149,9 +148,8 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
         rbAddSubtype.setSelected(true);
         cbxSubtype.setEnabled(false);
 
-        onFindSubtypes = Optional.of(() -> {
-            accountSubtypeMinData
-                    .stream()
+        onFindSubtypes = Optional.of((list) -> {
+            list.stream()
                     .filter(e -> e.id().equals(entity.subtypeId()))
                     .findFirst()
                     .ifPresent(cbxModelAccountSubtype::setSelectedItem);
@@ -175,7 +173,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     public void prepareToEdit() {
         tblData.getSelected()
                 .ifPresentOrElse(this::setEntityDataInForm,
-                        () -> showMessage("Seleccione un elemento de la tabla"));
+                        () -> showWarning("Seleccione un elemento de la tabla"));
         btnSave.setEnabled(false);
         btnUpdate.setEnabled(true);
     }
@@ -216,7 +214,6 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
 
     @Override
     public void save() {
-        IO.println("save");
         try {
             var dto = getDataFromForm();
             new InTransactionWorker(
@@ -263,12 +260,16 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
                                             entity.setName(dto.name());
                                             entity.setType(dto.type());
 
-                                            if (dto.subtypeId().isEmpty()) return;
+                                            if (dto.subtypeId().isEmpty()) {
+                                                entity.setSubtype(null);
+                                                return;
+                                            }
 
                                             if (entity.getSubtype() != null
                                                     && entity.getSubtype().getId() != null
                                                     && entity.getSubtype().getId().equals(dto.subtypeId().get()))
                                                 return;
+
                                             var subtype = new AccountSubtypeQuery_(session).findById(dto.subtypeId().get());
 
 
@@ -279,7 +280,6 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
                                                                 .p("Si es un error debe")
                                                                 .build());
                                             }
-                                            IO.println("se pone");
                                             entity.setSubtype(subtype.get());
                                         },
                                         this::loadData,

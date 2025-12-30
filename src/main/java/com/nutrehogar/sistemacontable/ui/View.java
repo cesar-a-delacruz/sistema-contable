@@ -41,7 +41,7 @@ public abstract class View extends JPanel {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void showError(@NotNull String message, @Nullable Exception cause) {
+    public void showError(@NotNull Object message, @Nullable Exception cause) {
         showError(message, "Error", cause);
     }
 
@@ -52,7 +52,7 @@ public abstract class View extends JPanel {
      * @param title   titulo del dialog
      * @param cause   Error que causo el error, se registrara en logback
      */
-    public void showError(@NotNull String message, @NotNull String title, @Nullable Exception cause) {
+    public void showError(@NotNull Object message, @NotNull String title, @Nullable Exception cause) {
         if (cause != null && !(cause instanceof AppException))
             log.error(cause.getMessage(), cause);
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
@@ -68,6 +68,10 @@ public abstract class View extends JPanel {
 
     public void showWarning(@NotNull InvalidFieldException cause) {
         JOptionPane.showMessageDialog(this, cause.getMessage(), "Advertencia!", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void showWarning(@NotNull Object message) {
+        JOptionPane.showMessageDialog(this, message, "Advertencia!", JOptionPane.INFORMATION_MESSAGE);
     }
 
 }
