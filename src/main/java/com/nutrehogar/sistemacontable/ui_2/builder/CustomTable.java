@@ -1,15 +1,30 @@
 package com.nutrehogar.sistemacontable.ui_2.builder;
 
+import jakarta.validation.constraints.Null;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class CustomTable<T> extends JTable {
+    @Getter
+    @NotNull
     protected Optional<T> selected = Optional.empty();
+    @Setter
+    @Nullable
+    protected Runnable onFailed;
+    @Setter
+    @Nullable
+    protected Consumer<T> onSelected;
+    @Setter
+    protected Runnable onDeselected;
 
     {
         setDefaultRenderer(Object.class, new CustomTableCellRenderer());
@@ -18,17 +33,14 @@ public class CustomTable<T> extends JTable {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                selected = Optional.empty();
-                int row = rowAtPoint(e.getPoint());
-                if (row != -1) {
-                    int selectedRow = getSelectedRow();
-                    if (selectedRow < 0) {
-                        onFailed();
-                        return;
-                    }
-                    selected = Optional.ofNullable(getModel().getData().get(selectedRow));
-                    selected.ifPresentOrElse(CustomTable.this::onSelected, CustomTable.this::onFailed);
-                }
+                setEmpty();
+                if (rowAtPoint(e.getPoint()) == -1) return;
+                int selectedRow = getSelectedRow();
+                if (selectedRow < 0) return;
+                selected = Optional.ofNullable(getModel().getData().get(selectedRow));
+                if (selected.isPresent())
+                    if (onSelected != null) onSelected.accept(selected.get());
+                    else if (onFailed != null) onFailed.run();
             }
         });
     }
@@ -46,14 +58,14 @@ public class CustomTable<T> extends JTable {
         });
     }
 
+    public void setEmpty() {
+        selected = Optional.empty();
+        if (onDeselected != null)
+            onDeselected.run();
+    }
+
     @Override
     public CustomTableModel<T> getModel() {
         return (CustomTableModel<T>) super.getModel();
-    }
-
-    protected void onFailed() {
-    }
-
-    protected void onSelected(@NotNull T entity) {
     }
 }

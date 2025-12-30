@@ -12,8 +12,7 @@ import javax.swing.*;
 
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
-import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
-import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
+import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
 import org.hibernate.HibernateException;
@@ -39,7 +38,7 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
         this.cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
         this.accountSubtypeMinData = List.of();
         this.cbxModelAccountSubtype = new CustomComboBoxModel<>(accountSubtypeMinData);
-        this.tblModel = new CustomTableModel("Numero", "Nombre", "Tipo de Cuenta", "Subtipo de Cuenta") {
+        this.tblModel = new CustomTableModel<>("Numero", "Nombre", "Tipo de Cuenta", "Subtipo de Cuenta") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var dto = data.get(rowIndex);
@@ -58,49 +57,144 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
             }
         };
         initComponents();
-        txtName.putClientProperty("JTextField.placeholderText", "Caja Menuda");
-        txtNumber.putClientProperty("JTextField.placeholderText", "11");
-        configureTable(tblData);
+        loadData();
         cbxType.setRenderer(new CustomListCellRenderer());
         cbxSubtype.setRenderer(new CustomListCellRenderer());
-        addListenersToOperationPanel();
-        loadData();
+        txtName.putClientProperty("JTextField.placeholderText", "Caja Menuda");
+        txtNumber.putClientProperty("JTextField.placeholderText", "11");
+
+        tblData.setOnDeselected(this::onDeselected);
+        tblData.setOnSelected(this::onSelected);
+        operationPanel.getBtnPrepareToAdd().addActionListener(_ -> prepareToAdd());
+        operationPanel.getBtnPrepareToEdit().addActionListener(_ -> prepareToEdit());
         btnSave.addActionListener(_ -> save());
         btnUpdate.addActionListener(_ -> update());
-        cbxType.addActionListener(_ -> lblAccountTypeId.setText(((AccountType) cbxType.getSelectedItem()).getId() + "."));
-        cbxType.addActionListener(_ -> new CbxModelAccountSubtypeDataLoader((AccountType) cbxType.getSelectedItem()).execute());
+        operationPanel.getBtnDelete().addActionListener(_ -> delete());
+
+        btnSave.addActionListener(_ -> save());
+        btnUpdate.addActionListener(_ -> update());
+
+
+        cbxType.addActionListener(_ -> lblAccountTypeId.setText((cbxModelAccountType.getSelectedItem()).getId() + "."));
+        cbxType.addActionListener(_ -> new CbxModelAccountSubtypeDataLoader(cbxModelAccountType.getSelectedItem()).execute());
         rbAddSubtype.addActionListener(_ -> cbxSubtype.setEnabled(rbAddSubtype.isSelected()));
-        lblTitle.setFont(Theme.Typography.FONT_BASE.deriveFont(Font.PLAIN, 30));
+
+        cbxType.setSelectedItem(AccountType.ASSETS);
+    }
+
+
+    public void loadData() {
+        tblData.setEmpty();
+        prepareToAdd();
+        super.loadData();
+    }
+    @Override
+    protected @NotNull AccountFormData getDataFromForm() {
+        var type = cbxModelAccountType.getSelectedItem();
+
+        Optional<Integer> subtypeId = rbAddSubtype.isSelected()
+                ? Optional.of(((AccountSubtypeMinData) cbxSubtype.getSelectedItem()).id())
+                : Optional.empty();
+
+        return new AccountFormData(
+                txtName.getText(),
+                AccountNumber.generateNumber(txtNumber.getText(), type),
+                type,
+                subtypeId,
+                user.getUsername()
+        );    }
+
+    @Override
+    protected void setEntityDataInForm(@NotNull AccountData entity) {
+        txtName.setText(entity.name());
+        txtNumber.setText(AccountNumber.getSubNumber(entity.number()));
+        cbxType.setSelectedItem(entity.type());
+
+        if (entity.subtypeId() == null) {
+            rbAddSubtype.setSelected(false);
+            cbxSubtype.setEnabled(false);
+            btnUpdate.setEnabled(true);
+            return;
+        }
+
+        rbAddSubtype.setSelected(true);
+        cbxSubtype.setEnabled(false);
+
+        onFindSubtypes = Optional.of(() -> {
+            accountSubtypeMinData
+                    .stream()
+                    .filter(e -> e.id().equals(entity.subtypeId()))
+                    .findFirst()
+                    .ifPresent(cbxModelAccountSubtype::setSelectedItem);
+            cbxSubtype.setEnabled(true);
+            btnUpdate.setEnabled(true);
+        });
+    }
+
+    @Override
+    protected @NotNull List<AccountData> getEntities(@NotNull Session session) {
+        return new AccountQuery_(session).findAllDataAndSubtypes();
+    }
+
+    @Override
+    protected void prepareToAdd() {
+        txtName.setText("");
+        txtNumber.setText("");
+        rbAddSubtype.setSelected(false);
+        cbxSubtype.setEnabled(false);
+        cbxType.setSelectedItem(AccountType.ASSETS);
+        btnSave.setEnabled(true);
+        btnUpdate.setEnabled(false);
+    }
+    @Override
+    protected void prepareToEdit() {
+        tblData.getSelected()
+                .ifPresentOrElse(this::setEntityDataInForm,
+                        () -> showMessage("Seleccione un elemento de la tabla"));
+        btnSave.setEnabled(false);
+        btnUpdate.setEnabled(true);
+    }
+
+    @Override
+    protected void onSelected(AccountData entity) {
+        auditablePanel.setAuditableFields(entity);
+        operationPanel.getBtnDelete().setEnabled(true);
+        operationPanel.getBtnPrepareToEdit().setEnabled(true);
+    }
+
+    @Override
+    protected void onDeselected() {
+        operationPanel.getBtnDelete().setEnabled(false);
+        operationPanel.getBtnPrepareToEdit().setEnabled(false);
     }
 
     @Override
     protected void delete() {
-        if (selected.isEmpty()) {
-            showMessage("Seleccione un elemento de la tabla");
-            return;
-        }
-        new DeleteAccountWorker(selected.get()).execute();
+        tblData.getSelected()
+                .ifPresentOrElse(
+                        entity -> new RemoveAsync(entity).execute(),
+                        () -> showMessage("Seleccione un elemento de la tabla")
+                );
     }
 
     @Override
     protected void save() {
-        var dto = getDataFromForm();
-        new SaveAccountWorker(dto).execute();
+        new PersistAsync(getDataFromForm()).execute();
     }
 
     @Override
     protected void update() {
-        if (selected.isEmpty()) {
-            showMessage("Seleccione un elemento de la tabla");
-            return;
-        }
-        var dto = getDataFromForm();
-        new EditAccountWorker(selected.get(), dto).execute();
+        tblData.getSelected()
+                .ifPresentOrElse(
+                        entity -> new MergeAsync(entity, getDataFromForm()).execute(),
+                        () -> showMessage("Seleccione un elemento de la tabla")
+                );
     }
 
-    private final class EditAccountWorker extends EditWorker {
 
-        public EditAccountWorker(@NotNull AccountData entity, @NotNull AccountFormData dto) {
+    private final class MergeAsync extends MergeWorker<AccountData,AccountFormData> {
+
+        public MergeAsync(@NotNull AccountData entity, @NotNull AccountFormData dto) {
             super(entity, dto);
         }
 
@@ -143,9 +237,9 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
         }
     }
 
-    private final class SaveAccountWorker extends SaveWorker {
+    private final class PersistAsync extends PersistWorker<AccountFormData> {
 
-        public SaveAccountWorker(@NotNull AccountFormData dto) {
+        public PersistAsync(@NotNull AccountFormData dto) {
             super(dto);
         }
 
@@ -167,8 +261,8 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
         }
     }
 
-    private final class DeleteAccountWorker extends DeleteWorker {
-        public DeleteAccountWorker(@NotNull AccountData entity) {
+    private final class RemoveAsync extends RemoveWorker<AccountData> {
+        public RemoveAsync(@NotNull AccountData entity) {
             super(entity);
         }
 
@@ -221,16 +315,9 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
         @Override
         protected void done() {
             accountSubtypeMinData = List.of();
-
             try {
                 if (get() == null) {
                     error = new ApplicationException(LabelBuilder.build("Error al optener la lista de subtipos de cuentas"));
-                }
-                if (get().isEmpty() || get().getFirst() == null) {
-                    error = new ApplicationException(LabelBuilder.of("La lista esta vacía.")
-                            .p("Para agregar un subtipo de cuenta debe seleccionar un tipo de cuenta que tenga subtipos.")
-                            .build()
-                    );
                 }
                 accountSubtypeMinData = get();
             } catch (Exception e) {
@@ -250,90 +337,6 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
     }
 
 
-    @Override
-    protected @NotNull AccountFormData getDataFromForm() {
-        var type = (AccountType) cbxType.getSelectedItem();
-
-        Optional<Integer> subtypeId = rbAddSubtype.isSelected()
-                ? Optional.of(((AccountSubtypeMinData) cbxSubtype.getSelectedItem()).id())
-                : Optional.empty();
-
-        return new AccountFormData(
-                txtName.getText(),
-                AccountNumber.generateNumber(txtNumber.getText(), type),
-                type,
-                subtypeId,
-                user.getUsername()
-        );
-    }
-
-    @Override
-    protected void resetForm() {
-        txtName.setText("");
-        txtNumber.setText("");
-        rbAddSubtype.setSelected(false);
-        cbxSubtype.setEnabled(false);
-        cbxType.setSelectedItem(AccountType.ASSETS);
-    }
-
-    @Override
-    protected void setEntityDataInForm(@NotNull AccountData entity) {
-        txtName.setText(entity.name());
-        txtNumber.setText(AccountNumber.getSubNumber(entity.number()));
-        cbxType.setSelectedItem(entity.type());
-
-        if (entity.subtypeId() == null) {
-            rbAddSubtype.setSelected(false);
-            cbxSubtype.setEnabled(false);
-            btnUpdate.setEnabled(true);
-            return;
-        }
-
-        rbAddSubtype.setSelected(true);
-        cbxSubtype.setEnabled(false);
-
-        onFindSubtypes = Optional.of(() -> {
-            accountSubtypeMinData
-                    .stream()
-                    .filter(e -> e.id().equals(entity.subtypeId()))
-                    .findFirst()
-                    .ifPresent(cbxModelAccountSubtype::setSelectedItem);
-            cbxSubtype.setEnabled(true);
-            btnUpdate.setEnabled(true);
-        });
-    }
-
-    @Override
-    protected void prepareToAdd() {
-        super.prepareToAdd();
-        btnSave.setEnabled(true);
-        btnUpdate.setEnabled(false);
-    }
-
-    @Override
-    protected void prepareToEdit() {
-        super.prepareToEdit();
-        btnSave.setEnabled(false);
-        btnUpdate.setEnabled(true);
-    }
-
-    @Override
-    protected AuditablePanel getAuditablePanel() {
-        return this.auditablePanel;
-    }
-
-    @Override
-    protected OperationPanel getOperationPanel() {
-        return this.operationPanel1;
-    }
-
-    @Override
-    protected List<AccountData> findEntities() {
-        AtomicReference<List<AccountData>> list = new AtomicReference<>(List.of());
-        HibernateUtil.getSessionFactory().inTransaction(session -> list.set(new AccountQuery_(session).findAllDataAndSubtypes()));
-        return list.get();
-    }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -348,8 +351,6 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblData = new javax.swing.JTable();
         pnlAside = new javax.swing.JPanel();
         pnlForm = new javax.swing.JPanel();
         lblAccountName = new javax.swing.JLabel();
@@ -369,14 +370,13 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
         lblUpdate = new javax.swing.JLabel();
         rbAddSubtype = new javax.swing.JRadioButton();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        operationPanel1 = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
+        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
         lblTitle = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
 
         setOpaque(false);
         setPreferredSize(new java.awt.Dimension(524, 664));
-
-        tblData.setModel(tblModel);
-        jScrollPane1.setViewportView(tblData);
 
         pnlAside.setOpaque(false);
         pnlAside.setPreferredSize(new java.awt.Dimension(419, 652));
@@ -512,25 +512,27 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
                 .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlForm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(auditablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
-                    .addComponent(operationPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(operationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlAsideLayout.setVerticalGroup(
             pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAsideLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(operationPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(operationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(auditablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
         lblTitle.setIcon(Theme.SVGs.ACCOUNT.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
         lblTitle.setText(LabelBuilder.build("Cuentas"));
+
+        jScrollPane2.setViewportView(tblData);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -539,8 +541,8 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -549,11 +551,11 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, 704, Short.MAX_VALUE)
+                    .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, 695, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1)))
+                        .addComponent(jScrollPane2)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -565,7 +567,7 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
     private javax.swing.JComboBox<AccountSubtypeMinData> cbxSubtype;
     private javax.swing.JComboBox<AccountType> cbxType;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel labelSection1;
     private javax.swing.JLabel lblAccountId;
     private javax.swing.JLabel lblAccountName;
@@ -574,12 +576,12 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
     private javax.swing.JLabel lblSave;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblUpdate;
-    private com.nutrehogar.sistemacontable.ui_2.component.OperationPanel operationPanel1;
+    private com.nutrehogar.sistemacontable.ui_2.component.OperationPanel operationPanel;
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlForm;
     private javax.swing.JRadioButton rbAddSubtype;
     private javax.swing.JSeparator sepaSection1;
-    private javax.swing.JTable tblData;
+    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<AccountData> tblData;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtNumber;
     // End of variables declaration//GEN-END:variables

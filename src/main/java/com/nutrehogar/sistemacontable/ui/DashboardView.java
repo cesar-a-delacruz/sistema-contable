@@ -1,10 +1,12 @@
 package com.nutrehogar.sistemacontable.ui;
 
 import com.nutrehogar.sistemacontable.ui.crud.AccountSubtypeView;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.User;
 //import com.nutrehogar.sistemacontable.ui.crud.AccountView;
+//import com.nutrehogar.sistemacontable.ui.crud.UserView;
+//import com.nutrehogar.sistemacontable.ui.crud.AccountView;
+//import com.nutrehogar.sistemacontable.ui.crud.AccountingPeriodView;
 //import com.nutrehogar.sistemacontable.ui.crud.UserView;
 import com.nutrehogar.sistemacontable.ui.crud.AccountView;
 import com.nutrehogar.sistemacontable.ui.crud.AccountingPeriodView;
@@ -27,7 +29,6 @@ public class DashboardView extends Background {
         pnlContent.setOpaque(false);
         buttonPermissionSettings();
         setupViewListeners();
-
     }
 
     public void setUser(@NotNull User user) {
@@ -47,7 +48,6 @@ public class DashboardView extends Background {
         btnUser.addActionListener(_ -> setContent(new UserView(user)));
         btnAccountingPeriod.addActionListener(_ -> setContent(new AccountingPeriodView(user)));
         btnHome.addActionListener(_ -> setContent(pnlHome));
-        btnForm.addActionListener(_->setContent(new NewJPanel()));
     }
 
     public void setContent(JPanel p) {
@@ -102,6 +102,7 @@ public class DashboardView extends Background {
         setColor3(new java.awt.Color(239, 248, 255));
         setColor4(new java.awt.Color(255, 255, 255));
         setNumberOfColors(com.nutrehogar.sistemacontable.ui_2.component.Background.NumberOfColors.FOUR);
+        setRadioIncremento(250);
 
         pnlContent.setOpaque(false);
 
@@ -156,11 +157,11 @@ public class DashboardView extends Background {
             .addGroup(pnlGroupBtnLayout.createSequentialGroup()
                 .addGroup(pnlGroupBtnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlGroupBtnLayout.createSequentialGroup()
-                        .addComponent(btnForm, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
+                        .addComponent(btnForm, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnTrialBalance, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
+                        .addComponent(btnTrialBalance, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))
+                        .addComponent(btnAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE))
                     .addGroup(pnlGroupBtnLayout.createSequentialGroup()
                         .addComponent(btnJournal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -169,9 +170,9 @@ public class DashboardView extends Background {
                         .addComponent(btnAccountSubtype, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(5, 5, 5)
                 .addGroup(pnlGroupBtnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnUser, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                    .addComponent(btnUser, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
                     .addComponent(btnAccountingPeriod, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout pnlHomeLayout = new javax.swing.GroupLayout(pnlHome);
@@ -235,7 +236,7 @@ public class DashboardView extends Background {
             .addGroup(pnlNavLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnHome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 385, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 260, Short.MAX_VALUE)
                 .addComponent(btnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );

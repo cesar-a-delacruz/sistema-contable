@@ -5,14 +5,12 @@ import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.PasswordHasher;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
-import com.nutrehogar.sistemacontable.model.Permission;
+import com.nutrehogar.sistemacontable.model.*;
 
-import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.UserQuery_;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
-import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
-import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
+import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import lombok.Getter;
 import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
 public class UserView extends CRUDView<User,UserFormData> {
@@ -29,7 +26,7 @@ public class UserView extends CRUDView<User,UserFormData> {
     public UserView(User user) {
         super(user,"Subtipo de Cuenta");
         this.cbxModelPermision = new CustomComboBoxModel<>(Permission.values());
-        this.tblModel = new CustomTableModel("Nombre", "Contraseña", "Habilitado", "Permiso") {
+        this.tblModel = new CustomTableModel<>("Nombre", "Contraseña", "Habilitado", "Permiso") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var user = data.get(rowIndex);
@@ -52,86 +49,27 @@ public class UserView extends CRUDView<User,UserFormData> {
             }
         };
         initComponents();
+        loadData();
+        cbxPermissions.setRenderer(new CustomListCellRenderer());
         txtName.putClientProperty("JTextField.placeholderText", "Lic. Ema Perez");
         txtPassword.putClientProperty("JTextField.placeholderText", "20010");
-        configureTable(tblData);
-        cbxPermissions.setRenderer(new CustomListCellRenderer());
-        addListenersToOperationPanel();
-        loadData();
+        tblData.setOnDeselected(this::onDeselected);
+        tblData.setOnSelected(this::onSelected);
+        operationPanel.getBtnPrepareToAdd().addActionListener(_ -> prepareToAdd());
+        operationPanel.getBtnPrepareToEdit().addActionListener(_ -> prepareToEdit());
         btnSave.addActionListener(_ -> save());
         btnUpdate.addActionListener(_ -> update());
+        operationPanel.getBtnDelete().addActionListener(_ -> delete());
     }
 
 
-
-    @Override
-    protected void delete() {
-        if (selected.isEmpty()) {
-            showMessage("Seleccione un elemento de la tabla");
-            return;
-        }
-        new DeleteUserWorker(selected.get()).execute();
+    public void loadData() {
+        tblData.setEmpty();
+        prepareToAdd();
+        super.loadData();
     }
     @Override
-    protected void save() {
-        var dto = getDataFromForm();
-        if(dto.password().isEmpty()){
-            showMessage(LabelBuilder.build("La contraseña es requerida"));
-            return;
-        }
-        new SaveUserWorker(dto).execute();
-    }
-    @Override
-    protected void update() {
-        if (selected.isEmpty() || selected.get().getId() == null) {
-            showMessage("Seleccione un elemento de la tabla");
-            return;
-        }
-        var dto = getDataFromForm();
-        new EditUserWorker(selected.get(), dto).execute();
-    }
-    private final class EditUserWorker extends EditWorker {
-
-        public EditUserWorker(@NotNull User entity, @NotNull UserFormData dto) {
-            super(entity, dto);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            var entity = session.merge(this.entity);
-            entity.setUpdatedBy(dto.updatedBy());
-            entity.setEnabled(dto.isEnable());
-            dto.password().ifPresent(entity::setPassword);
-            entity.setPermissions(dto.permission());
-        }
-    }
-    private final class SaveUserWorker extends SaveWorker {
-
-        public SaveUserWorker(@NotNull UserFormData dto) {
-            super(dto);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            if(dto.password().isEmpty()){
-                throw new ApplicationException(LabelBuilder.build("La contraseña es requerida"));
-            }
-            session.persist(new User(dto.password().get(), dto.username(), dto.isEnable(),dto.permission(),dto.updatedBy()));
-        }
-    }
-    private final class DeleteUserWorker extends DeleteWorker {
-        public DeleteUserWorker(@NotNull User entity) {
-            super(entity);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            session.remove(session.merge(this.entity));
-        }
-    }
-
-    @Override
-    protected UserFormData getDataFromForm() {
+    protected @NotNull UserFormData getDataFromForm() {
         Optional<String> pass = txtPassword.getText().isBlank()
                 ? Optional.empty()
                 : Optional.of(PasswordHasher.hashPassword(getTxtPassword().getText()));
@@ -139,19 +77,18 @@ public class UserView extends CRUDView<User,UserFormData> {
         return new UserFormData(
                 txtName.getText(),
                 chkIsEnable.isSelected(),
-                (Permission) cbxPermissions.getSelectedItem(),
+                cbxModelPermision.getSelectedItem(),
                 pass,
                 user.getUsername()
         );
     }
 
+
     @Override
-    protected void resetForm() {
-        txtName.setText("");
-        txtPassword.setText("");
-        chkIsEnable.setSelected(true);
-        cbxPermissions.setSelectedItem(Permission.ADMIN);
+    protected @NotNull List<User> getEntities(@NotNull Session session) {
+        return new UserQuery_(session).findAll();
     }
+
     @Override
     protected void setEntityDataInForm(@NotNull User entity) {
         txtName.setText(entity.getUsername());
@@ -162,35 +99,84 @@ public class UserView extends CRUDView<User,UserFormData> {
 
     @Override
     protected void prepareToAdd() {
-        super.prepareToAdd();
+        txtName.setText("");
+        txtPassword.setText("");
+        chkIsEnable.setSelected(true);
+        cbxPermissions.setSelectedItem(Permission.ADMIN);
         btnSave.setEnabled(true);
         btnUpdate.setEnabled(false);
     }
-
     @Override
     protected void prepareToEdit() {
-        super.prepareToEdit();
+        tblData.getSelected()
+                .ifPresentOrElse(this::setEntityDataInForm,
+                        () -> showMessage("Seleccione un elemento de la tabla"));
         btnSave.setEnabled(false);
         btnUpdate.setEnabled(true);
     }
 
     @Override
-    protected AuditablePanel getAuditablePanel() {
-        return this.auditablePanel;
+    protected void onSelected(User user) {
+        auditablePanel.setAuditableFields(user);
+        operationPanel.getBtnDelete().setEnabled(true);
+        operationPanel.getBtnPrepareToEdit().setEnabled(true);
     }
 
     @Override
-    protected OperationPanel getOperationPanel() {
-        return this.operationPanel1;
+    protected void onDeselected() {
+        operationPanel.getBtnDelete().setEnabled(false);
+        operationPanel.getBtnPrepareToEdit().setEnabled(false);
     }
 
     @Override
-    protected List<User> findEntities() {
-        AtomicReference<List<User>> list = new AtomicReference<>(List.of());
-            HibernateUtil
-                    .getSessionFactory()
-                    .inTransaction(session -> list.set(new UserQuery_(session).findAll()));
-        return list.get();
+    protected void delete() {
+        tblData.getSelected()
+                .ifPresentOrElse(
+                        entity -> new RemoveWorker<>(entity).execute(),
+                        () -> showMessage("Seleccione un elemento de la tabla")
+                );
+    }
+
+    @Override
+    protected void save() {
+        new PersistAsync(getDataFromForm()).execute();
+    }
+
+    @Override
+    protected void update() {
+        tblData.getSelected()
+                .ifPresentOrElse(
+                        entity -> new MergeAsync(entity, getDataFromForm()).execute(),
+                        () -> showMessage("Seleccione un elemento de la tabla")
+                );
+    }
+
+    private final class MergeAsync extends MergeWorker<User,UserFormData> {
+
+        public MergeAsync(@NotNull User entity, @NotNull UserFormData dto) {
+            super(entity, dto);
+        }
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            var entity = session.merge(this.entity);
+            entity.setUpdatedBy(dto.updatedBy());
+            entity.setEnabled(dto.isEnable());
+            dto.password().ifPresent(entity::setPassword);
+            entity.setPermissions(dto.permission());
+        }
+    }
+    private final class PersistAsync extends PersistWorker<UserFormData> {
+
+        public PersistAsync(@NotNull UserFormData dto) {
+            super(dto);
+        }
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            if(dto.password().isEmpty()){
+                throw new ApplicationException(LabelBuilder.build("La contraseña es requerida"));
+            }
+            session.persist(new User(dto.password().get(), dto.username(), dto.isEnable(),dto.permission(),dto.updatedBy()));        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated
@@ -198,8 +184,6 @@ public class UserView extends CRUDView<User,UserFormData> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblData = new javax.swing.JTable();
         pnlAside = new javax.swing.JPanel();
         pnlForm = new javax.swing.JPanel();
         lblUsername = new javax.swing.JLabel();
@@ -216,13 +200,12 @@ public class UserView extends CRUDView<User,UserFormData> {
         cbxPermissions = new javax.swing.JComboBox<>();
         lblUserPasswod1 = new javax.swing.JLabel();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        operationPanel1 = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
+        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
         lblTitle = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
 
         setOpaque(false);
-
-        tblData.setModel(tblModel);
-        jScrollPane1.setViewportView(tblData);
 
         pnlAside.setOpaque(false);
 
@@ -335,13 +318,13 @@ public class UserView extends CRUDView<User,UserFormData> {
                 .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlForm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(auditablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(operationPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(operationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlAsideLayout.setVerticalGroup(
             pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addComponent(operationPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(operationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -355,6 +338,8 @@ public class UserView extends CRUDView<User,UserFormData> {
         lblTitle.setText(LabelBuilder.build("Usuarios")
         );
 
+        jScrollPane2.setViewportView(tblData);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -362,8 +347,8 @@ public class UserView extends CRUDView<User,UserFormData> {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -375,8 +360,8 @@ public class UserView extends CRUDView<User,UserFormData> {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1))
-                    .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane2))
+                    .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -388,7 +373,7 @@ public class UserView extends CRUDView<User,UserFormData> {
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<Permission> cbxPermissions;
     private javax.swing.JCheckBox chkIsEnable;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel labelSection1;
     private javax.swing.JLabel lblSave;
     private javax.swing.JLabel lblTitle;
@@ -396,11 +381,11 @@ public class UserView extends CRUDView<User,UserFormData> {
     private javax.swing.JLabel lblUserPasswod;
     private javax.swing.JLabel lblUserPasswod1;
     private javax.swing.JLabel lblUsername;
-    private com.nutrehogar.sistemacontable.ui_2.component.OperationPanel operationPanel1;
+    private com.nutrehogar.sistemacontable.ui_2.component.OperationPanel operationPanel;
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlForm;
     private javax.swing.JSeparator sepaSection1;
-    private javax.swing.JTable tblData;
+    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<User> tblData;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtPassword;
     // End of variables declaration//GEN-END:variables

@@ -20,6 +20,8 @@ public abstract class CustomTableModel<T> extends AbstractTableModel {
         this.columnsNames = columnsNames;
     }
 
+
+
     public final void setData(@NotNull List<T> data) {
         this.data.clear();
         this.data.addAll(data);

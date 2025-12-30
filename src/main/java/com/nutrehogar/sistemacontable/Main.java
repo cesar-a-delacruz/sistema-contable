@@ -22,10 +22,12 @@ public class Main {
 
         HibernateUtil.getSessionFactory();
 
-        Thread.startVirtualThread(() -> Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            HibernateUtil.shutdown();
-            log.info("Application stopped");
-        })));
+        Thread.startVirtualThread(() -> Runtime
+                .getRuntime()
+                .addShutdownHook(new Thread(() -> {
+                    HibernateUtil.shutdown();
+                    log.info("Application stopped");
+                })));
 
 
         try {

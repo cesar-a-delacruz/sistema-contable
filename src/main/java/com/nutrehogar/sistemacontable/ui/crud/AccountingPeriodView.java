@@ -5,7 +5,9 @@ import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
 
+import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
+import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
 import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
 import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
@@ -31,7 +33,7 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
         this.spnModelStartPeriod = new LocalDateSpinnerModel(LocalDate.of(currentYear, 1, 1));
         this.spnModelEndPeriod = new LocalDateSpinnerModel(LocalDate.of(currentYear, 12, 1));
         this.spnModelYear = new SpinnerNumberModel(currentYear, 1500, null, 1);
-        this.tblModel = new CustomTableModel("Numero", "Año", "Cerrado", "Fecha de inicio", "Fecha de cierre") {
+        this.tblModel = new CustomTableModel<>("Numero", "Año", "Cerrado", "Fecha de inicio", "Fecha de cierre") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var dto = data.get(rowIndex);
@@ -56,97 +58,32 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
             }
         };
         initComponents();
+        loadData();
         spnYear.setEditor(new JSpinner.NumberEditor(spnYear, "#"));
         txtNumber.putClientProperty("JTextField.placeholderText", "11");
-        configureTable(tblData);
-        addListenersToOperationPanel();
-        loadData();
+        tblData.setOnDeselected(this::onDeselected);
+        tblData.setOnSelected(this::onSelected);
+        operationPanel.getBtnPrepareToAdd().addActionListener(_ -> prepareToAdd());
+        operationPanel.getBtnPrepareToEdit().addActionListener(_ -> prepareToEdit());
         btnSave.addActionListener(_ -> save());
         btnUpdate.addActionListener(_ -> update());
-        lblTitle.setFont(Theme.Typography.FONT_BASE.deriveFont(Font.PLAIN, 30));
+        operationPanel.getBtnDelete().addActionListener(_ -> delete());
     }
-
-    @Override
-    protected void delete() {
-        if (selected.isEmpty()) {
-            showMessage("Seleccione un elemento de la tabla");
-            return;
-        }
-        new DeleteAccountingPeriodWorker(selected.get()).execute();
+    public void loadData() {
+        tblData.setEmpty();
+        prepareToAdd();
+        super.loadData();
     }
-    @Override
-    protected void save() {
-        var dto = getDataFromForm();
-        new SaveAccountingPeriodWorker(dto).execute();
-    }
-    @Override
-    protected void update() {
-        if (selected.isEmpty() || selected.get().getId() == null) {
-            showMessage("Seleccione un elemento de la tabla");
-            return;
-        }
-        var dto = getDataFromForm();
-        new EditAccountingPeriodWorker(selected.get(), dto).execute();
-    }
-    private final class EditAccountingPeriodWorker extends EditWorker {
-
-        public EditAccountingPeriodWorker(@NotNull AccountingPeriod entity, @NotNull AccountingPeriodFormData dto) {
-            super(entity, dto);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            var entity = session.merge(this.entity);
-            entity.setUpdatedBy(dto.username());
-            entity.setClosed(dto.closed());
-            entity.setStartDate(dto.startDate());
-            entity.setEndDate(dto.endDate());
-            entity.setPeriodNumber(dto.periodNumber());
-            entity.setYear(dto.year());
-        }
-    }
-    private final class SaveAccountingPeriodWorker extends SaveWorker {
-
-        public SaveAccountingPeriodWorker(@NotNull AccountingPeriodFormData dto) {
-            super(dto);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            session.persist(new AccountingPeriod(dto.year(),dto.periodNumber(),dto.startDate(),dto.endDate(),dto.closed(),dto.username()));
-        }
-    }
-    private final class DeleteAccountingPeriodWorker extends DeleteWorker {
-        public DeleteAccountingPeriodWorker(@NotNull AccountingPeriod entity) {
-            super(entity);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            session.remove(session.merge(this.entity));
-        }
-    }
-
     @Override
     protected @NotNull AccountingPeriodFormData getDataFromForm() {
         return new AccountingPeriodFormData(
                 spnModelYear.getNumber().intValue(),
-               Integer.valueOf(txtNumber.getText()),
+                Integer.valueOf(txtNumber.getText()),
                 spnModelStartPeriod.getValue(),
                 spnModelEndPeriod.getValue(),
                 chkClosed.isSelected(),
                 user.getUsername()
         );
-    }
-
-    @Override
-    protected void resetForm() {
-        txtNumber.setText("");
-        chkClosed.setSelected(false);
-        var currentYear = LocalDate.now().getYear();
-        spnModelYear.setValue(currentYear);
-        spnModelStartPeriod.setValue(LocalDate.of(currentYear, 1, 1));
-        spnModelEndPeriod.setValue(LocalDate.of(currentYear, 12, 1));
     }
 
     @Override
@@ -159,37 +96,92 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
     }
 
     @Override
-    protected void prepareToAdd() {
-        super.prepareToAdd();
-        btnSave.setEnabled(true);
-        btnUpdate.setEnabled(false);
+    protected @NotNull List<AccountingPeriod> getEntities(@NotNull Session session) {
+        return new AccountingPeriodQuery_(session).findAll();
     }
 
     @Override
+    protected void prepareToAdd() {
+        txtNumber.setText("");
+        chkClosed.setSelected(false);
+        var currentYear = LocalDate.now().getYear();
+        spnModelYear.setValue(currentYear);
+        spnModelStartPeriod.setValue(LocalDate.of(currentYear, 1, 1));
+        spnModelEndPeriod.setValue(LocalDate.of(currentYear, 12, 1));
+        btnSave.setEnabled(true);
+        btnUpdate.setEnabled(false);
+    }
+    @Override
     protected void prepareToEdit() {
-        super.prepareToEdit();
+        tblData.getSelected()
+                .ifPresentOrElse(this::setEntityDataInForm,
+                        () -> showMessage("Seleccione un elemento de la tabla"));
         btnSave.setEnabled(false);
         btnUpdate.setEnabled(true);
     }
 
     @Override
-    protected AuditablePanel getAuditablePanel() {
-        return this.auditablePanel;
+    protected void onSelected(AccountingPeriod accountingPeriod) {
+        auditablePanel.setAuditableFields(accountingPeriod);
+        operationPanel.getBtnDelete().setEnabled(true);
+        operationPanel.getBtnPrepareToEdit().setEnabled(true);
     }
 
     @Override
-    protected OperationPanel getOperationPanel() {
-        return this.operationPanel1;
+    protected void onDeselected() {
+        operationPanel.getBtnDelete().setEnabled(false);
+        operationPanel.getBtnPrepareToEdit().setEnabled(false);
     }
 
     @Override
-    protected List<AccountingPeriod> findEntities() {
-        AtomicReference<List<AccountingPeriod>> list = new AtomicReference<>(List.of());
-        HibernateUtil
-                .getSessionFactory()
-                .inTransaction(session ->
-                        list.set(new AccountingPeriodQuery_(session).findAll()));
-        return list.get();
+    protected void delete() {
+        tblData.getSelected()
+                .ifPresentOrElse(
+                        entity -> new RemoveWorker<>(entity).execute(),
+                        () -> showMessage("Seleccione un elemento de la tabla")
+                );
+    }
+
+    @Override
+    protected void save() {
+        new PersistAsync(getDataFromForm()).execute();
+    }
+
+    @Override
+    protected void update() {
+        tblData.getSelected()
+                .ifPresentOrElse(
+                        entity -> new MergeAsync(entity, getDataFromForm()).execute(),
+                        () -> showMessage("Seleccione un elemento de la tabla")
+                );
+    }
+
+    private final class MergeAsync extends MergeWorker<AccountingPeriod,AccountingPeriodFormData> {
+
+        public MergeAsync(@NotNull AccountingPeriod entity, @NotNull AccountingPeriodFormData dto) {
+            super(entity, dto);
+        }
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            var entity = session.merge(this.entity);
+            entity.setUpdatedBy(dto.username());
+            entity.setClosed(dto.closed());
+            entity.setStartDate(dto.startDate());
+            entity.setEndDate(dto.endDate());
+            entity.setPeriodNumber(dto.periodNumber());
+            entity.setYear(dto.year());
+        }
+    }
+    private final class PersistAsync extends PersistWorker<AccountingPeriodFormData> {
+
+        public PersistAsync(@NotNull AccountingPeriodFormData dto) {
+            super(dto);
+        }
+
+        @Override
+        protected void inTransaction(@NotNull Session session) {
+            session.persist(new AccountingPeriod(dto.year(),dto.periodNumber(),dto.startDate(),dto.endDate(),dto.closed(),dto.username()));
+        }
     }
 
 
@@ -204,8 +196,6 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblData = new javax.swing.JTable();
         pnlAside = new javax.swing.JPanel();
         pnlForm = new javax.swing.JPanel();
         lblNumber = new javax.swing.JLabel();
@@ -224,8 +214,10 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
         spnYear = new javax.swing.JSpinner();
         chkClosed = new javax.swing.JCheckBox();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        operationPanel1 = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
+        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
         lblTitle = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -239,9 +231,6 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
         );
 
         setOpaque(false);
-
-        tblData.setModel(tblModel);
-        jScrollPane1.setViewportView(tblData);
 
         pnlAside.setOpaque(false);
 
@@ -370,13 +359,13 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
                 .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlForm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(auditablePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
-                    .addComponent(operationPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(operationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlAsideLayout.setVerticalGroup(
             pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addComponent(operationPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(operationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -389,6 +378,8 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
         lblTitle.setIcon(Theme.SVGs.ACCOUNTING_PERIOD.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
         lblTitle.setText(LabelBuilder.build("Periodos Contables"));
 
+        jScrollPane2.setViewportView(tblData);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -396,8 +387,8 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -410,7 +401,7 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1)))
+                        .addComponent(jScrollPane2)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -421,7 +412,7 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
     private javax.swing.JButton btnUpdate;
     private javax.swing.JCheckBox chkClosed;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel labelSection1;
     private javax.swing.JLabel lblEnd;
     private javax.swing.JLabel lblNumber;
@@ -430,14 +421,14 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblType;
     private javax.swing.JLabel lblUpdate;
-    private com.nutrehogar.sistemacontable.ui_2.component.OperationPanel operationPanel1;
+    private com.nutrehogar.sistemacontable.ui_2.component.OperationPanel operationPanel;
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlForm;
     private javax.swing.JSeparator sepaSection1;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnEnd;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnStart;
     private javax.swing.JSpinner spnYear;
-    private javax.swing.JTable tblData;
+    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<AccountingPeriod> tblData;
     private javax.swing.JTextField txtNumber;
     // End of variables declaration//GEN-END:variables
 
