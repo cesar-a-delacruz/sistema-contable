@@ -10,6 +10,9 @@ import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
 
 import javax.swing.*;
 
+import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
+import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
@@ -26,7 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
-public class AccountView extends CRUDView<AccountData, AccountFormData> {
+public class AccountView extends SimpleView<AccountData> implements CRUDView<AccountData, AccountFormData> {
 
     private final CustomComboBoxModel<AccountType> cbxModelAccountType;
     private List<AccountSubtypeMinData> accountSubtypeMinData;
@@ -76,7 +79,18 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
 
 
         cbxType.addActionListener(_ -> lblAccountTypeId.setText((cbxModelAccountType.getSelectedItem()).getId() + "."));
-        cbxType.addActionListener(_ -> new CbxModelAccountSubtypeDataLoader(cbxModelAccountType.getSelectedItem()).execute());
+        cbxType.addActionListener(_ -> {
+            var type = cbxModelAccountType.getSelectedItem();
+            new FromTransactionWorker<>(
+                    session -> new AccountSubtypeQuery_(session).findMinDataByType(type),
+                    subtypes->{
+                        cbxModelAccountSubtype.setData(subtypes);
+                        onFindSubtypes.ifPresent(Runnable::run);
+                        onFindSubtypes = Optional.empty();
+                    },
+                    this::showError
+            ).execute();
+        });
         rbAddSubtype.addActionListener(_ -> cbxSubtype.setEnabled(rbAddSubtype.isSelected()));
 
         cbxType.setSelectedItem(AccountType.ASSETS);
@@ -86,10 +100,15 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
     public void loadData() {
         tblData.setEmpty();
         prepareToAdd();
-        super.loadData();
+        new FromTransactionWorker<>(
+                session -> new AccountQuery_(session).findAllDataAndSubtypes(),
+                tblModel::setData,
+                this::showError
+        ).execute();
     }
+
     @Override
-    protected @NotNull AccountFormData getDataFromForm() {
+    public @NotNull AccountFormData getDataFromForm() {
         var type = cbxModelAccountType.getSelectedItem();
 
         Optional<Integer> subtypeId = rbAddSubtype.isSelected()
@@ -102,10 +121,11 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
                 type,
                 subtypeId,
                 user.getUsername()
-        );    }
+        );
+    }
 
     @Override
-    protected void setEntityDataInForm(@NotNull AccountData entity) {
+    public void setEntityDataInForm(@NotNull AccountData entity) {
         txtName.setText(entity.name());
         txtNumber.setText(AccountNumber.getSubNumber(entity.number()));
         cbxType.setSelectedItem(entity.type());
@@ -132,12 +152,7 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
     }
 
     @Override
-    protected @NotNull List<AccountData> getEntities(@NotNull Session session) {
-        return new AccountQuery_(session).findAllDataAndSubtypes();
-    }
-
-    @Override
-    protected void prepareToAdd() {
+    public void prepareToAdd() {
         txtName.setText("");
         txtNumber.setText("");
         rbAddSubtype.setSelected(false);
@@ -146,8 +161,9 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
         btnSave.setEnabled(true);
         btnUpdate.setEnabled(false);
     }
+
     @Override
-    protected void prepareToEdit() {
+    public void prepareToEdit() {
         tblData.getSelected()
                 .ifPresentOrElse(this::setEntityDataInForm,
                         () -> showMessage("Seleccione un elemento de la tabla"));
@@ -156,187 +172,102 @@ public class AccountView extends CRUDView<AccountData, AccountFormData> {
     }
 
     @Override
-    protected void onSelected(AccountData entity) {
+    public void onSelected(@NotNull AccountData entity) {
         auditablePanel.setAuditableFields(entity);
         operationPanel.getBtnDelete().setEnabled(true);
         operationPanel.getBtnPrepareToEdit().setEnabled(true);
     }
 
     @Override
-    protected void onDeselected() {
+    public void onDeselected() {
         operationPanel.getBtnDelete().setEnabled(false);
         operationPanel.getBtnPrepareToEdit().setEnabled(false);
     }
 
     @Override
-    protected void delete() {
-        tblData.getSelected()
+    public void delete() {
+        tblData
+                .getSelected()
                 .ifPresentOrElse(
-                        entity -> new RemoveAsync(entity).execute(),
+                        accountData ->
+                                new InTransactionWorker(
+                                        session -> new AccountQuery_(session).findById(accountData.id()).ifPresent(session::remove),
+                                        this::loadData,
+                                        this::showError
+                                ).execute(),
                         () -> showMessage("Seleccione un elemento de la tabla")
                 );
     }
 
     @Override
-    protected void save() {
-        new PersistAsync(getDataFromForm()).execute();
+    public void save() {
+        var dto = getDataFromForm();
+        new InTransactionWorker(
+                session -> {
+                    var account = new Account(dto.number(), dto.name(), dto.type(), dto.username());
+                    if (dto.subtypeId().isPresent()) {
+                        var subtype = new AccountSubtypeQuery_(session).findById(dto.subtypeId().get());
+                        if (subtype.isEmpty()) {
+                            throw new ApplicationException(
+                                    LabelBuilder.of("El subtipo de cuenta no fue encontrado.")
+                                            .p("Si no quiere agregar un subtipo, desmarque el check.")
+                                            .p("Si es un error debe")
+                                            .build());
+                        }
+                        account.setSubtype(subtype.get());
+                    }
+                    session.persist(account);
+                },
+                this::loadData,
+                this::showError
+        ).execute();
     }
 
     @Override
-    protected void update() {
+    public void update() {
+        var dto = getDataFromForm();
         tblData.getSelected()
                 .ifPresentOrElse(
-                        entity -> new MergeAsync(entity, getDataFromForm()).execute(),
+                        AccountData ->
+                                new InTransactionWorker(
+                                        session -> {
+                                            var response = new AccountQuery_(session).findById(AccountData.id());
+
+                                            if (response.isEmpty()) {
+                                                throw new ApplicationException(LabelBuilder.build("Cunta no ncontrada"));
+                                            }
+                                            var entity = response.get();
+
+                                            entity.setUpdatedBy(dto.username());
+                                            entity.setNumber(dto.number());
+                                            entity.setName(dto.name());
+                                            entity.setType(dto.type());
+
+                                            if (dto.subtypeId().isEmpty()) return;
+
+                                            if (entity.getSubtype() != null
+                                                    && entity.getSubtype().getId() != null
+                                                    && entity.getSubtype().getId().equals(dto.subtypeId().get()))
+                                                return;
+                                            var subtype = new AccountSubtypeQuery_(session).findById(dto.subtypeId().get());
+
+
+                                            if (subtype.isEmpty()) {
+                                                throw new ApplicationException(
+                                                        LabelBuilder.of("El subtipo de cuenta no fue encontrado.")
+                                                                .p("Si no quiere agregar un subtipo, desmarque el check.")
+                                                                .p("Si es un error debe")
+                                                                .build());
+                                            }
+                                            IO.println("se pone");
+                                            entity.setSubtype(subtype.get());
+                                        },
+                                        this::loadData,
+                                        this::showError
+                                ).execute(),
                         () -> showMessage("Seleccione un elemento de la tabla")
                 );
     }
-
-
-    private final class MergeAsync extends MergeWorker<AccountData,AccountFormData> {
-
-        public MergeAsync(@NotNull AccountData entity, @NotNull AccountFormData dto) {
-            super(entity, dto);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            IO.println("se busca");
-            var response = new AccountQuery_(session).findById(this.entity.id());
-
-            if(response.isEmpty()){
-                throw new ApplicationException(LabelBuilder.build("Cunta no ncontrada"));
-            }
-            var entity = response.get();
-
-            entity.setUpdatedBy(dto.username());
-            entity.setNumber(dto.number());
-            entity.setName(dto.name());
-            entity.setType(dto.type());
-
-            IO.println("is empty");
-            if (dto.subtypeId().isEmpty()) return;
-            IO.println("sis equals");
-
-            if (entity.getSubtype() != null
-                    && entity.getSubtype().getId() != null
-                    && entity.getSubtype().getId().equals(dto.subtypeId().get()))
-                return;
-            IO.println("se busca 2");
-            var subtype = new AccountSubtypeQuery_(session).findById(dto.subtypeId().get());
-
-            IO.println("isempty");
-            if (subtype.isEmpty()) {
-                throw new ApplicationException(
-                        LabelBuilder.of("El subtipo de cuenta no fue encontrado.")
-                                .p("Si no quiere agregar un subtipo, desmarque el check.")
-                                .p("Si es un error debe")
-                                .build());
-            }
-            IO.println("se pone");
-            entity.setSubtype(subtype.get());
-        }
-    }
-
-    private final class PersistAsync extends PersistWorker<AccountFormData> {
-
-        public PersistAsync(@NotNull AccountFormData dto) {
-            super(dto);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            var account = new Account(dto.number(), dto.name(), dto.type(), dto.username());
-            if (dto.subtypeId().isPresent()) {
-                var subtype = new AccountSubtypeQuery_(session).findById(dto.subtypeId().get());
-                if (subtype.isEmpty()) {
-                    throw new ApplicationException(
-                            LabelBuilder.of("El subtipo de cuenta no fue encontrado.")
-                                    .p("Si no quiere agregar un subtipo, desmarque el check.")
-                                    .p("Si es un error debe")
-                                    .build());
-                }
-                account.setSubtype(subtype.get());
-            }
-            session.persist(account);
-        }
-    }
-
-    private final class RemoveAsync extends RemoveWorker<AccountData> {
-        public RemoveAsync(@NotNull AccountData entity) {
-            super(entity);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            new AccountQuery_(session).findById(this.entity.id()).ifPresent(session::remove);
-        }
-    }
-
-    private final class CbxModelAccountSubtypeDataLoader extends SwingWorker<List<AccountSubtypeMinData>, Void> {
-        @NotNull
-        private final AccountType type;
-        @Nullable
-        private ApplicationException error;
-
-        private CbxModelAccountSubtypeDataLoader(@NotNull AccountType type) {
-            this.type = type;
-        }
-
-        @Override
-        protected @NotNull List<AccountSubtypeMinData> doInBackground() {
-            AtomicReference<List<AccountSubtypeMinData>> list = new AtomicReference<>(List.of());
-            try {
-                HibernateUtil
-                        .getSessionFactory()
-                        .inTransaction(session -> list.set(new AccountSubtypeQuery_(session).findMinDataByType(type)));
-            } catch (ConstraintViolationException cve) {
-                error = new ApplicationException(
-                        LabelBuilder.of("Los datos ingresados son inválidos.")
-                                .p("Por favor revise qe no alla cambos único que se repitan, ejm: Nombres, Números de Cuentas")
-                                .build(),
-                        cve);
-            } catch (HibernateException he) {
-                error = new ApplicationException(
-                        LabelBuilder.of("Ocurrió un error en la base de datos, inténtelo nuevamente")
-                                .p("Si el problema persiste valla al inicio y regrese")
-                                .p("Si el problema persiste, cierre el programa y vuelva a intentarlo.")
-                                .build(),
-                        he);
-            } catch (Exception e) {
-                error = new ApplicationException(
-                        LabelBuilder.of("Ocurrió un error inesperado, por favor inténtelo de nuevo.")
-                                .p("Si el problema persiste, cierre el programa y vuelva a intentarlo.")
-                                .build(),
-                        e);
-            }
-            return list.get();
-        }
-
-        @Override
-        protected void done() {
-            accountSubtypeMinData = List.of();
-            try {
-                if (get() == null) {
-                    error = new ApplicationException(LabelBuilder.build("Error al optener la lista de subtipos de cuentas"));
-                }
-                accountSubtypeMinData = get();
-            } catch (Exception e) {
-                error = new ApplicationException(LabelBuilder.build("Error al optener la lista de subtipos de cuentas"), e);
-            }
-
-            cbxModelAccountSubtype.setData(accountSubtypeMinData);
-
-            if (error != null) {
-                showError(error.getMessage(), error);
-                return;
-            }
-
-            onFindSubtypes.ifPresent(Runnable::run);
-            onFindSubtypes = Optional.empty();
-        }
-    }
-
-
 
     /**
      * This method is called from within the constructor to initialize the form.

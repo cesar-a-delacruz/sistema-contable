@@ -53,4 +53,8 @@ public abstract class View extends JPanel {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
+    public void showError(@NotNull Exception cause){
+        showError(cause.getMessage(), cause);
+    }
+
 }

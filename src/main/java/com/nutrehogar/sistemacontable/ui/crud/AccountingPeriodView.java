@@ -7,6 +7,9 @@ import com.nutrehogar.sistemacontable.model.*;
 
 import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
+import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
+import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
 import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
@@ -22,7 +25,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingPeriodFormData> {
+public class AccountingPeriodView extends SimpleView<AccountingPeriod> implements CRUDView<AccountingPeriod, AccountingPeriodFormData> {
     private final LocalDateSpinnerModel spnModelStartPeriod;
     private final LocalDateSpinnerModel spnModelEndPeriod;
     private final SpinnerNumberModel spnModelYear;
@@ -72,10 +75,14 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
     public void loadData() {
         tblData.setEmpty();
         prepareToAdd();
-        super.loadData();
+        new FromTransactionWorker<>(
+                session -> new AccountingPeriodQuery_(session).findAll(),
+                tblModel::setData,
+                this::showError
+        ).execute();
     }
     @Override
-    protected @NotNull AccountingPeriodFormData getDataFromForm() {
+    public @NotNull AccountingPeriodFormData getDataFromForm() {
         return new AccountingPeriodFormData(
                 spnModelYear.getNumber().intValue(),
                 Integer.valueOf(txtNumber.getText()),
@@ -87,7 +94,7 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
     }
 
     @Override
-    protected void setEntityDataInForm(@NotNull AccountingPeriod entity) {
+    public void setEntityDataInForm(@NotNull AccountingPeriod entity) {
         txtNumber.setText(entity.getPeriodNumber().toString());
         spnModelYear.setValue(entity.getYear());
         spnModelStartPeriod.setValue(entity.getStartDate());
@@ -96,12 +103,7 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
     }
 
     @Override
-    protected @NotNull List<AccountingPeriod> getEntities(@NotNull Session session) {
-        return new AccountingPeriodQuery_(session).findAll();
-    }
-
-    @Override
-    protected void prepareToAdd() {
+    public void prepareToAdd() {
         txtNumber.setText("");
         chkClosed.setSelected(false);
         var currentYear = LocalDate.now().getYear();
@@ -112,7 +114,7 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
         btnUpdate.setEnabled(false);
     }
     @Override
-    protected void prepareToEdit() {
+    public void prepareToEdit() {
         tblData.getSelected()
                 .ifPresentOrElse(this::setEntityDataInForm,
                         () -> showMessage("Seleccione un elemento de la tabla"));
@@ -121,69 +123,64 @@ public class AccountingPeriodView extends CRUDView<AccountingPeriod, AccountingP
     }
 
     @Override
-    protected void onSelected(AccountingPeriod accountingPeriod) {
+    public void onSelected(AccountingPeriod accountingPeriod) {
         auditablePanel.setAuditableFields(accountingPeriod);
         operationPanel.getBtnDelete().setEnabled(true);
         operationPanel.getBtnPrepareToEdit().setEnabled(true);
     }
 
     @Override
-    protected void onDeselected() {
+    public void onDeselected() {
         operationPanel.getBtnDelete().setEnabled(false);
         operationPanel.getBtnPrepareToEdit().setEnabled(false);
     }
 
     @Override
-    protected void delete() {
-        tblData.getSelected()
+    public void delete() {
+        tblData
+                .getSelected()
                 .ifPresentOrElse(
-                        entity -> new RemoveWorker<>(entity).execute(),
+                        entity ->
+                                new InTransactionWorker(
+                                        session -> session.remove(session.merge(entity)),
+                                        this::loadData,
+                                        this::showError
+                                ).execute(),
                         () -> showMessage("Seleccione un elemento de la tabla")
                 );
     }
 
     @Override
-    protected void save() {
-        new PersistAsync(getDataFromForm()).execute();
-    }
+    public void save() {
+        var dto = getDataFromForm();
+        new InTransactionWorker(
+                session -> session.persist(new AccountingPeriod(dto.year(),dto.periodNumber(),dto.startDate(),dto.endDate(),dto.closed(),dto.username())),
+                this::loadData,
+                this::showError
+        ).execute();    }
 
     @Override
-    protected void update() {
+    public void update() {
+        var dto = getDataFromForm();
         tblData.getSelected()
                 .ifPresentOrElse(
-                        entity -> new MergeAsync(entity, getDataFromForm()).execute(),
+                        accountingPeriod ->
+                                new InTransactionWorker(
+                                        session -> {
+                                            var entity = session.merge(accountingPeriod);
+                                            entity.setUpdatedBy(dto.username());
+                                            entity.setClosed(dto.closed());
+                                            entity.setStartDate(dto.startDate());
+                                            entity.setEndDate(dto.endDate());
+                                            entity.setPeriodNumber(dto.periodNumber());
+                                            entity.setYear(dto.year());
+                                        },
+                                        this::loadData,
+                                        this::showError
+                                ).execute(),
                         () -> showMessage("Seleccione un elemento de la tabla")
                 );
     }
-
-    private final class MergeAsync extends MergeWorker<AccountingPeriod,AccountingPeriodFormData> {
-
-        public MergeAsync(@NotNull AccountingPeriod entity, @NotNull AccountingPeriodFormData dto) {
-            super(entity, dto);
-        }
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            var entity = session.merge(this.entity);
-            entity.setUpdatedBy(dto.username());
-            entity.setClosed(dto.closed());
-            entity.setStartDate(dto.startDate());
-            entity.setEndDate(dto.endDate());
-            entity.setPeriodNumber(dto.periodNumber());
-            entity.setYear(dto.year());
-        }
-    }
-    private final class PersistAsync extends PersistWorker<AccountingPeriodFormData> {
-
-        public PersistAsync(@NotNull AccountingPeriodFormData dto) {
-            super(dto);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            session.persist(new AccountingPeriod(dto.year(),dto.periodNumber(),dto.startDate(),dto.endDate(),dto.closed(),dto.username()));
-        }
-    }
-
 
     /**
      * This method is called from within the constructor to initialize the form.

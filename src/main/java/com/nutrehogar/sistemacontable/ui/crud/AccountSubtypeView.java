@@ -8,6 +8,9 @@ import com.nutrehogar.sistemacontable.model.AccountType;
 
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
+import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
+import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
@@ -19,7 +22,7 @@ import java.awt.*;
 import java.util.List;
 
 
-public class AccountSubtypeView extends CRUDView<AccountSubtype, AccountSubtypeFormData> {
+public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CRUDView<AccountSubtype, AccountSubtypeFormData> {
 
     private final CustomComboBoxModel<AccountType> cbxModelAccountType;
     public AccountSubtypeView(User user) {
@@ -60,103 +63,103 @@ public class AccountSubtypeView extends CRUDView<AccountSubtype, AccountSubtypeF
     public void loadData() {
         tblData.setEmpty();
         prepareToAdd();
-        super.loadData();
+        new FromTransactionWorker<>(
+                session -> new AccountSubtypeQuery_(session).findAll(),
+                tblModel::setData,
+                this::showError
+        ).execute();
     }
     @Override
-    protected @NotNull AccountSubtypeFormData getDataFromForm() {
+    public @NotNull AccountSubtypeFormData getDataFromForm() {
         var type = cbxModelAccountType.getSelectedItem();
         return new AccountSubtypeFormData(txtName.getText(), AccountNumber.generateNumber(txtNumber.getText(), type), type, user.getUsername());
     }
 
     @Override
-    protected void setEntityDataInForm(@NotNull AccountSubtype entity) {
+    public void setEntityDataInForm(@NotNull AccountSubtype entity) {
         txtName.setText(entity.getName());
         txtNumber.setText(entity.getSubNumber());
         cbxType.setSelectedItem(entity.getType());
     }
 
     @Override
-    protected @NotNull List<AccountSubtype> getEntities(@NotNull Session session) {
-        return new AccountSubtypeQuery_(session).findAll();
-    }
-
-    @Override
-    protected void prepareToAdd() {
+    public void prepareToAdd() {
         txtName.setText("");
         txtNumber.setText("");
         cbxType.setSelectedItem(AccountType.ASSETS);
         btnSave.setEnabled(true);
         btnUpdate.setEnabled(false);
     }
+
     @Override
-    protected void prepareToEdit() {
-        tblData.getSelected()
-                .ifPresentOrElse(this::setEntityDataInForm,
-                        () -> showMessage("Seleccione un elemento de la tabla"));
+    public void prepareToEdit() {
+        tblData
+                .getSelected()
+                .ifPresentOrElse(
+                        this::setEntityDataInForm,
+                        () -> showMessage("Seleccione un elemento de la tabla")
+                );
         btnSave.setEnabled(false);
         btnUpdate.setEnabled(true);
     }
 
     @Override
-    protected void onSelected(AccountSubtype accountSubtype) {
+    public void onSelected(AccountSubtype accountSubtype) {
         auditablePanel.setAuditableFields(accountSubtype);
         operationPanel.getBtnDelete().setEnabled(true);
         operationPanel.getBtnPrepareToEdit().setEnabled(true);
     }
 
     @Override
-    protected void onDeselected() {
+    public void onDeselected() {
         operationPanel.getBtnDelete().setEnabled(false);
         operationPanel.getBtnPrepareToEdit().setEnabled(false);
     }
 
     @Override
-    protected void delete() {
-        tblData.getSelected()
+    public void delete() {
+        tblData
+                .getSelected()
                 .ifPresentOrElse(
-                        entity -> new RemoveWorker<>(entity).execute(),
+                        entity ->
+                                new InTransactionWorker(
+                                        session -> session.remove(session.merge(entity)),
+                                        this::loadData,
+                                        this::showError
+                                ).execute(),
                         () -> showMessage("Seleccione un elemento de la tabla")
                 );
     }
 
     @Override
-    protected void save() {
-        new PersistAsync(getDataFromForm()).execute();
+    public void save() {
+        var dto = getDataFromForm();
+        new InTransactionWorker(
+                session -> session.persist(new AccountSubtype(dto.number(), dto.name(), dto.type(), dto.username())),
+                this::loadData,
+                this::showError
+        ).execute();
     }
 
     @Override
-    protected void update() {
+    public void update() {
+        var dto = getDataFromForm();
         tblData.getSelected()
                 .ifPresentOrElse(
-                        entity -> new MergeAsync(entity, getDataFromForm()).execute(),
+                        accountSubtype ->
+                                new InTransactionWorker(
+                                        session -> {
+                                            var entity = session.merge(accountSubtype);
+                                            entity.setUpdatedBy(dto.username());
+                                            entity.setNumber(dto.number());
+                                            entity.setName(dto.name());
+                                            entity.setType(dto.type());
+                                        },
+                                        this::loadData,
+                                        this::showError
+                                ).execute(),
                         () -> showMessage("Seleccione un elemento de la tabla")
                 );
-    }
-
-    private final class MergeAsync extends MergeWorker<AccountSubtype,AccountSubtypeFormData> {
-
-        public MergeAsync(@NotNull AccountSubtype entity, @NotNull AccountSubtypeFormData dto) {
-            super(entity, dto);
-        }
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            var entity = session.merge(this.entity);
-            entity.setUpdatedBy(dto.username());
-            entity.setNumber(dto.number());
-            entity.setName(dto.name());
-            entity.setType(dto.type());
-        }
-    }
-    private final class PersistAsync extends PersistWorker<AccountSubtypeFormData> {
-
-        public PersistAsync(@NotNull AccountSubtypeFormData dto) {
-            super(dto);
-        }
-
-        @Override
-        protected void inTransaction(@NotNull Session session) {
-            session.persist(new AccountSubtype(dto.number(), dto.name(), dto.type(), dto.username()));
-        }
     }
 
 
