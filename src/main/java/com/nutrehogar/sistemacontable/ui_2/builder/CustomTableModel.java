@@ -28,6 +28,11 @@ public abstract class CustomTableModel<T> extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    public final void addData(@NotNull T element) {
+        this.data.add(element);
+        fireTableDataChanged();
+    }
+
     @Override
     public int getRowCount() {
         return data.size();

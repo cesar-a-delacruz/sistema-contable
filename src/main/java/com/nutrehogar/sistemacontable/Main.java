@@ -6,6 +6,7 @@ import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.Permission;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.ui.DashboardView;
+import com.nutrehogar.sistemacontable.ui.NewJPanel;
 import com.nutrehogar.sistemacontable.ui.service.AuthView;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,6 @@ public class Main {
         Theme.setup();
 
         var adminUser = new User("0922", "Root", true, Permission.ADMIN, "Roo");
-
-        HibernateUtil.getSessionFactory();
 
         Thread.startVirtualThread(() -> Runtime
                 .getRuntime()

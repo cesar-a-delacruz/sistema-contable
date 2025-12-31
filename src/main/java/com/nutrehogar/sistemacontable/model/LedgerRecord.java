@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 
@@ -19,10 +20,11 @@ public class LedgerRecord extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
+    @Nullable
     Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @Nullable
     JournalEntry entry;
 
     @Column(nullable = false, length = 600)
@@ -30,8 +32,8 @@ public class LedgerRecord extends AuditableEntity {
     @NotNull
     String reference;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @Nullable
     Account account;
 
     @NotNull
@@ -43,4 +45,12 @@ public class LedgerRecord extends AuditableEntity {
     @Basic(optional = false)
     @Column(precision = 15, scale = 2, nullable = false)
     BigDecimal credit;
+
+    public LedgerRecord(@NotNull String reference, @NotNull Account account, @NotNull BigDecimal debit, @NotNull BigDecimal credit,@NotNull String updatedBy) {
+        super(updatedBy);
+        this.reference = reference;
+        this.account = account;
+        this.debit = debit;
+        this.credit = credit;
+    }
 }

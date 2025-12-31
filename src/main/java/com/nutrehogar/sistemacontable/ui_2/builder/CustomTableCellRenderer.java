@@ -38,23 +38,12 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
                 setText(doubleValue == 0.0 ? "" : DECIMAL_FORMAT.format(doubleValue));
                 setHorizontalAlignment(RIGHT);
             }
-            case AccountType accountType -> {
-                setText(AccountType.getCellRenderer(accountType));
-            }
-            case AccountSubtype tipoCuenta -> {
-                setText( tipoCuenta.getFormattedNumber() + " "
-                        + tipoCuenta.getName());
-            }
-            case Account account -> {
-                setText(account.getId() + " " + account.getName());
-            }
-            case DocumentType documentType -> {
-                setText(documentType.getName());
-
-            }
-            case Permission permissions -> {
-                setText(permissions.getName());
-            }
+            case AccountType accountType -> setText(AccountType.getCellRenderer(accountType));
+            case AccountSubtype tipoCuenta -> setText( tipoCuenta.getFormattedNumber() + " "
+                    + tipoCuenta.getName());
+            case Account account -> setText(account.getFormattedNumber() + " " + account.getName());
+            case DocumentType documentType -> setText(documentType.getName());
+            case Permission permissions -> setText(permissions.getName());
             case null -> setText("");
             default -> setText(value.toString());
         }

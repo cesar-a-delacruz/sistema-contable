@@ -14,11 +14,12 @@ public class CustomListCellRenderer extends DefaultListCellRenderer {
         label.setText(switch (value) {
             case AccountType type -> type.getCellRenderer();
             case AccountSubtype subtype -> subtype.getFormattedNumber() + " " + subtype.getName();
-            case Account a -> a.getFormattedNumber();
+            case Account a -> a.getFormattedNumber() + " " + a.getName();
             case DocumentType dt -> dt.getName();
             case Permission p -> p.getName();
             case AccountSubtypeMinData dto -> AccountNumber.getFormattedNumber(dto.number()) + " " + dto.name();
             case null -> "";
+
             default -> value.toString();
         });
         return label;

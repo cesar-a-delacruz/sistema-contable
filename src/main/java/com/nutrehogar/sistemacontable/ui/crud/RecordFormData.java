@@ -7,9 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-public record RecordFormData(@NotNull String reference,
-                             @NotNull Account account,
-                             @NotNull BigDecimal debit,
-                             @NotNull BigDecimal credit,
-                             @NotNull String username) {
+public record RecordFormData(
+        @NotNull String reference,
+        @NotNull Account account,
+        @NotNull BigDecimal debit,
+        @NotNull BigDecimal credit,
+        @NotNull String username
+) {
 }
