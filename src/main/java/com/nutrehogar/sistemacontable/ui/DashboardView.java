@@ -1,6 +1,6 @@
 package com.nutrehogar.sistemacontable.ui;
 
-import com.nutrehogar.sistemacontable.ui.crud.AccountSubtypeView;
+import com.nutrehogar.sistemacontable.ui.crud.*;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.User;
 //import com.nutrehogar.sistemacontable.ui.crud.AccountView;
@@ -8,9 +8,6 @@ import com.nutrehogar.sistemacontable.model.User;
 //import com.nutrehogar.sistemacontable.ui.crud.AccountView;
 //import com.nutrehogar.sistemacontable.ui.crud.AccountingPeriodView;
 //import com.nutrehogar.sistemacontable.ui.crud.UserView;
-import com.nutrehogar.sistemacontable.ui.crud.AccountView;
-import com.nutrehogar.sistemacontable.ui.crud.AccountingPeriodView;
-import com.nutrehogar.sistemacontable.ui.crud.UserView;
 import com.nutrehogar.sistemacontable.ui_2.component.Background;
 
 import org.jetbrains.annotations.Contract;
@@ -48,6 +45,7 @@ public class DashboardView extends Background {
         btnUser.addActionListener(_ -> setContent(new UserView(user)));
         btnAccountingPeriod.addActionListener(_ -> setContent(new AccountingPeriodView(user)));
         btnHome.addActionListener(_ -> setContent(pnlHome));
+        btnForm.addActionListener(_->setContent(new AccountingEntryView(user)));
     }
 
     public void setContent(JPanel p) {

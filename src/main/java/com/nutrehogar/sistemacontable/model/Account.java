@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString(exclude = "records")
+@ToString(exclude = {"records", "subtype"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Entity
@@ -34,8 +34,7 @@ public class Account extends AuditableEntity {
 
     @Column(nullable = false, unique = true)
     @Basic(optional = false)
-    @NotNull
-    String name;
+    @NotNull String name;
 
     @Enumerated(EnumType.STRING)
     @Basic(optional = false)
@@ -45,12 +44,10 @@ public class Account extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @Nullable
-    AccountSubtype subtype;
+    @Nullable AccountSubtype subtype;
 
     @OneToMany(mappedBy = LedgerRecord_.ACCOUNT, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @NotNull
-    Set<LedgerRecord> records = new HashSet<>();
+    @NotNull Set<LedgerRecord> records = new HashSet<>();
 
     public Account(@NotNull String updatedBy) {
         super(updatedBy);
