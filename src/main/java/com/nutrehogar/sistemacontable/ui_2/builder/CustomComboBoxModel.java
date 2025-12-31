@@ -16,6 +16,9 @@ public class CustomComboBoxModel<E> extends DefaultComboBoxModel<E> {
         super(data);
         setSelectedItem(data[0]);
     }
+    public CustomComboBoxModel(){
+        super();
+    }
 
     @SuppressWarnings("unchecked")
     @Override

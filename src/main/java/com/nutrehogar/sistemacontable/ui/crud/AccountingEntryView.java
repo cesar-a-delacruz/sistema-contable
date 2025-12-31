@@ -1,19 +1,29 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
+import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
+import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
+import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.View;
 
+import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
+import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Getter
 public class AccountingEntryView extends View implements CRUDView<JournalEntry, JournalFormData> {
     @NotNull
     protected final RecordController recordController;
+    /**
+     * Si esta vacio es que eta en modo crear, si esta es modo editar
+     */
     @NotNull
     protected Optional<JournalEntry> journalEntry = Optional.empty();
 
@@ -33,7 +43,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
     }
 
     @Override
-    public @NotNull JournalFormData getDataFromForm() {
+    public @NotNull JournalFormData getDataFromForm() throws InvalidFieldException {
         return null;
     }
 
@@ -81,10 +91,17 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         @NotNull
         public CustomTableModel<LedgerRecord> tblModelRecord;
         @NotNull
+        public CustomComboBoxModel<Account> cbxModelRAccount;
+
+        @NotNull
+        public final SpinnerNumberModel spnModelRAmount;
+        @NotNull
         public final String entityName;
 
         public RecordController() {
-            this.entityName = "Regitro";
+            this.entityName = "Registro";
+            this.cbxModelRAccount = new CustomComboBoxModel<>();
+            this.spnModelRAmount = new SpinnerNumberModel(1.0d, 0.0d, Integer.MAX_VALUE, 1.0d);
             this.tblModelRecord = new CustomTableModel<>("Referencia", "Cuenta", "Débito", "Crédito") {
 
                 @Override
@@ -104,58 +121,143 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                     return String.class;
                 }
             };
+            loadData();
+            cbxRAccount.setRenderer(new CustomListCellRenderer());
             txtRReference.putClientProperty("JTextField.placeholderText", "Pago de factura");
-            txtRAmount.putClientProperty("JTextField.placeholderText", "12.50");
+            tblRecord.setOnDeselected(this::onDeselected);
+            tblRecord.setOnSelected(this::onSelected);
+            OpRecord.getBtnPrepareToAdd().addActionListener(_ -> prepareToAdd());
+            OpRecord.getBtnPrepareToEdit().addActionListener(_ -> prepareToEdit());
+            btnRSave.addActionListener(_ -> save());
+            btnRUpdate.addActionListener(_ -> update());
+            OpRecord.getBtnDelete().addActionListener(_ -> delete());
         }
 
-        @Override
         public void loadData() {
-
+            tblRecord.setEmpty();
+            prepareToAdd();
+//            new FromTransactionWorker<>(
+//                    session -> new AccountSubtypeQuery_(session).findAll(),
+//                    tblModel::setData,
+//                    AccountingEntryView.this::showError
+//            ).execute();
         }
 
         @Override
-        public @NotNull RecordFormData getDataFromForm() {
-            return null;
+        public @NotNull RecordFormData getDataFromForm() throws InvalidFieldException {
+            var account = cbxModelRAccount.getSelectedItem();
+            if (account == null) throw new InvalidFieldException("La cuenta no puede estar vacía");
+            var amount = BigDecimal.valueOf(spnModelRAmount.getNumber().doubleValue());
+            var isDebit = rbtRDebit.isSelected();
+            return new RecordFormData(
+                    txtRReference.getText(),
+                    account,
+                    isDebit ? amount : BigDecimal.ZERO,
+                    !isDebit ? amount : BigDecimal.ZERO,
+                    user.getUsername()
+            );
         }
 
         @Override
         public void setEntityDataInForm(@NotNull LedgerRecord ledgerRecord) {
-
+            cbxModelRAccount.setSelectedItem(ledgerRecord.getAccount());
+            txtRReference.setText(ledgerRecord.getReference());
+            var isDebit = ledgerRecord.getDebit().equals(BigDecimal.ZERO);
+            rbtRDebit.setSelected(isDebit);
+            rbtRCredit.setSelected(!isDebit);
+            spnModelRAmount.setValue(isDebit ? ledgerRecord.getDebit() : ledgerRecord.getCredit());
         }
 
         @Override
         public void prepareToAdd() {
-
+            btnRSave.setEnabled(true);
+            btnRUpdate.setEnabled(false);
         }
 
         @Override
         public void prepareToEdit() {
-
+            tblRecord
+                    .getSelected()
+                    .ifPresentOrElse(
+                            this::setEntityDataInForm,
+                            () -> showWarning("Seleccione un elemento de la tabla")
+                    );
+            btnRSave.setEnabled(false);
+            btnRUpdate.setEnabled(true);
         }
 
         @Override
         public void onSelected(@NotNull LedgerRecord ledgerRecord) {
-
+            ApRecord.setAuditableFields(ledgerRecord);
+            OpRecord.getBtnDelete().setEnabled(true);
+            OpRecord.getBtnPrepareToEdit().setEnabled(true);
         }
 
         @Override
         public void onDeselected() {
-
+            OpRecord.getBtnDelete().setEnabled(false);
+            OpRecord.getBtnPrepareToEdit().setEnabled(false);
         }
 
         @Override
         public void delete() {
-
+//            try {
+//                tblRecord
+//                        .getSelected()
+//                        .ifPresentOrElse(
+//                                entity ->
+//                                        new InTransactionWorker(
+//                                                session -> session.remove(session.merge(entity)),
+//                                                this::loadData,
+//                                                AccountingEntryView.this::showError
+//                                        ).execute(),
+//                                () -> {
+//                                    throw new InvalidFieldException("Seleccione un elemento de la tabla");
+//                                });
+//            } catch (InvalidFieldException e) {
+//                showWarning(e);
+//            }
         }
 
         @Override
         public void save() {
-
+//            try {
+//                var dto = getDataFromForm();
+//                new InTransactionWorker(
+//                        session -> session.persist(new AccountSubtype(dto.number(), dto.name(), dto.type(), dto.username())),
+//                        this::loadData,
+//                        AccountingEntryView.this::showError
+//                ).execute();
+//            } catch (InvalidFieldException e) {
+//                showWarning(e);
+//            }
         }
 
         @Override
         public void update() {
-
+//            try {
+//                var dto = getDataFromForm();
+//                tblRecord.getSelected()
+//                        .ifPresentOrElse(
+//                                accountSubtype ->
+//                                        new InTransactionWorker(
+//                                                session -> {
+//                                                    var entity = session.merge(accountSubtype);
+//                                                    entity.setUpdatedBy(dto.username());
+//                                                    entity.setNumber(dto.number());
+//                                                    entity.setName(dto.name());
+//                                                    entity.setType(dto.type());
+//                                                },
+//                                                this::loadData,
+//                                                AccountingEntryView.this::showError
+//                                        ).execute(),
+//                                () -> {
+//                                    throw new InvalidFieldException("Seleccione un elemento de la tabla");
+//                                }
+//                        );
+//            } catch (InvalidFieldException e) {
+//                showWarning(e);
+//            }
         }
     }
 
@@ -177,7 +279,6 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         pnlAside = new javax.swing.JPanel();
         pnlRecordForm = new javax.swing.JPanel();
         lblRecordAmount = new javax.swing.JLabel();
-        txtRAmount = new javax.swing.JTextField();
         lblRecordAccount = new javax.swing.JLabel();
         btnRSave = new javax.swing.JButton();
         cbxRAccount = new javax.swing.JComboBox<>();
@@ -191,6 +292,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         rbtRCredit = new javax.swing.JRadioButton();
         sepaSection1 = new javax.swing.JSeparator();
         labelSection1 = new javax.swing.JLabel();
+        spnRAmount = new javax.swing.JSpinner(recordController.spnModelRAmount);
         ApRecord = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
         OpRecord = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel();
         pnlEntryForm = new javax.swing.JPanel();
@@ -234,7 +336,6 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         pnlRecordForm.setOpaque(false);
 
         lblRecordAmount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblRecordAmount.setLabelFor(txtRAmount);
         lblRecordAmount.setText("Monto:");
         lblRecordAmount.setName(""); // NOI18N
 
@@ -244,7 +345,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
 
         btnRSave.setText("Guardar");
 
-        cbxRAccount.setModel(new javax.swing.DefaultComboBoxModel<>());
+        cbxRAccount.setModel(recordController.cbxModelRAccount);
 
         btnRUpdate.setText("Actualizar");
 
@@ -297,7 +398,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                                                 .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                         .addComponent(txtRReference, javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addComponent(cbxRAccount, javax.swing.GroupLayout.Alignment.TRAILING, 0, 253, Short.MAX_VALUE)
-                                                        .addComponent(txtRAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addComponent(spnRAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addGroup(pnlRecordFormLayout.createSequentialGroup()
                                                 .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -331,7 +432,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(lblRecordAmount)
-                                        .addComponent(txtRAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(spnRAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(labelSection1)
@@ -572,15 +673,16 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                 pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btnGeneratePaymentVoucher)
-                                        .addComponent(jLabel1)
-                                        .addComponent(lblCreateBy)
-                                        .addComponent(jLabel4)
-                                        .addComponent(lblUpdateBy)
+                                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                 .addComponent(jLabel5)
-                                                .addComponent(lblVersion)))
+                                                .addComponent(lblVersion))
+                                        .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(btnGeneratePaymentVoucher)
+                                                .addComponent(jLabel1)
+                                                .addComponent(lblCreateBy)
+                                                .addComponent(jLabel4)
+                                                .addComponent(lblUpdateBy)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(btnGenerateRegistrationForm)
@@ -667,12 +769,12 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
     private javax.swing.JRadioButton rbtRDebit;
     private javax.swing.JSeparator sepaSection1;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnJDate;
+    private javax.swing.JSpinner spnRAmount;
     private javax.swing.JTextArea taJConcept;
     private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<LedgerRecord> tblRecord;
     private javax.swing.JTextField txtJCheckNumber;
     private javax.swing.JTextField txtJDoctNumber;
     private javax.swing.JTextField txtJName;
-    private javax.swing.JTextField txtRAmount;
     private javax.swing.JTextField txtRReference;
     // End of variables declaration//GEN-END:variables
 }

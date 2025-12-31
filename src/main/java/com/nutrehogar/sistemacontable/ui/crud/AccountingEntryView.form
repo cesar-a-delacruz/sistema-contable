@@ -121,7 +121,7 @@
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="txtRReference" alignment="1" max="32767" attributes="0"/>
                                   <Component id="cbxRAccount" alignment="1" pref="253" max="32767" attributes="0"/>
-                                  <Component id="txtRAmount" alignment="0" min="-2" pref="130" max="-2" attributes="0"/>
+                                  <Component id="spnRAmount" alignment="0" min="-2" pref="113" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -166,7 +166,7 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="lblRecordAmount" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtRAmount" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spnRAmount" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
@@ -192,14 +192,9 @@
             <Component class="javax.swing.JLabel" name="lblRecordAmount">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="txtRAmount"/>
-                </Property>
                 <Property name="text" type="java.lang.String" value="Monto:"/>
                 <Property name="name" type="java.lang.String" value="" noResource="true"/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="txtRAmount">
             </Component>
             <Component class="javax.swing.JLabel" name="lblRecordAccount">
               <Properties>
@@ -218,7 +213,7 @@
             <Component class="javax.swing.JComboBox" name="cbxRAccount">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;()" type="code"/>
+                  <Connection code="recordController.cbxModelRAccount" type="code"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -296,6 +291,11 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Operaciones"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JSpinner" name="spnRAmount">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JSpinner(recordController.spnModelRAmount)"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
@@ -623,15 +623,17 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="btnGeneratePaymentVoucher" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblCreateBy" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblUpdateBy" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                           <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lblVersion" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="btnGeneratePaymentVoucher" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblCreateBy" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblUpdateBy" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
