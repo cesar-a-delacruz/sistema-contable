@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.nutrehogar.sistemacontable.config.Util.*;
 import static com.nutrehogar.sistemacontable.config.Util.AUDITABLE_DATE_FORMATTER;
 import static com.nutrehogar.sistemacontable.config.Util.NA;
 import static com.nutrehogar.sistemacontable.config.Util.toStringSafe;
@@ -53,7 +52,7 @@ public class AccountingEntryView extends View{
     @NotNull
     private final CustomComboBoxModel<DocumentType> cbxModelJDocType;
 
-    public AccountingEntryView(@NotNull User user) {
+    public AccountingEntryView(@NotNull User user, @NotNull Optional<Long> journalId) {
         super(user);
         this.entityName = "Entrada de Diario";
         this.spnModelJDate = new LocalDateSpinnerModel();
@@ -62,7 +61,6 @@ public class AccountingEntryView extends View{
         recordController = new RecordController();
         initComponents();
         recordController.init();
-
         txtJName.putClientProperty("JTextField.placeholderText", "Ventas S.A.");
         taJConcept.putClientProperty("JTextArea.placeholderText", "Cancelación de factura al crédito");
         txtJCheckNumber.putClientProperty("JTextField.placeholderText", "4987");
@@ -71,11 +69,12 @@ public class AccountingEntryView extends View{
                 spnModelJDocNumber::setValue,
                 this::showError
         ).execute());
+        cbxJDocType.setRenderer(new CustomListCellRenderer());
         txtRReference.addActionListener(_ -> btnRSave.doClick());
         btnJSave.addActionListener(_ -> save());
         btnJAdd.addActionListener(_ -> prepareToAdd());
         btnJDelete.addActionListener(_ -> delete());
-        edit(3L);
+        journalId.ifPresentOrElse(this::edit, this::prepareToAdd);
     }
 
     public @NotNull JournalFormData getDataFromForm() throws InvalidFieldException {
@@ -118,7 +117,6 @@ public class AccountingEntryView extends View{
 
     public void prepareToAdd() {
         journalEntry = Optional.empty();
-        btnJAdd.setEnabled(true);
         btnJSave.setEnabled(true);
         btnJUpdate.setEnabled(false);
         btnJDelete.setEnabled(false);
@@ -127,11 +125,16 @@ public class AccountingEntryView extends View{
         txtJName.setText("");
         spnJDate.setValue(LocalDate.now());
         cbxJDocType.setSelectedItem(DocumentType.INCOME);
+
+        lblCreateAt.setText(NA);
+        lblUpdateAt.setText(NA);
+        lblCreateBy.setText(NA);
+        lblUpdateBy.setText(NA);
+        lblVersion.setText(NA);
         recordController.clear();
     }
 
     public void prepareToEdit(@NotNull JournalEntry journalEntry) {
-        btnJAdd.setEnabled(false);
         btnJSave.setEnabled(false);
         btnJUpdate.setEnabled(true);
         btnJDelete.setEnabled(true);
@@ -157,8 +160,9 @@ public class AccountingEntryView extends View{
             showWarning("Debe de estar editando un documento para poder eliminarlo");
             return;
         }
+        var id = journalEntry.get().getId();
         new InTransactionWorker(
-                session -> session.remove(new JournalEntryQuery_(session).findById(journalEntry.get().getId())),
+                session -> new JournalEntryQuery_(session).findById(id).ifPresent(session::remove),
                 this::prepareToAdd,
                 this::showError
         ).execute();
@@ -255,7 +259,7 @@ public class AccountingEntryView extends View{
             this.accounts = new ArrayList<>();
             this.formRecords = new ArrayList<>();
             this.isBalanced = false;
-            this.spnModelRAccountNumber = new SpinnerNumberModel(0, 0, 9999, 1);
+            this.spnModelRAccountNumber = new SpinnerNumberModel(0, 0, 99999, 1);
             this.spnModelRAmount = new SpinnerNumberModel(1.0d, 0.0d, Integer.MAX_VALUE, 1.0d);
             this.tblModelRecord = new CustomTableModel<>("Referencia", "Cuenta", "Débito", "Crédito", "Subtotal") {
                 @Override
@@ -441,6 +445,7 @@ public class AccountingEntryView extends View{
 
 
         public void onDeselected() {
+            ApRecord.clear();
             OpRecord.getBtnDelete().setEnabled(false);
             OpRecord.getBtnPrepareToEdit().setEnabled(false);
         }

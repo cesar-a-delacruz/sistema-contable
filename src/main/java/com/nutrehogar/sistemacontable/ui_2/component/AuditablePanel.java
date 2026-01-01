@@ -18,6 +18,13 @@ public class AuditablePanel extends javax.swing.JPanel {
         lblUpdateBy.setText(toStringSafe(entity.getUpdatedBy(),NA));
         lblVersion.setText(toStringSafe(entity.getVersion(),NA));
     }
+    public void clear(){
+        lblCreateAt.setText(NA);
+        lblUpdateAt.setText(NA);
+        lblCreateBy.setText(NA);
+        lblUpdateBy.setText(NA);
+        lblVersion.setText(NA);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JPanel" name="jPanel1">
 
@@ -41,20 +41,26 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="140" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="lblTitle" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="0" pref="0" max="32767" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="pnlAside" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="pnlAside" alignment="1" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" alignment="1" pref="0" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Component id="lblTitle" min="-2" pref="62" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPane2" max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="pnlAside" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -62,47 +68,6 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-      <AuxValues>
-        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-      </AuxValues>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-      <SubComponents>
-        <Component class="javax.swing.JTable" name="tblData">
-          <Properties>
-            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="4">
-                <Column editable="true" title="Title 1" type="java.lang.Object">
-                  <Data value="1"/>
-                  <Data value="a"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="true" title="Title 2" type="java.lang.Object">
-                  <Data value="2"/>
-                  <Data value="b"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="true" title="Title 3" type="java.lang.Object">
-                  <Data value="3"/>
-                  <Data value="c"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="true" title="Title 4" type="java.lang.Object">
-                  <Data value="4"/>
-                  <Data value="d"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
-              </Table>
-            </Property>
-          </Properties>
-        </Component>
-      </SubComponents>
-    </Container>
     <Container class="javax.swing.JPanel" name="pnlAside">
       <Properties>
         <Property name="opaque" type="boolean" value="false"/>
@@ -113,10 +78,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="pnlOperations" alignment="1" max="32767" attributes="0"/>
-                      <Component id="auditablePanel" alignment="0" max="32767" attributes="0"/>
-                  </Group>
+                  <Component id="pnlOperations" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
@@ -130,11 +92,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Component id="pnlOperations" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="auditablePanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="177" max="-2" attributes="0"/>
                   <Component id="btnGenerateReport" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="249" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -164,17 +124,17 @@
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="spnEnd" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="spnStart" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="spnEndDate" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="spnStartDate" alignment="1" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="lblEdit" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="btnResetEnd" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnResetEndDate" alignment="0" max="32767" attributes="0"/>
                           <Component id="btnFilter" alignment="0" max="32767" attributes="0"/>
-                          <Component id="btnResetStart" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnResetStartDate" alignment="0" max="32767" attributes="0"/>
                           <Component id="btnEdit" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -186,15 +146,15 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="spnStart" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spnStartDate" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lblStart" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnResetStart" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnResetStartDate" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="spnEnd" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spnEndDate" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lblEnd" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnResetEnd" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnResetEndDate" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -231,34 +191,40 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner" name="spnStart">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner" name="spnStartDate">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner(spnModelStartDate)"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="lblStart">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="spnStart"/>
+                  <ComponentRef name="spnStartDate"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Inicio de per&#xed;odo:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="btnResetStart">
+            <Component class="javax.swing.JButton" name="btnResetStartDate">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Restablecer"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="btnResetEnd">
+            <Component class="javax.swing.JButton" name="btnResetEndDate">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Restablecer"/>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner" name="spnEnd">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner" name="spnEndDate">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner(spnModelEndDate)"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="lblEnd">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="spnEnd"/>
+                  <ComponentRef name="spnEndDate"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Final de per&#xed;odo:"/>
               </Properties>
@@ -282,15 +248,6 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel" name="auditablePanel">
-          <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Auditor&#xed;a"/>
-              </Border>
-            </Property>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JButton" name="btnGenerateReport">
           <Properties>
             <Property name="text" type="java.lang.String" value="Generar Reporte"/>
@@ -298,5 +255,38 @@
         </Component>
       </SubComponents>
     </Container>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="com.nutrehogar.sistemacontable.ui_2.builder.CustomTable" name="tblData">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel)"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;JournalTableData&gt;"/>
+          </AuxValues>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JLabel" name="lblTitle">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+          <FontInfo relative="true">
+            <Font component="lblTitle" property="font" relativeSize="false" size="30"/>
+          </FontInfo>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="Theme.Palette.OFFICE_GREEN" type="code"/>
+        </Property>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="Theme.SVGs.JOURNAL.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD)" type="code"/>
+        </Property>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="LabelBuilder.build(&quot;Libro Diario&quot;)" type="code"/>
+        </Property>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>

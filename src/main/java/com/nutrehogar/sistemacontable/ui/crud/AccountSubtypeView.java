@@ -51,7 +51,6 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
         };
         initComponents();
         loadData();
-
         cbxType.setRenderer(new CustomListCellRenderer());
         txtName.putClientProperty("JTextField.placeholderText", "Activos Corrientes");
         spnNumber.setEditor(new JSpinner.NumberEditor(spnNumber, "#"));

@@ -1,12 +1,14 @@
 package com.nutrehogar.sistemacontable.ui_2.builder;
 
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 
-import static com.nutrehogar.sistemacontable.config.Util.DECIMAL_FORMAT;
+import static com.nutrehogar.sistemacontable.config.Util.*;
 
 /**
  * Define como se debe renderizar una selda que contenga un tipo especifico de
@@ -26,10 +28,13 @@ import static com.nutrehogar.sistemacontable.config.Util.DECIMAL_FORMAT;
  * @see DefaultTableCellRenderer
  */
 public class CustomTableCellRenderer extends DefaultTableCellRenderer {
-
     @Override
     protected void setValue(Object value) {
         switch (value) {
+            case LocalDate date -> {
+                setText(SMALL_DATE_FORMATTER.format(date));
+                setToolTipText(LARGE_DATE_FORMATTER.format(date));
+            }
             case BigDecimal bigDecimal -> {
                 setText(bigDecimal.compareTo(BigDecimal.ZERO) == 0 ? "" : DECIMAL_FORMAT.format(bigDecimal));
                 setHorizontalAlignment(RIGHT);
@@ -38,10 +43,15 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
                 setText(doubleValue == 0.0 ? "" : DECIMAL_FORMAT.format(doubleValue));
                 setHorizontalAlignment(RIGHT);
             }
-            case AccountType accountType -> setText(AccountType.getCellRenderer(accountType));
-            case AccountSubtype tipoCuenta -> setText( tipoCuenta.getFormattedNumber() + " "
-                    + tipoCuenta.getName());
-            case Account account -> setText(account.getFormattedNumber() + " " + account.getName());
+            case AccountSubtype tipoCuenta -> {
+                setText(tipoCuenta.getFormattedNumber());
+                setToolTipText(tipoCuenta.getName());
+            }
+            case Account account -> {
+                setText(account.getFormattedNumber());
+                setToolTipText(account.getName());
+            }
+            case AccountType accountType -> setText(accountType.getName());
             case DocumentType documentType -> setText(documentType.getName());
             case Permission permissions -> setText(permissions.getName());
             case null -> setText("");

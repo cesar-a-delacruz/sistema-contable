@@ -13,7 +13,7 @@ public class DefaultPanelButton extends JButton {
         setVerticalTextPosition(SwingConstants.TOP);
         setHorizontalAlignment(SwingConstants.LEADING);
         setMargin(new Insets(4, 6, 3, 14));
-        setFont(Theme.Typography.FONT_XL);
+        setFont(Theme.Typography.FONT_2XL);
         setForeground(Theme.Palette.OFFICE_GREEN);
         setIconTextGap(Theme.Spacing.GAP_MD);
         addMouseListener(new MouseAdapter() {

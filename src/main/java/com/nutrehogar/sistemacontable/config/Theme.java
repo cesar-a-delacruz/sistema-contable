@@ -72,12 +72,14 @@ public class Theme {
         public static final int TEXT_BASE = scale(16);
         public static final int TEXT_LG = scale(18);
         public static final int TEXT_XL = scale(20);
+        public static final int TEXT_2XL = scale(22);
 
         public static final Font FONT_BASE = new Font("Roboto", Font.PLAIN, TEXT_BASE);
         public static final Font FONT_XS = FONT_BASE.deriveFont(Font.PLAIN, TEXT_XS);
         public static final Font FONT_SM = FONT_BASE.deriveFont(Font.PLAIN, TEXT_SM);
         public static final Font FONT_LG = FONT_BASE.deriveFont(Font.PLAIN, TEXT_LG);
         public static final Font FONT_XL = FONT_BASE.deriveFont(Font.PLAIN, TEXT_XL);
+        public static final Font FONT_2XL = FONT_BASE.deriveFont(Font.PLAIN, TEXT_2XL);
 
     }
 

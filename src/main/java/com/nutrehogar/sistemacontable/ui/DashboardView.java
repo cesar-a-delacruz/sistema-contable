@@ -1,5 +1,6 @@
 package com.nutrehogar.sistemacontable.ui;
 
+import com.nutrehogar.sistemacontable.ui.business.JournalView;
 import com.nutrehogar.sistemacontable.ui.crud.*;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.User;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class DashboardView extends Background {
     @NotNull
@@ -39,13 +42,18 @@ public class DashboardView extends Background {
         btnBackup.setEnabled(false);
     }
 
+    private void editJournal(@NotNull Long id){
+        setContent(new AccountingEntryView(user, Optional.of(id)));
+    }
+
     public void setupViewListeners() {
         btnAccountSubtype.addActionListener(_ -> setContent(new AccountSubtypeView(user)));
         btnAccount.addActionListener(_ -> setContent(new AccountView(user)));
         btnUser.addActionListener(_ -> setContent(new UserView(user)));
         btnAccountingPeriod.addActionListener(_ -> setContent(new AccountingPeriodView(user)));
         btnHome.addActionListener(_ -> setContent(pnlHome));
-        btnForm.addActionListener(_->setContent(new AccountingEntryView(user)));
+        btnForm.addActionListener(_->setContent(new AccountingEntryView(user, Optional.empty())));
+        btnJournal.addActionListener(_->setContent(new JournalView(user,this::editJournal)));
     }
 
     public void setContent(JPanel p) {

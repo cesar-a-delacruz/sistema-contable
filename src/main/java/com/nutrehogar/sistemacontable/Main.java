@@ -5,7 +5,6 @@ import com.nutrehogar.sistemacontable.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.ui.DashboardView;
-import com.nutrehogar.sistemacontable.ui.NewJPanel;
 import com.nutrehogar.sistemacontable.ui.service.AuthView;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +35,7 @@ public class Main {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
-            frame.getRootPane().setBackground(Theme.Palette.SOLITUDE_50);
+            frame.getRootPane().setBackground(Theme.Palette.SOLITUDE_100);
             var dashBoard = new DashboardView(adminUser);
             frame.add(dashBoard);
             frame.setVisible(true);

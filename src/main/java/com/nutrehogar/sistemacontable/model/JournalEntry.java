@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(exclude = {"records","period"})
+@ToString(exclude = {"records", "period"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "journal_entry")
@@ -24,7 +24,7 @@ public class JournalEntry extends AuditableEntity {
     @Id
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @Nullable Long id;
 
     @Column(name = "document_number", nullable = false)
     @Basic(optional = false)
@@ -50,16 +50,15 @@ public class JournalEntry extends AuditableEntity {
     @Basic(optional = false)
     @NotNull LocalDate date;
 
-    @NotNull
     @OneToMany(mappedBy = LedgerRecord_.ENTRY, cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
-    Set<LedgerRecord> records = new HashSet<>();
+    @NotNull Set<LedgerRecord> records = new HashSet<>();
 
-    @Nullable
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST})
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    AccountingPeriod period;
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @NotNull AccountingPeriod period;
 
-    public JournalEntry(@NotNull Integer number, @NotNull DocumentType type, @NotNull String name, @NotNull String concept, @NotNull String checkNumber, @NotNull LocalDate date,@NotNull String updatedBy) {
+    public JournalEntry(@NotNull Integer number, @NotNull DocumentType type, @NotNull String name, @NotNull String concept, @NotNull String checkNumber, @NotNull LocalDate date, @NotNull String updatedBy) {
         super(updatedBy);
         this.number = number;
         this.type = type;
