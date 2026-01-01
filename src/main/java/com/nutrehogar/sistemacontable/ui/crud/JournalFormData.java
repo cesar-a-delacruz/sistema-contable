@@ -11,6 +11,7 @@ public record JournalFormData(
         @NotNull String name,
         @NotNull String concept,
         @NotNull String checkNumber,
-        @NotNull LocalDate date
+        @NotNull LocalDate date,
+        @NotNull String user
         ) {
 }

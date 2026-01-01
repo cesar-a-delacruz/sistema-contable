@@ -70,7 +70,7 @@ public abstract class View extends JPanel {
         JOptionPane.showMessageDialog(this, cause.getMessage(), "Advertencia!", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void showWarning(@NotNull Object message) {
+    public void showWarning(@NotNull String message) {
         JOptionPane.showMessageDialog(this, message, "Advertencia!", JOptionPane.INFORMATION_MESSAGE);
     }
 

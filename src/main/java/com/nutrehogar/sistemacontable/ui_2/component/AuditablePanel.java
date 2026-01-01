@@ -44,22 +44,27 @@ public class AuditablePanel extends javax.swing.JPanel {
 
         lblCreateBy.setText(NA);
 
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Creado por: ");
 
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Creación: ");
 
         lblCreateAt.setText(NA);
 
         lblUpdateBy.setText(NA);
 
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Actualizado por: ");
 
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel3.setText("Actualización: ");
 
         lblUpdateAt.setText(NA);
 
         lblVersion.setText(NA);
 
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Version:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

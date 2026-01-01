@@ -30,7 +30,7 @@ class AppTest {
     void insertSubtypes() {
         HibernateUtil.getSessionFactory().inTransaction(session -> {
             for (var type : AccountType.values()) {
-                for (int i = 1000; i < 9999; i++) {
+                for (int i = 1000; i < 1010; i++) {
                     session.persist(new AccountSubtype(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
                 }
             }
@@ -41,7 +41,7 @@ class AppTest {
     void inertAccounts() {
         HibernateUtil.getSessionFactory().inTransaction(session -> {
             for (var type : AccountType.values()) {
-                for (int i = 1000; i < 9999; i++) {
+                for (int i = 1000; i < 1020; i++) {
                     session.persist(new Account(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
                 }
             }

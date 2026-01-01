@@ -11,15 +11,15 @@ public record RecordTableData(
         @Nullable LedgerRecord record,
         @NotNull String reference,
         @Nullable Account account,
-        @NotNull BigDecimal debit,
-        @NotNull BigDecimal credit,
+        @Nullable BigDecimal debit,
+        @Nullable BigDecimal credit,
         @NotNull BigDecimal total
 ) {
-    public RecordTableData(@NotNull String reference, @NotNull BigDecimal debit, @NotNull BigDecimal credit, @NotNull BigDecimal total) {
+    public RecordTableData(@NotNull String reference, @Nullable BigDecimal debit, @Nullable BigDecimal credit, @NotNull BigDecimal total) {
         this(null, reference, null, debit, credit, total);
     }
 
     public boolean isEntity() {
-        return record == null;
+        return record != null;
     }
 }

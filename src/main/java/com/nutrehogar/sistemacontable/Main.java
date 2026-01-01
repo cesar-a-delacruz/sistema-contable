@@ -3,14 +3,14 @@ package com.nutrehogar.sistemacontable;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.nutrehogar.sistemacontable.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.config.Theme;
-import com.nutrehogar.sistemacontable.model.Permission;
-import com.nutrehogar.sistemacontable.model.User;
+import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.ui.DashboardView;
 import com.nutrehogar.sistemacontable.ui.NewJPanel;
 import com.nutrehogar.sistemacontable.ui.service.AuthView;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.time.LocalDate;
 
 public class Main {
     void main() {
@@ -21,13 +21,12 @@ public class Main {
 
         var adminUser = new User("0922", "Root", true, Permission.ADMIN, "Roo");
 
-        Thread.startVirtualThread(() -> Runtime
-                .getRuntime()
-                .addShutdownHook(new Thread(() -> {
-                    HibernateUtil.shutdown();
-                    log.info("Application stopped");
-                })));
+        Thread.startVirtualThread(() -> Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            HibernateUtil.shutdown();
+            log.info("Application stopped");
+        })));
 
+//        HibernateUtil.getSessionFactory().inTransaction(session -> session.persist(new AccountingPeriod(2025, 1, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), false, adminUser.getUsername())));
 
         try {
             var frame = new JFrame();

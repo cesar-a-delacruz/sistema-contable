@@ -2,32 +2,39 @@ package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
+import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
-import com.nutrehogar.sistemacontable.query.AccountQuery_;
-import com.nutrehogar.sistemacontable.query.LedgerRecordQuery_;
+import com.nutrehogar.sistemacontable.query.*;
 import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.View;
 
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
+import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static com.nutrehogar.sistemacontable.config.Util.*;
+import static com.nutrehogar.sistemacontable.config.Util.AUDITABLE_DATE_FORMATTER;
+import static com.nutrehogar.sistemacontable.config.Util.NA;
+import static com.nutrehogar.sistemacontable.config.Util.toStringSafe;
 import static java.math.MathContext.DECIMAL128;
 
 @Slf4j
 @Getter
-public class AccountingEntryView extends View implements CRUDView<JournalEntry, JournalFormData> {
+public class AccountingEntryView extends View{
     @NotNull
     protected final RecordController recordController;
     /**
@@ -39,65 +46,187 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
     @NotNull
     public final String entityName;
 
+    @NotNull
+    private final SpinnerNumberModel spnModelJDocNumber;
+    @NotNull
+    private final LocalDateSpinnerModel spnModelJDate;
+    @NotNull
+    private final CustomComboBoxModel<DocumentType> cbxModelJDocType;
+
     public AccountingEntryView(@NotNull User user) {
         super(user);
         this.entityName = "Entrada de Diario";
+        this.spnModelJDate = new LocalDateSpinnerModel();
+        this.cbxModelJDocType = new CustomComboBoxModel<>(DocumentType.values());
+        this.spnModelJDocNumber = new SpinnerNumberModel(2, 2, Integer.MAX_VALUE, 1);
         recordController = new RecordController();
         initComponents();
         recordController.init();
+
         txtJName.putClientProperty("JTextField.placeholderText", "Ventas S.A.");
         taJConcept.putClientProperty("JTextArea.placeholderText", "Cancelación de factura al crédito");
-        txtJDoctNumber.putClientProperty("JTextField.placeholderText", "120");
         txtJCheckNumber.putClientProperty("JTextField.placeholderText", "4987");
-        txtRReference.addActionListener(_->btnRSave.doClick());
+        cbxJDocType.addActionListener(_->new FromTransactionWorker<>(
+                session -> new JournalEntryQuery_(session).findNextDocNumberByType(cbxModelJDocType.getSelectedItem()),
+                spnModelJDocNumber::setValue,
+                this::showError
+        ).execute());
+        txtRReference.addActionListener(_ -> btnRSave.doClick());
+        btnJSave.addActionListener(_ -> save());
+        btnJAdd.addActionListener(_ -> prepareToAdd());
+        btnJDelete.addActionListener(_ -> delete());
+        edit(3L);
     }
 
-    @Override
-    public void loadData() {
-
-    }
-
-    @Override
     public @NotNull JournalFormData getDataFromForm() throws InvalidFieldException {
-        return null;
+        var name = txtJName.getText();
+        if (name == null || name.isBlank()) throw new InvalidFieldException("El nombre no puede estar vacío");
+        var concept = taJConcept.getText();
+        if (concept == null || concept.isBlank()) throw new InvalidFieldException("El concepto no puede estar vacío");
+        var checkNumber = txtJCheckNumber.getText();
+        if (checkNumber == null) throw new InvalidFieldException("El numero del documento no puede estar vacío");
+        var type = cbxModelJDocType.getSelectedItem();
+        if (type == null)
+            throw new InvalidFieldException("El tipo de documento no puede estar vacío");
+
+        return new JournalFormData(
+                spnModelJDocNumber.getNumber().intValue(),
+                type,
+                name,
+                concept,
+                checkNumber,
+                spnJDate.getValue(),
+                user.getUsername()
+        );
     }
 
-    @Override
-    public void setEntityDataInForm(@NotNull JournalEntry journalEntry) {
-
+    public void edit(@NotNull Long journalEntryId) {
+        new FromTransactionWorker<>(
+                session -> new JournalEntryQuery_(session).findAndPeriodById(journalEntryId),
+                journal -> {
+                    if(journal.isEmpty()){
+                        showError(new ApplicationException("No se encontró el Documento"));
+                        prepareToAdd();
+                        return;
+                    }
+                    journalEntry = journal;
+                    prepareToEdit(journal.get());
+                },
+                this::showError
+        ).execute();
     }
 
-    @Override
     public void prepareToAdd() {
-
+        journalEntry = Optional.empty();
+        btnJAdd.setEnabled(true);
+        btnJSave.setEnabled(true);
+        btnJUpdate.setEnabled(false);
+        btnJDelete.setEnabled(false);
+        taJConcept.setText("");
+        txtJCheckNumber.setText("");
+        txtJName.setText("");
+        spnJDate.setValue(LocalDate.now());
+        cbxJDocType.setSelectedItem(DocumentType.INCOME);
+        recordController.clear();
     }
 
-    @Override
-    public void prepareToEdit() {
+    public void prepareToEdit(@NotNull JournalEntry journalEntry) {
+        btnJAdd.setEnabled(false);
+        btnJSave.setEnabled(false);
+        btnJUpdate.setEnabled(true);
+        btnJDelete.setEnabled(true);
 
+        spnModelJDate.setValue(journalEntry.getDate());
+        txtJName.setText(journalEntry.getName());
+        txtJCheckNumber.setText(journalEntry.getCheckNumber());
+        spnModelJDocNumber.setValue(journalEntry.getNumber());
+        taJConcept.setText(journalEntry.getConcept());
+        cbxModelJDocType.setSelectedItem(journalEntry.getType());
+
+        lblCreateAt.setText(toStringSafe(journalEntry.getCreatedAt(),date->date.format(AUDITABLE_DATE_FORMATTER),NA));
+        lblUpdateAt.setText(toStringSafe(journalEntry.getUpdatedAt(),date->date.format(AUDITABLE_DATE_FORMATTER),NA));
+        lblCreateBy.setText(toStringSafe(journalEntry.getCreatedBy(),NA));
+        lblUpdateBy.setText(toStringSafe(journalEntry.getUpdatedBy(),NA));
+        lblVersion.setText(toStringSafe(journalEntry.getVersion(),NA));
+
+        recordController.clear();
     }
 
-    @Override
-    public void onSelected(@NotNull JournalEntry journalEntry) {
-
-    }
-
-    @Override
-    public void onDeselected() {
-
-    }
-
-    @Override
     public void delete() {
-
+        if (journalEntry.isEmpty()) {
+            showWarning("Debe de estar editando un documento para poder eliminarlo");
+            return;
+        }
+        new InTransactionWorker(
+                session -> session.remove(new JournalEntryQuery_(session).findById(journalEntry.get().getId())),
+                this::prepareToAdd,
+                this::showError
+        ).execute();
     }
 
-    @Override
+
     public void save() {
-
+        if (journalEntry.isPresent()) {
+            showError(new ApplicationException("No se pudo guardar el documento cuando se esta editando"));
+            return;
+        }
+        if (recordController
+                .formRecords.isEmpty() || recordController.formRecords.size() > 3) {
+            showWarning("El documento no tiene suficientes registros, al menos debe tener dos");
+            return;
+        }
+        if (recordController.isBalanced) {
+            showWarning("El documento no esta balanceado");
+            return;
+        }
+        var records = recordController
+                .formRecords
+                .stream()
+                .map(r ->
+                        new LedgerRecord(
+                                r.reference(),
+                                r.account(),
+                                r.debit(),
+                                r.credit(),
+                                user.getUsername()
+                        ))
+                .collect(Collectors.toSet());
+        try {
+            var dto = getDataFromForm();
+            new InTransactionWorker(
+                    session -> {
+                        var queries = new JournalEntryQuery_(session);
+                        if (queries.existByDocNumAndType(dto.type(), dto.number()))
+                            throw new InvalidFieldException("El documento: " + dto.type().getName() + " No." + dto.number() + ", ya existe");
+                        var entry = new JournalEntry(
+                                dto.number(),
+                                dto.type(),
+                                dto.name(),
+                                dto.concept(),
+                                dto.checkNumber(),
+                                dto.date(),
+                                dto.user()
+                        );
+                        records.forEach(r->r.setEntry(entry));
+                        entry.setRecords(records);
+                        var period = new AccountingPeriodQuery_(session).findByNumber(1);
+                        if (period.isEmpty())
+                            throw new InvalidFieldException("El periodo no existe");
+                        entry.setPeriod(period.get());
+                        session.persist(entry);
+                    },
+                    ()->{
+                        showMessage("Documento " + dto.type().getName() + " No." + dto.number() + ", creado exitosamente");
+                        prepareToAdd();
+                    },
+                    this::showError
+            ).execute();
+        } catch (InvalidFieldException e) {
+            showWarning(e);
+        }
     }
 
-    @Override
+
     public void update() {
 
     }
@@ -118,19 +247,17 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         public final ArrayList<Account> accounts;
         @NotNull
         public final ArrayList<RecordFormData> formRecords;
-        @NotNull
-        public final ArrayList<LedgerRecord> records;
+        public boolean isBalanced;
 
         public RecordController() {
             this.entityName = "Registro";
             this.cbxModelRAccount = new CustomComboBoxModel<>();
             this.accounts = new ArrayList<>();
-            this.records = new ArrayList<>();
             this.formRecords = new ArrayList<>();
+            this.isBalanced = false;
             this.spnModelRAccountNumber = new SpinnerNumberModel(0, 0, 9999, 1);
             this.spnModelRAmount = new SpinnerNumberModel(1.0d, 0.0d, Integer.MAX_VALUE, 1.0d);
             this.tblModelRecord = new CustomTableModel<>("Referencia", "Cuenta", "Débito", "Crédito", "Subtotal") {
-
                 @Override
                 public Object getValueAt(int rowIndex, int columnIndex) {
                     var record = data.get(rowIndex);
@@ -153,6 +280,10 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                     };
                 }
             };
+        }
+        public void clear(){
+            formRecords.clear();
+            loadData();
         }
 
         public void init() {
@@ -199,7 +330,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
             journalEntry.ifPresentOrElse(journalEntry ->
                     new FromTransactionWorker<>(
                             session -> new LedgerRecordQuery_(session).findAllAndAccountsByJournal(journalEntry),
-                            RecordController.this::setDataToTable,
+                            this::setDataToTable,
                             AccountingEntryView.this::showError
                     ).execute(),
                     () -> setDataToTable(List.of())
@@ -249,16 +380,17 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
             }
             dtos.add(new RecordTableData(
                     "Total",
-                    debitSum,
-                    creditSum,
+                    null,
+                    null,
                     totalSum
             ));
+            isBalanced = totalSum.equals(BigDecimal.ZERO);
             tblModelRecord.setData(dtos);
         }
 
-
         public @NotNull RecordFormData getDataFromForm() throws InvalidFieldException {
             var reference = txtRReference.getText();
+            if( reference == null || reference.isBlank() ) throw new InvalidFieldException("La referencia no puede estar vacía");
             var account = cbxModelRAccount.getSelectedItem();
             if (account == null) throw new InvalidFieldException("La cuenta no puede estar vacía");
             var amount = BigDecimal.valueOf(spnModelRAmount.getNumber().doubleValue());
@@ -271,8 +403,6 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                     user.getUsername()
             );
         }
-
-
         public void setEntityDataInForm(@NotNull RecordTableData record) {
             cbxModelRAccount.setSelectedItem(record.account());
             txtRReference.setText(record.reference());
@@ -282,12 +412,10 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
             spnModelRAmount.setValue(isDebit ? record.debit() : record.credit());
         }
 
-
         public void prepareToAdd() {
             btnRSave.setEnabled(true);
             btnRUpdate.setEnabled(false);
         }
-
 
         public void prepareToEdit() {
             tblRecord
@@ -306,16 +434,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                 tblRecord.setEmpty();
                 return;
             }
-            journalEntry.ifPresent(journalEntry -> {
-                if(journalEntry.getRecords() != null && !journalEntry.getRecords().isEmpty()){
-                    journalEntry
-                            .getRecords()
-                            .stream()
-                            .filter(r->r.getId().equals(record.id()))
-                            .findFirst()
-                            .ifPresent(r-> ApRecord.setAuditableFields(r));
-                }
-            });
+            Optional.ofNullable(record.record()).ifPresent(ApRecord::setAuditableFields);
             OpRecord.getBtnDelete().setEnabled(true);
             OpRecord.getBtnPrepareToEdit().setEnabled(true);
         }
@@ -328,43 +447,55 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
 
 
         public void delete() {
-            try {
-                tblRecord.getSelected()
-                        .ifPresentOrElse(
-                                entity -> journalEntry.ifPresentOrElse(_ -> {
-//                                        new InTransactionWorker(
-//                                                session -> session.remove(session.merge(entity)),
-//                                                this::loadData,
-//                                                AccountingEntryView.this::showError
-//                                        ).execute(),
-                                }, () -> {
-                                    records.removeIf(r -> r.getReference().equals(entity.reference()));
-                                    loadData();
-                                }),
-                                () -> {
-                                    throw new InvalidFieldException("Seleccione un elemento de la tabla");
-                                });
-            } catch (InvalidFieldException e) {
-                showWarning(e);
+
+            if (tblRecord.getSelected().isEmpty()) {
+                showWarning("Seleccione un elemento de la tabla");
+                return;
             }
+
+            var selected = tblRecord.getSelected().get();
+
+            if (selected.isEntity()) {
+                new InTransactionWorker(
+                        session -> session.remove(session.merge(selected.record())),
+                        this::loadData,
+                        AccountingEntryView.this::showError
+                ).execute();
+                return;
+            }
+
+            formRecords.removeIf(r -> r.reference().equals(selected.reference()));
+            loadData();
         }
 
-
         public void save() {
+
             try {
-                journalEntry.ifPresentOrElse(_ -> {
-                    //                new InTransactionWorker(
-//                        session -> session.persist(new AccountSubtype(dto.number(), dto.name(), dto.type(), dto.username())),
-//                        this::loadData,
-//                        AccountingEntryView.this::showError
-//                ).execute();
-                }, () -> {
-                    var dto = getDataFromForm();
-                    if (journalEntry.isEmpty()) {
-                        records.add(new LedgerRecord(dto.reference(), dto.account(), dto.debit(), dto.credit(), user.getUsername()));
-                    }
-                    loadData();
-                });
+                var dto = getDataFromForm();
+                if (journalEntry.isPresent()) {
+                    for (var r : tblModelRecord.getData())
+                        if (r.reference().equals(dto.reference()))
+                            throw new InvalidFieldException("La referencia no se puede duplicar");
+                    new InTransactionWorker(
+                            session -> session.persist(new LedgerRecord(
+                                    journalEntry.get(),
+                                    dto.reference(),
+                                    dto.account(),
+                                    dto.debit(),
+                                    dto.credit(),
+                                    user.getUsername()
+                            )),
+                            this::loadData,
+                            AccountingEntryView.this::showError
+                    ).execute();
+                    return;
+                }
+                for (var r : formRecords)
+                    if (r.reference().equals(dto.reference()))
+                        throw new InvalidFieldException("La referencia no se puede duplicar");
+
+                formRecords.add(new RecordFormData(dto.reference(), dto.account(), dto.debit(), dto.credit(), user.getUsername()));
+                loadData();
             } catch (InvalidFieldException e) {
                 showWarning(e);
             }
@@ -372,32 +503,56 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
 
 
         public void update() {
+
+            if (tblRecord.getSelected().isEmpty()) {
+                showWarning("Seleccione un elemento de la tabla");
+                return;
+            }
+
+            var selected = tblRecord.getSelected().get();
+
             try {
                 var dto = getDataFromForm();
-                tblRecord.getSelected()
-                        .ifPresentOrElse(
-                                accountSubtype ->
-                                        journalEntry.ifPresentOrElse(_->{
-//                                        new InTransactionWorker(
-//                                                session -> {
-//                                                    var entity = session.merge(accountSubtype);
-//                                                    entity.setUpdatedBy(dto.username());
-//                                                    entity.setNumber(dto.number());
-//                                                    entity.setName(dto.name());
-//                                                    entity.setType(dto.type());
-//                                                },
-//                                                this::loadData,
-//                                                AccountingEntryView.this::showError
-//                                        ).execute()
-                                        },()->{
-                                            records.removeIf(r -> r.getReference().equals(accountSubtype.reference()));
-                                            records.add(new LedgerRecord(dto.reference(), dto.account(), dto.debit(), dto.credit(), user.getUsername()));
-                                            loadData();
-                                        }),
-                                () -> {
-                                    throw new InvalidFieldException("Seleccione un elemento de la tabla");
-                                }
-                        );
+                if (journalEntry.isPresent() && selected.isEntity()) {
+                    for (var r : tblModelRecord.getData())
+                        if (r.reference().equals(dto.reference()))
+                            throw new InvalidFieldException("La referencia no se puede duplicar");
+                    new InTransactionWorker(
+                            session -> {
+                                var entity = session.merge(selected.record());
+                                entity.setUpdatedBy(dto.username());
+                                entity.setReference(dto.reference());
+                                entity.setAccount(dto.account());
+                                entity.setDebit(dto.debit());
+                                entity.setCredit(dto.credit());
+                            },
+                            this::loadData,
+                            AccountingEntryView.this::showError
+                    ).execute();
+                    return;
+                }
+
+                //Lista de elementos con la referencia del elemento actual, debera ser solo el selecionado.
+
+                List<RecordFormData> toRemove = new ArrayList<>();
+
+                for (var r : formRecords)
+                    if (r.reference().equals(selected.reference()))
+                        toRemove.add(r);
+                // se eliminan los elementos que tengan la misma referencia que el seleccionado
+                formRecords.removeAll(toRemove);
+
+                // se busca si hay agun elemento con la nueva referencia
+                for (var r : formRecords)
+                    // si se encuenta rolback, los elementos que se eliminarian se reintegran y nada a pasao
+                    if (r.reference().equals(dto.reference())) {
+                        formRecords.addAll(toRemove);
+                        throw new InvalidFieldException("La referencia no se puede duplicar");
+                    }
+                //Esto es, porque si el elmeneto seleccionado no cambia la referencia la validar la duplicidad ese mismo se vera como duplicado, por ello se elimina ntes de validar.
+
+                formRecords.add(new RecordFormData(dto.reference(), dto.account(), dto.debit(), dto.credit(), user.getUsername()));
+                loadData();
             } catch (InvalidFieldException e) {
                 showWarning(e);
             }
@@ -438,7 +593,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         spnRAmount = new javax.swing.JSpinner(recordController.spnModelRAmount);
         spnRAccountNumber = new javax.swing.JSpinner(recordController.spnModelRAccountNumber);
         ApRecord = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        OpRecord = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel();
+        OpRecord = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(recordController.entityName);
         pnlEntryForm = new javax.swing.JPanel();
         lblEntryName = new javax.swing.JLabel();
         txtJName = new javax.swing.JTextField();
@@ -446,16 +601,16 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         jScrollPane2 = new javax.swing.JScrollPane();
         taJConcept = new javax.swing.JTextArea();
         lblEntryDocumentNumber = new javax.swing.JLabel();
-        txtJDoctNumber = new javax.swing.JTextField();
         lblEntryDate = new javax.swing.JLabel();
         txtJCheckNumber = new javax.swing.JTextField();
         lblEntryCeckNumber = new javax.swing.JLabel();
-        spnJDate = new com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner();
+        spnJDate = new com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner(spnModelJDate);
         btnJSave = new javax.swing.JButton();
         btnJUpdate = new javax.swing.JButton();
         btnJDelete = new javax.swing.JButton();
         btnJAdd = new javax.swing.JButton();
-        cbxJDoctType = new javax.swing.JComboBox<>();
+        cbxJDocType = new javax.swing.JComboBox<>(cbxModelJDocType);
+        spnJDocNumber = new javax.swing.JSpinner(spnModelJDocNumber);
         pnlSourceDocuments = new javax.swing.JPanel();
         btnGeneratePaymentVoucher = new javax.swing.JButton();
         btnGenerateRegistrationForm = new javax.swing.JButton();
@@ -648,7 +803,6 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
         jScrollPane2.setViewportView(taJConcept);
 
         lblEntryDocumentNumber.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblEntryDocumentNumber.setLabelFor(txtJDoctNumber);
         lblEntryDocumentNumber.setText("No Documento:");
 
         lblEntryDate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -661,9 +815,9 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
 
         btnJSave.setText("Guardar");
         btnJSave.setToolTipText("");
-        btnJSave.setMaximumSize(new java.awt.Dimension(73, 23));
-        btnJSave.setMinimumSize(new java.awt.Dimension(73, 23));
-        btnJSave.setPreferredSize(new java.awt.Dimension(73, 23));
+        btnJSave.setMaximumSize(new java.awt.Dimension(82, 23));
+        btnJSave.setMinimumSize(new java.awt.Dimension(82, 23));
+        btnJSave.setPreferredSize(new java.awt.Dimension(82, 23));
 
         btnJUpdate.setText("Actualizar");
         btnJUpdate.setMaximumSize(new java.awt.Dimension(73, 23));
@@ -674,9 +828,8 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
 
         btnJAdd.setText("Nuevo");
 
-        cbxJDoctType.setModel(new javax.swing.DefaultComboBoxModel<>());
-        cbxJDoctType.setToolTipText("Tipo de Documento");
-        cbxJDoctType.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        cbxJDocType.setToolTipText("Tipo de Documento");
+        cbxJDocType.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout pnlEntryFormLayout = new javax.swing.GroupLayout(pnlEntryForm);
         pnlEntryForm.setLayout(pnlEntryFormLayout);
@@ -685,38 +838,35 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
             .addGroup(pnlEntryFormLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEntryName, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblEntryCeckNumber)
-                    .addComponent(lblConcept, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(pnlEntryFormLayout.createSequentialGroup()
+                    .addComponent(lblConcept, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblEntryName, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlEntryFormLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                                .addComponent(jScrollPane2)
-                                .addGap(12, 12, 12))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlEntryFormLayout.createSequentialGroup()
-                                .addComponent(lblEntryDate, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(spnJDate, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnJUpdate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnJSave, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnJAdd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                        .addComponent(txtJName, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                            .addComponent(btnJAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnJSave, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlEntryFormLayout.createSequentialGroup()
+                        .addComponent(txtJName, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblEntryDocumentNumber)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtJDoctNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cbxJDoctType, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(spnJDocNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbxJDocType, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnJDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlEntryFormLayout.createSequentialGroup()
                         .addComponent(txtJCheckNumber)
-                        .addGap(333, 333, 333)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblEntryDate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spnJDate, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnJUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         pnlEntryFormLayout.setVerticalGroup(
@@ -724,38 +874,32 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
             .addGroup(pnlEntryFormLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnJDelete)
+                    .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblEntryName)
+                        .addComponent(txtJName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblEntryDocumentNumber)
+                        .addComponent(cbxJDocType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(spnJDocNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblEntryCeckNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtJCheckNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblEntryDate)
+                    .addComponent(spnJDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnJUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblEntryName)
-                            .addComponent(txtJName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(11, 11, 11)
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblEntryCeckNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtJCheckNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEntryDate)
-                            .addComponent(spnJDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnJDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(lblEntryDocumentNumber)
-                                .addComponent(txtJDoctNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(cbxJDoctType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnJUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlEntryFormLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(btnJAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnJSave, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblConcept)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(btnJAdd)
+                        .addGap(13, 13, 13)
+                        .addComponent(btnJSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblConcept))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        cbxJDoctType.getAccessibleContext().setAccessibleName("Tipo de Documento");
+        cbxJDocType.getAccessibleContext().setAccessibleName("");
 
         pnlSourceDocuments.setBorder(javax.swing.BorderFactory.createTitledBorder("Documentos Exportables"));
         pnlSourceDocuments.setOpaque(false);
@@ -766,20 +910,25 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
 
         lblCreateBy.setText("N/A");
 
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Creado por: ");
 
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Creacion: ");
 
         lblCreateAt.setText("N/A");
 
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Actualizado por: ");
 
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel3.setText("Actualizacion:");
 
         lblUpdateBy.setText("N/A");
 
         lblUpdateAt.setText("N/A");
 
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Version: ");
 
         lblVersion.setText("N/A");
@@ -798,38 +947,35 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblCreateBy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblCreateAt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblUpdateAt)
-                    .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
-                        .addComponent(lblUpdateBy)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblVersion)))
-                .addContainerGap(87, Short.MAX_VALUE))
+                    .addComponent(lblUpdateBy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblUpdateAt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblVersion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(157, 157, 157))
         );
         pnlSourceDocumentsLayout.setVerticalGroup(
             pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel5)
-                        .addComponent(lblVersion))
-                    .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnGeneratePaymentVoucher)
-                        .addComponent(jLabel1)
-                        .addComponent(lblCreateBy)
-                        .addComponent(jLabel4)
-                        .addComponent(lblUpdateBy)))
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGeneratePaymentVoucher)
+                    .addComponent(jLabel1)
+                    .addComponent(lblCreateBy)
+                    .addComponent(jLabel4)
+                    .addComponent(lblUpdateBy)
+                    .addComponent(jLabel5)
+                    .addComponent(lblVersion))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGenerateRegistrationForm)
@@ -890,7 +1036,7 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
     private javax.swing.JButton btnJUpdate;
     private javax.swing.JButton btnRSave;
     private javax.swing.JButton btnRUpdate;
-    private javax.swing.JComboBox<DocumentType> cbxJDoctType;
+    private javax.swing.JComboBox<DocumentType> cbxJDocType;
     private javax.swing.JComboBox<Account> cbxRAccount;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -925,13 +1071,14 @@ public class AccountingEntryView extends View implements CRUDView<JournalEntry, 
     private javax.swing.JRadioButton rbtRDebit;
     private javax.swing.JSeparator sepaSection1;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnJDate;
+    private javax.swing.JSpinner spnJDocNumber;
     private javax.swing.JSpinner spnRAccountNumber;
     private javax.swing.JSpinner spnRAmount;
     private javax.swing.JTextArea taJConcept;
     private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<RecordTableData> tblRecord;
     private javax.swing.JTextField txtJCheckNumber;
-    private javax.swing.JTextField txtJDoctNumber;
     private javax.swing.JTextField txtJName;
     private javax.swing.JTextField txtRReference;
     // End of variables declaration//GEN-END:variables
+
 }

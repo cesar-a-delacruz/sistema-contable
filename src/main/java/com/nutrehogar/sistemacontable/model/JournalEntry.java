@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(exclude = "records")
+@ToString(exclude = {"records","period"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "journal_entry")
@@ -28,40 +28,44 @@ public class JournalEntry extends AuditableEntity {
 
     @Column(name = "document_number", nullable = false)
     @Basic(optional = false)
-    @NotNull
-    Integer number;
+    @NotNull Integer number;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "document_type", nullable = false)
-    @NotNull
-    DocumentType type;
+    @NotNull DocumentType type;
 
     @Column(nullable = false)
     @Basic(optional = false)
-    @NotNull
-    String name;
+    @NotNull String name;
 
     @Column(nullable = false, length = 600)
     @Basic(optional = false)
-    @NotNull
-    String concept;
+    @NotNull String concept;
 
     @Column(name = "check_number", nullable = false)
     @Basic(optional = false)
-    @NotNull
-    String checkNumber;
+    @NotNull String checkNumber;
 
     @Column(nullable = false)
     @Basic(optional = false)
-    @NotNull
-    LocalDate date;
+    @NotNull LocalDate date;
 
     @NotNull
-    @OneToMany(mappedBy = LedgerRecord_.ENTRY, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = LedgerRecord_.ENTRY, cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
     Set<LedgerRecord> records = new HashSet<>();
 
     @Nullable
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST})
     @OnDelete(action = OnDeleteAction.SET_NULL)
     AccountingPeriod period;
+
+    public JournalEntry(@NotNull Integer number, @NotNull DocumentType type, @NotNull String name, @NotNull String concept, @NotNull String checkNumber, @NotNull LocalDate date,@NotNull String updatedBy) {
+        super(updatedBy);
+        this.number = number;
+        this.type = type;
+        this.name = name;
+        this.concept = concept;
+        this.checkNumber = checkNumber;
+        this.date = date;
+    }
 }
