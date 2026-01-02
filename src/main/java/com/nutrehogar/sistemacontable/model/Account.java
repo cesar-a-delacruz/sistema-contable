@@ -24,13 +24,12 @@ public class Account extends AuditableEntity {
     @Id
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    @Nullable Integer id;
 
     @Column(nullable = false, unique = true)
     @Basic(optional = false)
-    @NotNull
     @NaturalId(mutable = true)
-    Integer number;
+    @NotNull Integer number;
 
     @Column(nullable = false, unique = true)
     @Basic(optional = false)
@@ -38,9 +37,8 @@ public class Account extends AuditableEntity {
 
     @Enumerated(EnumType.STRING)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "account_type", nullable = false)
-    AccountType type;
+    @NotNull AccountType type;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @OnDelete(action = OnDeleteAction.SET_NULL)

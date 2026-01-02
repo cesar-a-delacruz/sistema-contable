@@ -2,6 +2,7 @@ package com.nutrehogar.sistemacontable.ui_2.builder;
 
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
+import com.nutrehogar.sistemacontable.ui.business.AccountMinData;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import java.math.BigDecimal;
@@ -50,6 +51,10 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
             case Account account -> {
                 setText(account.getFormattedNumber());
                 setToolTipText(account.getName());
+            }
+            case AccountMinData(var number, var name, var _) -> {
+                setText(AccountNumber.getFormattedNumber(number));
+                setToolTipText(name);
             }
             case AccountType accountType -> setText(accountType.getName());
             case DocumentType documentType -> setText(documentType.getName());

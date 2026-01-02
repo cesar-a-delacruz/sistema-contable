@@ -13,8 +13,8 @@ import java.util.function.Function;
 public class Util {{
 }
     public static final DateTimeFormatter AUDITABLE_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
-    public static final DateTimeFormatter SMALL_DATE_FORMATTER = DateTimeFormatter.ofPattern("d/M/yyyy");
-    public static final DateTimeFormatter LARGE_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE d, LLLL yyyy");
+    public static final DateTimeFormatter SMALL_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    public static final DateTimeFormatter LARGE_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE d 'de' LLLL 'del' yyyy");
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.00");
 
     public static final String NA = "N/A";

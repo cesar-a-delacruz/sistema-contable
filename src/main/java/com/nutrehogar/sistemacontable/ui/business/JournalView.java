@@ -3,10 +3,8 @@ package com.nutrehogar.sistemacontable.ui.business;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.Account;
-import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.DocumentType;
 import com.nutrehogar.sistemacontable.model.User;
-import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
 import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
@@ -21,7 +19,7 @@ import java.time.LocalDate;
 import java.util.function.Consumer;
 
 @Getter
-public class JournalView extends SimpleView<JournalTableData> {
+public class JournalView extends SimpleView<JournalData> {
     @NotNull
     private final LocalDateSpinnerModel spnModelStartDate;
     @NotNull
@@ -30,7 +28,7 @@ public class JournalView extends SimpleView<JournalTableData> {
         super(user, "Libro Diario");
         this.spnModelStartDate = new LocalDateSpinnerModel();
         this.spnModelEndDate = new LocalDateSpinnerModel();
-        this.tblModel = new CustomTableModel<>("Fecha", "Comprobante", "Tipo de Documento", "Cuenta", "Referencia", "Débito", "Crédito") {
+        this.tblModel = new CustomTableModel<>("Fecha", "Comprobante", "Tipo", "Cuenta", "Referencia", "Débito", "Crédito") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var dto = data.get(rowIndex);
@@ -64,6 +62,7 @@ public class JournalView extends SimpleView<JournalTableData> {
         tblData.setOnDeselected(()-> btnEdit.setEnabled(false));
         tblData.setOnSelected(_ -> btnEdit.setEnabled(true));
         btnEdit.addActionListener(_ -> tblData.getSelected().ifPresent(e -> editJournal.accept(e.journalId())));
+        btnFilter.addActionListener(_->loadData());
     }
 
     public void loadData() {
@@ -220,9 +219,9 @@ public class JournalView extends SimpleView<JournalTableData> {
             pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAsideLayout.createSequentialGroup()
                 .addComponent(pnlOperations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(177, 177, 177)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGenerateReport)
-                .addContainerGap(249, Short.MAX_VALUE))
+                .addContainerGap(420, Short.MAX_VALUE))
         );
 
         jScrollPane2.setViewportView(tblData);
@@ -275,6 +274,6 @@ public class JournalView extends SimpleView<JournalTableData> {
     private javax.swing.JPanel pnlOperations;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnEndDate;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnStartDate;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<JournalTableData> tblData;
+    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<JournalData> tblData;
     // End of variables declaration//GEN-END:variables
 }

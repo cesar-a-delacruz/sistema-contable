@@ -1,6 +1,7 @@
 package com.nutrehogar.sistemacontable.ui;
 
 import com.nutrehogar.sistemacontable.ui.business.JournalView;
+import com.nutrehogar.sistemacontable.ui.business.TrialBalanceView;
 import com.nutrehogar.sistemacontable.ui.crud.*;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.User;
@@ -54,6 +55,7 @@ public class DashboardView extends Background {
         btnHome.addActionListener(_ -> setContent(pnlHome));
         btnForm.addActionListener(_->setContent(new AccountingEntryView(user, Optional.empty())));
         btnJournal.addActionListener(_->setContent(new JournalView(user,this::editJournal)));
+        btnTrialBalance.addActionListener(_->setContent(new TrialBalanceView(user,this::editJournal)));
     }
 
     public void setContent(JPanel p) {
