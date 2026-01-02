@@ -10,15 +10,16 @@ import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.View;
 
-import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
-import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
-import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
-import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
+import com.nutrehogar.sistemacontable.ui_2.builder.*;
+import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
+import com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner;
+import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -175,7 +176,7 @@ public class AccountingEntryView extends View{
             return;
         }
         if (recordController
-                .formRecords.isEmpty() || recordController.formRecords.size() > 3) {
+                .formRecords.isEmpty() || recordController.formRecords.size() <3) {
             showWarning("El documento no tiene suficientes registros, al menos debe tener dos");
             return;
         }
@@ -200,8 +201,13 @@ public class AccountingEntryView extends View{
             new InTransactionWorker(
                     session -> {
                         var queries = new JournalEntryQuery_(session);
+                        var period = new AccountingPeriodQuery_(session).findByNumber(1);
+
+                        if (period.isEmpty()) throw new InvalidFieldException("El periodo no existe");
+
                         if (queries.existByDocNumAndType(dto.type(), dto.number()))
                             throw new InvalidFieldException("El documento: " + dto.type().getName() + " No." + dto.number() + ", ya existe");
+
                         var entry = new JournalEntry(
                                 dto.number(),
                                 dto.type(),
@@ -211,16 +217,17 @@ public class AccountingEntryView extends View{
                                 dto.date(),
                                 dto.user()
                         );
-                        records.forEach(r->r.setEntry(entry));
+
+                        for (var ledgerRecord : records)
+                            ledgerRecord.setEntry(entry);
+
                         entry.setRecords(records);
-                        var period = new AccountingPeriodQuery_(session).findByNumber(1);
-                        if (period.isEmpty())
-                            throw new InvalidFieldException("El periodo no existe");
                         entry.setPeriod(period.get());
+
                         session.persist(entry);
                     },
                     ()->{
-                        showMessage("Documento " + dto.type().getName() + " No." + dto.number() + ", creado exitosamente");
+                        showMessage("Documento " + dto.type().getName() + " No. " + dto.number() + ", creado exitosamente");
                         prepareToAdd();
                     },
                     this::showError
@@ -237,7 +244,7 @@ public class AccountingEntryView extends View{
 
     private final class RecordController {
         @NotNull
-        public final CustomTableModel<RecordTableData> tblModelRecord;
+        public final CustomTableModel<RecordTableRow> tblModelRecord;
         @NotNull
         public final CustomComboBoxModel<Account> cbxModelRAccount;
         @NotNull
@@ -264,14 +271,20 @@ public class AccountingEntryView extends View{
             this.tblModelRecord = new CustomTableModel<>("Referencia", "Cuenta", "Débito", "Crédito", "Subtotal") {
                 @Override
                 public Object getValueAt(int rowIndex, int columnIndex) {
-                    var record = data.get(rowIndex);
-                    return switch (columnIndex) {
-                        case 0 -> record.reference();
-                        case 1 -> record.account();
-                        case 2 -> record.debit();
-                        case 3 -> record.credit();
-                        case 4 -> record.total();
-                        default -> "que haces?";
+                    return switch (data.get(rowIndex)) {
+                        case RecordTableData r -> switch (columnIndex) {
+                            case 0 -> r.reference();
+                            case 1 -> r.account();
+                            case 2 -> r.debit();
+                            case 3 -> r.credit();
+                            case 4 -> r.total();
+                            default -> "que haces?";
+                        };
+                        case RecordTableTotal(var total) -> switch (columnIndex) {
+                            case 0 -> "Total";
+                            case 4 -> total;
+                            default -> "";
+                        };
                     };
                 }
 
@@ -345,7 +358,7 @@ public class AccountingEntryView extends View{
             var debitSum = BigDecimal.ZERO;
             var creditSum = BigDecimal.ZERO;
             var totalSum = BigDecimal.ZERO;
-            var dtos = new ArrayList<RecordTableData>();
+            var dtos = new ArrayList<RecordTableRow>(records.size() + formRecords.size() + 1);
             for (var record : records) {
                 var account = record.getAccount();
                 if (account == null) {
@@ -356,12 +369,8 @@ public class AccountingEntryView extends View{
                 creditSum = creditSum.add(record.getCredit(), DECIMAL128);
                 totalSum = account.getType().getBalance(totalSum, record.getCredit(), record.getDebit());
                 dtos.add(
-                        new RecordTableData(
+                        new RecordTableEntity(
                                 record,
-                                record.getReference(),
-                                account,
-                                record.getDebit(),
-                                record.getCredit(),
                                 totalSum
                         )
                 );
@@ -372,22 +381,13 @@ public class AccountingEntryView extends View{
                 creditSum = creditSum.add(record.credit(), DECIMAL128);
                 totalSum = account.getType().getBalance(totalSum, record.credit(), record.debit());
                 dtos.add(
-                        new RecordTableData(
-                                null,
-                                record.reference(),
-                                account,
-                                record.debit(),
-                                record.credit(),
+                        new RecordTableFormData(
+                                record,
                                 totalSum
                         )
                 );
             }
-            dtos.add(new RecordTableData(
-                    "Total",
-                    null,
-                    null,
-                    totalSum
-            ));
+            dtos.add(new RecordTableTotal(totalSum));
             isBalanced = totalSum.equals(BigDecimal.ZERO);
             tblModelRecord.setData(dtos);
         }
@@ -421,24 +421,25 @@ public class AccountingEntryView extends View{
             btnRUpdate.setEnabled(false);
         }
 
+
         public void prepareToEdit() {
-            tblRecord
-                    .getSelected()
-                    .ifPresentOrElse(
-                            this::setEntityDataInForm,
-                            () -> showWarning("Seleccione un elemento de la tabla")
-                    );
+            if(tblRecord.getSelected().isEmpty() || tblRecord.getSelected().get() instanceof RecordTableTotal){
+                showWarning("Seleccione un elemento de la tabla");
+                return;
+            }
             btnRSave.setEnabled(false);
             btnRUpdate.setEnabled(true);
         }
 
 
-        public void onSelected(@NotNull RecordTableData record) {
-            if(record.reference().equals("Total") && record.account() == null){
+        public void onSelected(@NotNull RecordTableRow row) {
+            if (row instanceof RecordTableTotal) {
                 tblRecord.setEmpty();
                 return;
             }
-            Optional.ofNullable(record.record()).ifPresent(ApRecord::setAuditableFields);
+            if (row instanceof RecordTableEntity entity) {
+                ApRecord.setAuditableFields(entity.entity());
+            }
             OpRecord.getBtnDelete().setEnabled(true);
             OpRecord.getBtnPrepareToEdit().setEnabled(true);
         }
@@ -452,53 +453,32 @@ public class AccountingEntryView extends View{
 
 
         public void delete() {
-
-            if (tblRecord.getSelected().isEmpty()) {
+            if(tblRecord.getSelected().isEmpty()){
                 showWarning("Seleccione un elemento de la tabla");
                 return;
             }
-
-            var selected = tblRecord.getSelected().get();
-
-            if (selected.isEntity()) {
-                new InTransactionWorker(
-                        session -> session.remove(session.merge(selected.record())),
-                        this::loadData,
-                        AccountingEntryView.this::showError
-                ).execute();
-                return;
+            switch (tblRecord.getSelected().get()) {
+                case RecordTableEntity(var entity, var _) ->
+                        new InTransactionWorker(
+                                session -> session.remove(session.merge(entity)),
+                                this::loadData,
+                                AccountingEntryView.this::showError
+                        ).execute();
+                case RecordTableFormData(var formData, var _) -> {
+                    formRecords.removeIf(formData::equals);
+                    loadData();
+                }
+                case RecordTableTotal _ -> showWarning("Seleccione un elemento de la tabla");
             }
-
-            formRecords.removeIf(r -> r.reference().equals(selected.reference()));
-            loadData();
         }
 
         public void save() {
-
             try {
                 var dto = getDataFromForm();
                 if (journalEntry.isPresent()) {
-                    for (var r : tblModelRecord.getData())
-                        if (r.reference().equals(dto.reference()))
-                            throw new InvalidFieldException("La referencia no se puede duplicar");
-                    new InTransactionWorker(
-                            session -> session.persist(new LedgerRecord(
-                                    journalEntry.get(),
-                                    dto.reference(),
-                                    dto.account(),
-                                    dto.debit(),
-                                    dto.credit(),
-                                    user.getUsername()
-                            )),
-                            this::loadData,
-                            AccountingEntryView.this::showError
-                    ).execute();
+                    new InTransactionWorker(session -> session.persist(new LedgerRecord(journalEntry.get(), dto.reference(), dto.account(), dto.debit(), dto.credit(), user.getUsername())), this::loadData, AccountingEntryView.this::showError).execute();
                     return;
                 }
-                for (var r : formRecords)
-                    if (r.reference().equals(dto.reference()))
-                        throw new InvalidFieldException("La referencia no se puede duplicar");
-
                 formRecords.add(new RecordFormData(dto.reference(), dto.account(), dto.debit(), dto.credit(), user.getUsername()));
                 loadData();
             } catch (InvalidFieldException e) {
@@ -508,56 +488,33 @@ public class AccountingEntryView extends View{
 
 
         public void update() {
-
-            if (tblRecord.getSelected().isEmpty()) {
+            if(tblRecord.getSelected().isEmpty()){
                 showWarning("Seleccione un elemento de la tabla");
                 return;
             }
-
-            var selected = tblRecord.getSelected().get();
-
             try {
                 var dto = getDataFromForm();
-                if (journalEntry.isPresent() && selected.isEntity()) {
-                    for (var r : tblModelRecord.getData())
-                        if (r.reference().equals(dto.reference()))
-                            throw new InvalidFieldException("La referencia no se puede duplicar");
-                    new InTransactionWorker(
-                            session -> {
-                                var entity = session.merge(selected.record());
-                                entity.setUpdatedBy(dto.username());
-                                entity.setReference(dto.reference());
-                                entity.setAccount(dto.account());
-                                entity.setDebit(dto.debit());
-                                entity.setCredit(dto.credit());
-                            },
-                            this::loadData,
-                            AccountingEntryView.this::showError
-                    ).execute();
-                    return;
-                }
-
-                //Lista de elementos con la referencia del elemento actual, debera ser solo el selecionado.
-
-                List<RecordFormData> toRemove = new ArrayList<>();
-
-                for (var r : formRecords)
-                    if (r.reference().equals(selected.reference()))
-                        toRemove.add(r);
-                // se eliminan los elementos que tengan la misma referencia que el seleccionado
-                formRecords.removeAll(toRemove);
-
-                // se busca si hay agun elemento con la nueva referencia
-                for (var r : formRecords)
-                    // si se encuenta rolback, los elementos que se eliminarian se reintegran y nada a pasao
-                    if (r.reference().equals(dto.reference())) {
-                        formRecords.addAll(toRemove);
-                        throw new InvalidFieldException("La referencia no se puede duplicar");
+                switch (tblRecord.getSelected().get()) {
+                    case RecordTableEntity(var entity, var _) ->
+                            new InTransactionWorker(
+                                    session -> {
+                                        var tomerge = session.merge(entity);
+                                        tomerge.setUpdatedBy(dto.username());
+                                        tomerge.setReference(dto.reference());
+                                        tomerge.setAccount(dto.account());
+                                        tomerge.setDebit(dto.debit());
+                                        tomerge.setCredit(dto.credit());
+                                    },
+                                    this::loadData,
+                                    AccountingEntryView.this::showError
+                            ).execute();
+                    case RecordTableFormData(var formData, var _) -> {
+                        formRecords.removeIf(formData::equals);
+                        formRecords.add(new RecordFormData(dto.reference(), dto.account(), dto.debit(), dto.credit(), user.getUsername()));
+                        loadData();
                     }
-                //Esto es, porque si el elmeneto seleccionado no cambia la referencia la validar la duplicidad ese mismo se vera como duplicado, por ello se elimina ntes de validar.
-
-                formRecords.add(new RecordFormData(dto.reference(), dto.account(), dto.debit(), dto.credit(), user.getUsername()));
-                loadData();
+                    case RecordTableTotal _ -> showWarning("Seleccione un elemento de la tabla");
+                }
             } catch (InvalidFieldException e) {
                 showWarning(e);
             }
@@ -578,73 +535,73 @@ public class AccountingEntryView extends View{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        bgRecordType = new javax.swing.ButtonGroup();
-        pnlAside = new javax.swing.JPanel();
-        pnlRecordForm = new javax.swing.JPanel();
-        lblRecordAmount = new javax.swing.JLabel();
-        lblRecordAccount = new javax.swing.JLabel();
-        btnRSave = new javax.swing.JButton();
-        cbxRAccount = new javax.swing.JComboBox<>();
-        btnRUpdate = new javax.swing.JButton();
-        lblSave = new javax.swing.JLabel();
-        lblUpdate = new javax.swing.JLabel();
-        txtRReference = new javax.swing.JTextField();
-        lblRecordReference = new javax.swing.JLabel();
-        lblRecordType = new javax.swing.JLabel();
-        rbtRDebit = new javax.swing.JRadioButton();
-        rbtRCredit = new javax.swing.JRadioButton();
-        sepaSection1 = new javax.swing.JSeparator();
-        labelSection1 = new javax.swing.JLabel();
-        spnRAmount = new javax.swing.JSpinner(recordController.spnModelRAmount);
-        spnRAccountNumber = new javax.swing.JSpinner(recordController.spnModelRAccountNumber);
-        ApRecord = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        OpRecord = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(recordController.entityName);
-        pnlEntryForm = new javax.swing.JPanel();
-        lblEntryName = new javax.swing.JLabel();
-        txtJName = new javax.swing.JTextField();
-        lblConcept = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        taJConcept = new javax.swing.JTextArea();
-        lblEntryDocumentNumber = new javax.swing.JLabel();
-        lblEntryDate = new javax.swing.JLabel();
-        txtJCheckNumber = new javax.swing.JTextField();
-        lblEntryCeckNumber = new javax.swing.JLabel();
-        spnJDate = new com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner(spnModelJDate);
-        btnJSave = new javax.swing.JButton();
-        btnJUpdate = new javax.swing.JButton();
-        btnJDelete = new javax.swing.JButton();
-        btnJAdd = new javax.swing.JButton();
-        cbxJDocType = new javax.swing.JComboBox<>(cbxModelJDocType);
-        spnJDocNumber = new javax.swing.JSpinner(spnModelJDocNumber);
-        pnlSourceDocuments = new javax.swing.JPanel();
-        btnGeneratePaymentVoucher = new javax.swing.JButton();
-        btnGenerateRegistrationForm = new javax.swing.JButton();
-        lblCreateBy = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        lblCreateAt = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        lblUpdateBy = new javax.swing.JLabel();
-        lblUpdateAt = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        lblVersion = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tblRecord = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(recordController.tblModelRecord);
-        lblTitle = new javax.swing.JLabel();
+        bgRecordType = new ButtonGroup();
+        pnlAside = new JPanel();
+        pnlRecordForm = new JPanel();
+        lblRecordAmount = new JLabel();
+        lblRecordAccount = new JLabel();
+        btnRSave = new JButton();
+        cbxRAccount = new JComboBox<>();
+        btnRUpdate = new JButton();
+        lblSave = new JLabel();
+        lblUpdate = new JLabel();
+        txtRReference = new JTextField();
+        lblRecordReference = new JLabel();
+        lblRecordType = new JLabel();
+        rbtRDebit = new JRadioButton();
+        rbtRCredit = new JRadioButton();
+        sepaSection1 = new JSeparator();
+        labelSection1 = new JLabel();
+        spnRAmount = new JSpinner(recordController.spnModelRAmount);
+        spnRAccountNumber = new JSpinner(recordController.spnModelRAccountNumber);
+        ApRecord = new AuditablePanel();
+        OpRecord = new OperationPanel(recordController.entityName);
+        pnlEntryForm = new JPanel();
+        lblEntryName = new JLabel();
+        txtJName = new JTextField();
+        lblConcept = new JLabel();
+        jScrollPane2 = new JScrollPane();
+        taJConcept = new JTextArea();
+        lblEntryDocumentNumber = new JLabel();
+        lblEntryDate = new JLabel();
+        txtJCheckNumber = new JTextField();
+        lblEntryCeckNumber = new JLabel();
+        spnJDate = new LocalDateSpinner(spnModelJDate);
+        btnJSave = new JButton();
+        btnJUpdate = new JButton();
+        btnJDelete = new JButton();
+        btnJAdd = new JButton();
+        cbxJDocType = new JComboBox<>(cbxModelJDocType);
+        spnJDocNumber = new JSpinner(spnModelJDocNumber);
+        pnlSourceDocuments = new JPanel();
+        btnGeneratePaymentVoucher = new JButton();
+        btnGenerateRegistrationForm = new JButton();
+        lblCreateBy = new JLabel();
+        jLabel1 = new JLabel();
+        jLabel2 = new JLabel();
+        lblCreateAt = new JLabel();
+        jLabel4 = new JLabel();
+        jLabel3 = new JLabel();
+        lblUpdateBy = new JLabel();
+        lblUpdateAt = new JLabel();
+        jLabel5 = new JLabel();
+        lblVersion = new JLabel();
+        jScrollPane3 = new JScrollPane();
+        tblRecord = new CustomTable(recordController.tblModelRecord);
+        lblTitle = new JLabel();
 
         setOpaque(false);
 
         pnlAside.setOpaque(false);
 
-        pnlRecordForm.setBorder(javax.swing.BorderFactory.createTitledBorder("Formulario de Registros"));
+        pnlRecordForm.setBorder(BorderFactory.createTitledBorder("Formulario de Registros"));
         pnlRecordForm.setOpaque(false);
 
-        lblRecordAmount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblRecordAmount.setHorizontalAlignment(SwingConstants.RIGHT);
         lblRecordAmount.setText("Monto:");
         lblRecordAmount.setName(""); // NOI18N
 
-        lblRecordAccount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblRecordAccount.setHorizontalAlignment(SwingConstants.RIGHT);
         lblRecordAccount.setLabelFor(cbxRAccount);
         lblRecordAccount.setText("Cuenta:");
 
@@ -656,19 +613,19 @@ public class AccountingEntryView extends View{
 
         lblSave.setLabelFor(btnRSave);
         lblSave.setText("<html><p>Agrega el nuevo registro a la entrada</p></html>");
-        lblSave.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        lblSave.setPreferredSize(new java.awt.Dimension(250, 40));
+        lblSave.setVerticalAlignment(SwingConstants.TOP);
+        lblSave.setPreferredSize(new Dimension(250, 40));
 
         lblUpdate.setLabelFor(btnRUpdate);
         lblUpdate.setText("<html><p>Actualiza los datos del registro editado</p></html>");
-        lblUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        lblUpdate.setPreferredSize(new java.awt.Dimension(250, 40));
+        lblUpdate.setVerticalAlignment(SwingConstants.TOP);
+        lblUpdate.setPreferredSize(new Dimension(250, 40));
 
-        lblRecordReference.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblRecordReference.setHorizontalAlignment(SwingConstants.RIGHT);
         lblRecordReference.setLabelFor(txtRReference);
         lblRecordReference.setText("Referencia:");
 
-        lblRecordType.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblRecordType.setHorizontalAlignment(SwingConstants.RIGHT);
         lblRecordType.setLabelFor(rbtRDebit);
         lblRecordType.setText("Tipo de registro:");
 
@@ -681,122 +638,122 @@ public class AccountingEntryView extends View{
 
         labelSection1.setText("Operaciones");
 
-        javax.swing.GroupLayout pnlRecordFormLayout = new javax.swing.GroupLayout(pnlRecordForm);
+        GroupLayout pnlRecordFormLayout = new GroupLayout(pnlRecordForm);
         pnlRecordForm.setLayout(pnlRecordFormLayout);
         pnlRecordFormLayout.setHorizontalGroup(
-            pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(pnlRecordFormLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(pnlRecordFormLayout.createSequentialGroup()
-                        .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnRUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecordFormLayout.createSequentialGroup()
-                        .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnRSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblUpdate, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnRUpdate, GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
+                    .addGroup(GroupLayout.Alignment.TRAILING, pnlRecordFormLayout.createSequentialGroup()
+                        .addComponent(lblSave, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnRSave, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnlRecordFormLayout.createSequentialGroup()
                         .addComponent(labelSection1)
                         .addGap(18, 18, 18)
                         .addComponent(sepaSection1))
                     .addGroup(pnlRecordFormLayout.createSequentialGroup()
-                        .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblRecordAmount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblRecordAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblRecordReference, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblRecordType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblRecordAmount, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblRecordAccount, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblRecordReference, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblRecordType, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addGroup(pnlRecordFormLayout.createSequentialGroup()
                                 .addComponent(rbtRDebit)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(rbtRCredit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rbtRCredit, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(123, 123, 123))
                             .addGroup(pnlRecordFormLayout.createSequentialGroup()
-                                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
                                     .addComponent(txtRReference)
                                     .addGroup(pnlRecordFormLayout.createSequentialGroup()
-                                        .addComponent(spnRAccountNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cbxRAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(spnRAccountNumber, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(cbxRAccount, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE))
                                     .addComponent(spnRAmount))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         pnlRecordFormLayout.setVerticalGroup(
-            pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(pnlRecordFormLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtRReference, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtRReference, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblRecordReference))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRecordAccount)
-                    .addComponent(cbxRAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spnRAccountNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbxRAccount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(spnRAccountNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRecordType)
                     .addComponent(rbtRDebit)
                     .addComponent(rbtRCredit))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRecordAmount)
-                    .addComponent(spnRAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(spnRAmount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                     .addComponent(labelSection1)
-                    .addComponent(sepaSection1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sepaSection1, GroupLayout.PREFERRED_SIZE, 10, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRSave)
-                    .addComponent(lblSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlRecordFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblSave, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlRecordFormLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblUpdate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnRUpdate))
                 .addContainerGap())
         );
 
-        ApRecord.setBorder(javax.swing.BorderFactory.createTitledBorder("Auditoría"));
+        ApRecord.setBorder(BorderFactory.createTitledBorder("Auditoría"));
         ApRecord.setToolTipText("");
         ApRecord.setName(""); // NOI18N
 
-        javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
+        GroupLayout pnlAsideLayout = new GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);
         pnlAsideLayout.setHorizontalGroup(
-            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            pnlAsideLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(pnlAsideLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlRecordForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ApRecord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(OpRecord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(pnlAsideLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlRecordForm, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ApRecord, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(OpRecord, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlAsideLayout.setVerticalGroup(
-            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            pnlAsideLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addComponent(OpRecord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlRecordForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ApRecord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(OpRecord, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlRecordForm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ApRecord, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        pnlEntryForm.setBorder(javax.swing.BorderFactory.createTitledBorder("Formulario de Entrada"));
+        pnlEntryForm.setBorder(BorderFactory.createTitledBorder("Formulario de Entrada"));
         pnlEntryForm.setOpaque(false);
 
-        lblEntryName.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblEntryName.setHorizontalAlignment(SwingConstants.RIGHT);
         lblEntryName.setLabelFor(txtJName);
         lblEntryName.setText("Nombre:");
 
-        txtJName.setMaximumSize(new java.awt.Dimension(500, 500));
+        txtJName.setMaximumSize(new Dimension(500, 500));
 
-        lblConcept.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblConcept.setHorizontalAlignment(SwingConstants.RIGHT);
         lblConcept.setLabelFor(taJConcept);
         lblConcept.setText("Concepto:");
 
@@ -804,109 +761,109 @@ public class AccountingEntryView extends View{
         taJConcept.setLineWrap(true);
         taJConcept.setRows(3);
         taJConcept.setWrapStyleWord(true);
-        taJConcept.setMaximumSize(new java.awt.Dimension(400, 400));
+        taJConcept.setMaximumSize(new Dimension(400, 400));
         jScrollPane2.setViewportView(taJConcept);
 
-        lblEntryDocumentNumber.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblEntryDocumentNumber.setHorizontalAlignment(SwingConstants.RIGHT);
         lblEntryDocumentNumber.setText("No Documento:");
 
-        lblEntryDate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblEntryDate.setHorizontalAlignment(SwingConstants.RIGHT);
         lblEntryDate.setLabelFor(spnJDate);
         lblEntryDate.setText("Fecha:");
 
-        lblEntryCeckNumber.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblEntryCeckNumber.setHorizontalAlignment(SwingConstants.RIGHT);
         lblEntryCeckNumber.setLabelFor(txtJCheckNumber);
         lblEntryCeckNumber.setText("No Cheque:");
 
         btnJSave.setText("Guardar");
         btnJSave.setToolTipText("");
-        btnJSave.setMaximumSize(new java.awt.Dimension(82, 23));
-        btnJSave.setMinimumSize(new java.awt.Dimension(82, 23));
-        btnJSave.setPreferredSize(new java.awt.Dimension(82, 23));
+        btnJSave.setMaximumSize(new Dimension(82, 23));
+        btnJSave.setMinimumSize(new Dimension(82, 23));
+        btnJSave.setPreferredSize(new Dimension(82, 23));
 
         btnJUpdate.setText("Actualizar");
-        btnJUpdate.setMaximumSize(new java.awt.Dimension(73, 23));
-        btnJUpdate.setMinimumSize(new java.awt.Dimension(73, 23));
-        btnJUpdate.setPreferredSize(new java.awt.Dimension(73, 23));
+        btnJUpdate.setMaximumSize(new Dimension(73, 23));
+        btnJUpdate.setMinimumSize(new Dimension(73, 23));
+        btnJUpdate.setPreferredSize(new Dimension(73, 23));
 
         btnJDelete.setText("Eliminar");
 
         btnJAdd.setText("Nuevo");
 
         cbxJDocType.setToolTipText("Tipo de Documento");
-        cbxJDocType.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        cbxJDocType.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
-        javax.swing.GroupLayout pnlEntryFormLayout = new javax.swing.GroupLayout(pnlEntryForm);
+        GroupLayout pnlEntryFormLayout = new GroupLayout(pnlEntryForm);
         pnlEntryForm.setLayout(pnlEntryFormLayout);
         pnlEntryFormLayout.setHorizontalGroup(
-            pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            pnlEntryFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(pnlEntryFormLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlEntryFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(lblEntryCeckNumber)
-                    .addComponent(lblConcept, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblEntryName, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlEntryFormLayout.createSequentialGroup()
+                    .addComponent(lblConcept, GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblEntryName, GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlEntryFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(GroupLayout.Alignment.TRAILING, pnlEntryFormLayout.createSequentialGroup()
                         .addComponent(jScrollPane2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnJAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnJSave, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlEntryFormLayout.createSequentialGroup()
-                        .addComponent(txtJName, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlEntryFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(btnJAdd, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnJSave, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(GroupLayout.Alignment.TRAILING, pnlEntryFormLayout.createSequentialGroup()
+                        .addComponent(txtJName, GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblEntryDocumentNumber)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spnJDocNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbxJDocType, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnJDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spnJDocNumber, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbxJDocType, GroupLayout.PREFERRED_SIZE, 116, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnJDelete, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlEntryFormLayout.createSequentialGroup()
                         .addComponent(txtJCheckNumber)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblEntryDate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spnJDate, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnJUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spnJDate, GroupLayout.PREFERRED_SIZE, 118, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnJUpdate, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         pnlEntryFormLayout.setVerticalGroup(
-            pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            pnlEntryFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(pnlEntryFormLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlEntryFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(btnJDelete)
-                    .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(pnlEntryFormLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(lblEntryName)
-                        .addComponent(txtJName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtJName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(lblEntryDocumentNumber)
-                        .addComponent(cbxJDocType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(spnJDocNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblEntryCeckNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtJCheckNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbxJDocType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(spnJDocNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlEntryFormLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblEntryCeckNumber, GroupLayout.PREFERRED_SIZE, 16, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtJCheckNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblEntryDate)
-                    .addComponent(spnJDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnJUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlEntryFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spnJDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnJUpdate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlEntryFormLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(pnlEntryFormLayout.createSequentialGroup()
                         .addComponent(btnJAdd)
                         .addGap(13, 13, 13)
-                        .addComponent(btnJSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnJSave, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblConcept))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         cbxJDocType.getAccessibleContext().setAccessibleName("");
 
-        pnlSourceDocuments.setBorder(javax.swing.BorderFactory.createTitledBorder("Documentos Exportables"));
+        pnlSourceDocuments.setBorder(BorderFactory.createTitledBorder("Documentos Exportables"));
         pnlSourceDocuments.setOpaque(false);
 
         btnGeneratePaymentVoucher.setText("Comprobante");
@@ -915,65 +872,65 @@ public class AccountingEntryView extends View{
 
         lblCreateBy.setText("N/A");
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel1.setText("Creado por: ");
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText("Creacion: ");
 
         lblCreateAt.setText("N/A");
 
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel4.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel4.setText("Actualizado por: ");
 
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel3.setText("Actualizacion:");
 
         lblUpdateBy.setText("N/A");
 
         lblUpdateAt.setText("N/A");
 
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel5.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel5.setText("Version: ");
 
         lblVersion.setText("N/A");
 
-        javax.swing.GroupLayout pnlSourceDocumentsLayout = new javax.swing.GroupLayout(pnlSourceDocuments);
+        GroupLayout pnlSourceDocumentsLayout = new GroupLayout(pnlSourceDocuments);
         pnlSourceDocuments.setLayout(pnlSourceDocumentsLayout);
         pnlSourceDocumentsLayout.setHorizontalGroup(
-            pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            pnlSourceDocumentsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnGeneratePaymentVoucher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnGenerateRegistrationForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnGeneratePaymentVoucher, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGenerateRegistrationForm, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblCreateBy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblCreateAt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblUpdateBy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblUpdateAt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                    .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCreateBy, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblCreateAt, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(lblUpdateBy, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblUpdateAt, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblVersion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblVersion, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(157, 157, 157))
         );
         pnlSourceDocumentsLayout.setVerticalGroup(
-            pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            pnlSourceDocumentsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(pnlSourceDocumentsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGeneratePaymentVoucher)
                     .addComponent(jLabel1)
                     .addComponent(lblCreateBy)
@@ -981,14 +938,14 @@ public class AccountingEntryView extends View{
                     .addComponent(lblUpdateBy)
                     .addComponent(jLabel5)
                     .addComponent(lblVersion))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlSourceDocumentsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGenerateRegistrationForm)
                     .addComponent(jLabel2)
                     .addComponent(lblCreateAt)
                     .addComponent(jLabel3)
                     .addComponent(lblUpdateAt))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jScrollPane3.setViewportView(tblRecord);
@@ -998,92 +955,92 @@ public class AccountingEntryView extends View{
         lblTitle.setIcon(Theme.SVGs.FORM.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
         lblTitle.setText(LabelBuilder.build("Subtipos de Cuentas"));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlEntryForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlSourceDocuments, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlEntryForm, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlSourceDocuments, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane3)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblTitle, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlAside, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlAside, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlEntryForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlSourceDocuments, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(lblTitle, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pnlEntryForm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pnlSourceDocuments, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel ApRecord;
-    private com.nutrehogar.sistemacontable.ui_2.component.OperationPanel OpRecord;
-    private javax.swing.ButtonGroup bgRecordType;
-    private javax.swing.JButton btnGeneratePaymentVoucher;
-    private javax.swing.JButton btnGenerateRegistrationForm;
-    private javax.swing.JButton btnJAdd;
-    private javax.swing.JButton btnJDelete;
-    private javax.swing.JButton btnJSave;
-    private javax.swing.JButton btnJUpdate;
-    private javax.swing.JButton btnRSave;
-    private javax.swing.JButton btnRUpdate;
-    private javax.swing.JComboBox<DocumentType> cbxJDocType;
-    private javax.swing.JComboBox<Account> cbxRAccount;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JLabel labelSection1;
-    private javax.swing.JLabel lblConcept;
-    private javax.swing.JLabel lblCreateAt;
-    private javax.swing.JLabel lblCreateBy;
-    private javax.swing.JLabel lblEntryCeckNumber;
-    private javax.swing.JLabel lblEntryDate;
-    private javax.swing.JLabel lblEntryDocumentNumber;
-    private javax.swing.JLabel lblEntryName;
-    private javax.swing.JLabel lblRecordAccount;
-    private javax.swing.JLabel lblRecordAmount;
-    private javax.swing.JLabel lblRecordReference;
-    private javax.swing.JLabel lblRecordType;
-    private javax.swing.JLabel lblSave;
-    private javax.swing.JLabel lblTitle;
-    private javax.swing.JLabel lblUpdate;
-    private javax.swing.JLabel lblUpdateAt;
-    private javax.swing.JLabel lblUpdateBy;
-    private javax.swing.JLabel lblVersion;
-    private javax.swing.JPanel pnlAside;
-    private javax.swing.JPanel pnlEntryForm;
-    private javax.swing.JPanel pnlRecordForm;
-    private javax.swing.JPanel pnlSourceDocuments;
-    private javax.swing.JRadioButton rbtRCredit;
-    private javax.swing.JRadioButton rbtRDebit;
-    private javax.swing.JSeparator sepaSection1;
-    private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnJDate;
-    private javax.swing.JSpinner spnJDocNumber;
-    private javax.swing.JSpinner spnRAccountNumber;
-    private javax.swing.JSpinner spnRAmount;
-    private javax.swing.JTextArea taJConcept;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<RecordTableData> tblRecord;
-    private javax.swing.JTextField txtJCheckNumber;
-    private javax.swing.JTextField txtJName;
-    private javax.swing.JTextField txtRReference;
+    private AuditablePanel ApRecord;
+    private OperationPanel OpRecord;
+    private ButtonGroup bgRecordType;
+    private JButton btnGeneratePaymentVoucher;
+    private JButton btnGenerateRegistrationForm;
+    private JButton btnJAdd;
+    private JButton btnJDelete;
+    private JButton btnJSave;
+    private JButton btnJUpdate;
+    private JButton btnRSave;
+    private JButton btnRUpdate;
+    private JComboBox<DocumentType> cbxJDocType;
+    private JComboBox<Account> cbxRAccount;
+    private JLabel jLabel1;
+    private JLabel jLabel2;
+    private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JLabel jLabel5;
+    private JScrollPane jScrollPane2;
+    private JScrollPane jScrollPane3;
+    private JLabel labelSection1;
+    private JLabel lblConcept;
+    private JLabel lblCreateAt;
+    private JLabel lblCreateBy;
+    private JLabel lblEntryCeckNumber;
+    private JLabel lblEntryDate;
+    private JLabel lblEntryDocumentNumber;
+    private JLabel lblEntryName;
+    private JLabel lblRecordAccount;
+    private JLabel lblRecordAmount;
+    private JLabel lblRecordReference;
+    private JLabel lblRecordType;
+    private JLabel lblSave;
+    private JLabel lblTitle;
+    private JLabel lblUpdate;
+    private JLabel lblUpdateAt;
+    private JLabel lblUpdateBy;
+    private JLabel lblVersion;
+    private JPanel pnlAside;
+    private JPanel pnlEntryForm;
+    private JPanel pnlRecordForm;
+    private JPanel pnlSourceDocuments;
+    private JRadioButton rbtRCredit;
+    private JRadioButton rbtRDebit;
+    private JSeparator sepaSection1;
+    private LocalDateSpinner spnJDate;
+    private JSpinner spnJDocNumber;
+    private JSpinner spnRAccountNumber;
+    private JSpinner spnRAmount;
+    private JTextArea taJConcept;
+    private CustomTable<RecordTableRow> tblRecord;
+    private JTextField txtJCheckNumber;
+    private JTextField txtJName;
+    private JTextField txtRReference;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -7,8 +7,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.nutrehogar.sistemacontable.model.JournalEntry_.date;
-
 public record JournalData(
         @NotNull Long journalId,
         @NotNull LocalDate date,

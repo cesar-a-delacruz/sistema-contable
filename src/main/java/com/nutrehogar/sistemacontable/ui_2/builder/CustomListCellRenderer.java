@@ -1,6 +1,7 @@
 package com.nutrehogar.sistemacontable.ui_2.builder;
 
 import com.nutrehogar.sistemacontable.model.*;
+import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.crud.AccountSubtypeMinData;
 
 import javax.swing.*;
@@ -26,6 +27,7 @@ public class CustomListCellRenderer extends DefaultListCellRenderer {
                 setText(AccountNumber.getFormattedNumber(number));
                 setToolTipText(name);
             }
+            case Period(var _, var name) -> setText(String.valueOf(name));
             case null -> setText("");
             default -> setText(value.toString());
         }

@@ -6,10 +6,13 @@ import com.nutrehogar.sistemacontable.model.Account;
 import com.nutrehogar.sistemacontable.model.AccountType;
 import com.nutrehogar.sistemacontable.model.DocumentType;
 import com.nutrehogar.sistemacontable.model.User;
+import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
 import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui.crud.RecordTableData;
+import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTable;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
@@ -34,13 +37,13 @@ import static java.util.stream.Collectors.*;
 @Getter
 public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
     @NotNull
-    private final LocalDateSpinnerModel spnModelStartDate;
+    private final CustomComboBoxModel<Period> cbxModelPeriod;
     @NotNull
-    private final LocalDateSpinnerModel spnModelEndDate;
+    private final SpinnerNumberModel spnModelMonth;
     public TrialBalanceView(@NotNull User user, @NotNull Consumer<Long> editJournal) {
         super(user, "Libro Diario");
-        this.spnModelStartDate = new LocalDateSpinnerModel();
-        this.spnModelEndDate = new LocalDateSpinnerModel();
+        this.cbxModelPeriod = new CustomComboBoxModel<>();
+        this.spnModelMonth = new SpinnerNumberModel(LocalDate.now().getMonthValue(), 1, 12, 1);
         this.tblModel = new CustomTableModel<>("Fecha", "Comprobante", "Tipo", "Cuenta", "Referencia", "Débito", "Crédito", "Saldo") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
@@ -79,7 +82,24 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
             }
         };
         initComponents();
-        loadData();
+        new FromTransactionWorker<>(
+                session -> new AccountingPeriodQuery_(session).findAllMinData(),
+                periods -> {
+                    if (periods.isEmpty()) {
+                        showWarning("No hay periodos disponibles, antes de continuar debe crear al menos uno");
+                        return;
+                    }
+                    cbxModelPeriod.setData(periods);
+
+                    var thisYear = LocalDate.now().getYear();
+                    for (var period : periods)
+                        if (period.year() == thisYear)
+                            cbxModelPeriod.setSelectedItem(period);
+
+                    loadData();
+                },
+                this::showError
+        ).execute();
         btnEdit.setEnabled(false);
         tblData.setOnDeselected(() -> btnEdit.setEnabled(false));
         tblData.setOnSelected(e -> {
@@ -96,17 +116,22 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
             }
             tblData.setEmpty();
         }));
-        btnFilter.addActionListener(_->loadData());
-
+        cbxPeriod.addActionListener(_->loadData());
+        spnMonth.addChangeListener(_ -> loadData());
+        btnFilter.addActionListener(_ -> loadData());
     }
 
     public void loadData() {
         tblData.setEmpty();
-        var end = spnModelEndDate.getValue();
-        var start = spnModelStartDate.getValue();
+        var period = cbxModelPeriod.getSelectedItem();
+        if (period == null) {
+            showWarning("El periodo seleccionado no es valido");
+            return;
+        }
+        var month = getSpnModelMonth().getNumber().intValue();
         new FromTransactionWorker<>(
                 session -> {
-                    var journal = new BussinessQuery_(session).findJournalByDateRange(start, end);
+                    var journal = new BussinessQuery_(session).findJournalByPeriodIdAndMonth(period.id(), month);
                     var trialBalance = new ArrayList<TrialBalanceRow>(journal.size());
                     var groupByAccountType = journal
                             .stream()
@@ -164,139 +189,132 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new JPanel();
-        pnlAside = new JPanel();
-        pnlOperations = new JPanel();
-        btnFilter = new JButton();
-        lblFilter = new JLabel();
-        spnStartDate = new LocalDateSpinner(spnModelStartDate);
-        lblStart = new JLabel();
-        btnResetStartDate = new JButton();
-        btnResetEndDate = new JButton();
-        spnEndDate = new LocalDateSpinner(spnModelEndDate);
-        lblEnd = new JLabel();
-        btnEdit = new JButton();
-        lblEdit = new JLabel();
-        btnGenerateReport = new JButton();
-        jScrollPane2 = new JScrollPane();
-        tblData = new CustomTable(tblModel);
-        lblTitle = new JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        pnlAside = new javax.swing.JPanel();
+        pnlOperations = new javax.swing.JPanel();
+        btnFilter = new javax.swing.JButton();
+        lblFilter = new javax.swing.JLabel();
+        btnEdit = new javax.swing.JButton();
+        lblEdit = new javax.swing.JLabel();
+        spnMonth = new javax.swing.JSpinner(spnModelMonth);
+        cbxPeriod = new com.nutrehogar.sistemacontable.ui_2.component.CustomComboBox<>(cbxModelPeriod);
+        lblStart = new javax.swing.JLabel();
+        lblEnd = new javax.swing.JLabel();
+        btnGenerateReport = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
+        lblTitle = new javax.swing.JLabel();
 
-        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 591, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 479, Short.MAX_VALUE)
         );
 
         setOpaque(false);
-        setPreferredSize(new Dimension(524, 664));
+        setPreferredSize(new java.awt.Dimension(524, 664));
 
         pnlAside.setOpaque(false);
 
-        pnlOperations.setBorder(BorderFactory.createTitledBorder("Operaciones"));
+        pnlOperations.setBorder(javax.swing.BorderFactory.createTitledBorder("Operaciones"));
         pnlOperations.setOpaque(false);
 
         btnFilter.setText("Aplicar");
 
         lblFilter.setLabelFor(btnFilter);
         lblFilter.setText("<html><p>Muestra los datos de registros que coincidan con el período contable</p></html>");
-        lblFilter.setVerticalAlignment(SwingConstants.TOP);
-        lblFilter.setPreferredSize(new Dimension(250, 40));
-
-        lblStart.setHorizontalAlignment(SwingConstants.RIGHT);
-        lblStart.setLabelFor(spnStartDate);
-        lblStart.setText("Inicio de período:");
-
-        btnResetStartDate.setText("Restablecer");
-
-        btnResetEndDate.setText("Restablecer");
-
-        lblEnd.setHorizontalAlignment(SwingConstants.RIGHT);
-        lblEnd.setLabelFor(spnEndDate);
-        lblEnd.setText("Final de período:");
+        lblFilter.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblFilter.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnEdit.setText("Editar");
 
         lblEdit.setLabelFor(btnEdit);
         lblEdit.setText("<html><p>Editar registro seleccionado</p></html>");
-        lblEdit.setVerticalAlignment(SwingConstants.TOP);
-        lblEdit.setPreferredSize(new Dimension(250, 40));
+        lblEdit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblEdit.setPreferredSize(new java.awt.Dimension(250, 40));
 
-        GroupLayout pnlOperationsLayout = new GroupLayout(pnlOperations);
+        cbxPeriod.setModel(cbxModelPeriod);
+
+        lblStart.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblStart.setText("Período:");
+
+        lblEnd.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblEnd.setText("Mes del período:");
+
+        javax.swing.GroupLayout pnlOperationsLayout = new javax.swing.GroupLayout(pnlOperations);
         pnlOperations.setLayout(pnlOperationsLayout);
         pnlOperationsLayout.setHorizontalGroup(
-            pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlOperationsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(lblFilter, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(GroupLayout.Alignment.TRAILING, pnlOperationsLayout.createSequentialGroup()
-                        .addGroup(pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addComponent(lblStart, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblEnd, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                            .addComponent(spnEndDate, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(spnStartDate, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(lblEdit, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(btnResetEndDate, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnFilter, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnResetStartDate, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEdit, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlOperationsLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                            .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(pnlOperationsLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblEnd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(spnMonth)
+                            .addComponent(cbxPeriod, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         pnlOperationsLayout.setVerticalGroup(
-            pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, pnlOperationsLayout.createSequentialGroup()
+            pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlOperationsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(spnStartDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblStart)
-                    .addComponent(btnResetStartDate))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(spnEndDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxPeriod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEnd)
-                    .addComponent(btnResetEndDate))
-                .addGap(18, 18, 18)
-                .addGroup(pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(spnMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20)
+                .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnFilter)
-                    .addComponent(lblFilter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlOperationsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(lblFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlOperationsLayout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(lblEdit, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(btnEdit)))
         );
 
         btnGenerateReport.setText("Generar Reporte");
 
-        GroupLayout pnlAsideLayout = new GroupLayout(pnlAside);
+        javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);
         pnlAsideLayout.setHorizontalGroup(
-            pnlAsideLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAsideLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnlOperations, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pnlOperations, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(GroupLayout.Alignment.TRAILING, pnlAsideLayout.createSequentialGroup()
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAsideLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnGenerateReport)
                 .addGap(15, 15, 15))
         );
         pnlAsideLayout.setVerticalGroup(
-            pnlAsideLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            pnlAsideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAsideLayout.createSequentialGroup()
-                .addComponent(pnlOperations, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlOperations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGenerateReport)
                 .addContainerGap(420, Short.MAX_VALUE))
         );
@@ -308,49 +326,47 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
         lblTitle.setIcon(Theme.SVGs.TRIAL_BALANCE.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
         lblTitle.setText(LabelBuilder.build("Balance de comprobacion"));
 
-        GroupLayout layout = new GroupLayout(this);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTitle, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlAside, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblTitle, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane2))
-                    .addComponent(pnlAside, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton btnEdit;
-    private JButton btnFilter;
-    private JButton btnGenerateReport;
-    private JButton btnResetEndDate;
-    private JButton btnResetStartDate;
-    private JPanel jPanel1;
-    private JScrollPane jScrollPane2;
-    private JLabel lblEdit;
-    private JLabel lblEnd;
-    private JLabel lblFilter;
-    private JLabel lblStart;
-    private JLabel lblTitle;
-    private JPanel pnlAside;
-    private JPanel pnlOperations;
-    private LocalDateSpinner spnEndDate;
-    private LocalDateSpinner spnStartDate;
-    private CustomTable<TrialBalanceRow> tblData;
+    private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnFilter;
+    private javax.swing.JButton btnGenerateReport;
+    private com.nutrehogar.sistemacontable.ui_2.component.CustomComboBox<Period> cbxPeriod;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblEdit;
+    private javax.swing.JLabel lblEnd;
+    private javax.swing.JLabel lblFilter;
+    private javax.swing.JLabel lblStart;
+    private javax.swing.JLabel lblTitle;
+    private javax.swing.JPanel pnlAside;
+    private javax.swing.JPanel pnlOperations;
+    private javax.swing.JSpinner spnMonth;
+    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<TrialBalanceRow> tblData;
     // End of variables declaration//GEN-END:variables
 }

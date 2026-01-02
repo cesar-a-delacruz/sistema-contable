@@ -2,6 +2,7 @@ package com.nutrehogar.sistemacontable;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.nutrehogar.sistemacontable.config.ConfigLoader;
+import com.nutrehogar.sistemacontable.config.PasswordHasher;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.ui.DashboardView;
@@ -25,7 +26,38 @@ public class Main {
             log.info("Application stopped");
         })));
 
-//        HibernateUtil.getSessionFactory().inTransaction(session -> session.persist(new AccountingPeriod(2025, 1, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), false, adminUser.getUsername())));
+//        HibernateUtil
+//                .getSessionFactory()
+//                .inTransaction(session ->
+//                        session.persist(new AccountingPeriod(2025, 1, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), false, adminUser.getUsername())));
+//
+//        HibernateUtil
+//                .getSessionFactory()
+//                .inTransaction(session -> {
+//                    for (var type : AccountType.values()) {
+//                        for (int i = 1000; i < 1010; i++) {
+//                            session.persist(new AccountSubtype(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
+//                        }
+//                    }
+//                });
+//        HibernateUtil
+//                .getSessionFactory()
+//                .inTransaction(session -> {
+//                    for (var type : AccountType.values()) {
+//                        for (int i = 1000; i < 1020; i++) {
+//                            session.persist(new Account(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
+//                        }
+//                    }
+//                });
+//
+//
+//        HibernateUtil
+//                .getSessionFactory()
+//                .inTransaction(session -> {
+//                    for (int i = 1000; i < 1020; i++) {
+//                        session.persist(new User(PasswordHasher.hashPassword("123456"), "user-" + i, i % 2 == 0, Permission.CONTRIBUTE, adminUser.getUsername()));
+//                    }
+//                });
 
         try {
             var frame = new JFrame();

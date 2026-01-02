@@ -1,6 +1,7 @@
 package com.nutrehogar.sistemacontable.query;
 
 import com.nutrehogar.sistemacontable.model.AccountingPeriod;
+import com.nutrehogar.sistemacontable.ui.Period;
 import org.hibernate.annotations.processing.Find;
 import org.hibernate.annotations.processing.HQL;
 
@@ -11,6 +12,9 @@ public interface AccountingPeriodQuery extends Query {
 
     @HQL("select distinct a from AccountingPeriod a order by a.year asc")
     List<AccountingPeriod> findAll();
+
+    @HQL("select distinct new Period(a.id, a.year) from AccountingPeriod a order by a.year asc")
+    List<Period> findAllMinData();
 
     @Find
     Optional<AccountingPeriod> findById(Integer id);
