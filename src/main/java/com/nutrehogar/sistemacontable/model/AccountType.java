@@ -28,38 +28,38 @@ import static java.math.MathContext.DECIMAL128;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum AccountType {
-    ASSETS(1, "ACTIVO") {
+    ASSETS(1, "Activo") {
         @Override
         public BigDecimal getBalance(BigDecimal balance, BigDecimal credit, BigDecimal debit) {
             return balance.add(debit, DECIMAL128).subtract(credit, DECIMAL128).setScale(2, RoundingMode.HALF_UP);
         }
     },
-    LIABILITIES(2, "PASIVO") {
+    LIABILITIES(2, "Pasivo") {
         @Override
         public BigDecimal getBalance(BigDecimal balance, BigDecimal credit, BigDecimal debit) {
             return balance.add(credit, DECIMAL128).subtract(debit, DECIMAL128).setScale(2, RoundingMode.HALF_UP);
         }
     },
-    EQUITY(3, "PATRIMONIO") {
+    EQUITY(3, "Patrimonio") {
         @Override
         public BigDecimal getBalance(BigDecimal balance, BigDecimal credit, BigDecimal debit) {
             return balance.add(credit, DECIMAL128).subtract(debit, DECIMAL128).setScale(2, RoundingMode.HALF_UP);
         }
     },
-    INCOME(4, "INGRESO") {
+    INCOME(4, "Ingreso") {
         @Override
         public BigDecimal getBalance(BigDecimal balance, BigDecimal credit, BigDecimal debit) {
             return balance.add(credit, DECIMAL128).subtract(debit, DECIMAL128).setScale(2, RoundingMode.HALF_UP);
         }
     },
-    EXPENSE(5, "GASTO") {
+    EXPENSE(5, "Gasto") {
         @Override
         public BigDecimal getBalance(BigDecimal balance, BigDecimal credit, BigDecimal debit) {
             return balance.add(debit, DECIMAL128).subtract(credit, DECIMAL128).setScale(2, RoundingMode.HALF_UP);
         }
     },
     // TODO: El metodo no esta bien implementado
-    COST(6, "COSTO") {
+    COST(6, "Costo") {
         @Override
         public BigDecimal getBalance(BigDecimal balance, BigDecimal credit, BigDecimal debit) {
             return balance.add(credit, DECIMAL128).subtract(debit, DECIMAL128).setScale(2, RoundingMode.HALF_UP);

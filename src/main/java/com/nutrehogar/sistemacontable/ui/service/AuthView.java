@@ -7,6 +7,7 @@ import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.UserQuery_;
+import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui_2.builder.UserListCellRenderer;
 
 import java.awt.*;
@@ -39,7 +40,19 @@ public class AuthView extends JDialog {
         this.adminUser = adminUser;
         this.userListModel = new DefaultListModel<>();
         initComponents();
-        new UserListDataLoader().execute();
+        new FromTransactionWorker<>(
+                session -> new UserQuery_(session).findAllEnables(),
+                users -> {
+                    userListModel.removeAllElements();
+                    userListModel.addAll(users);
+                    userListModel.addElement(adminUser);
+                    if (!userListModel.isEmpty()) {
+                        lstUser.setSelectedIndex(0);
+                        btnOk.setEnabled(true);
+                    }
+                },
+                this::showError
+        ).execute();
 
         var cancelName = "cancel";
 
@@ -78,7 +91,7 @@ public class AuthView extends JDialog {
             if(selectedUser.isAdmin()
                     && selectedUser.getUsername().equals(adminUser.getUsername())) {
                 if (!insertPass.equals(adminUser.getPassword())) {
-                    showError("Contraseña Incorrecta.", new ApplicationException("incorrect Password"));
+                    showError(new ApplicationException("Contraseña Incorrecta."));
                     return;
                 }
                 autenicateUser = adminUser;
@@ -90,7 +103,7 @@ public class AuthView extends JDialog {
             }
 
             if(!PasswordHasher.verifyPassword(insertPass, selectedUser.getPassword())) {
-                showError("Contraseña Incorrecta.", new ApplicationException("incorrect Password"));
+                showError(new ApplicationException("Contraseña Incorrecta."));
                 return;
             }
 
@@ -102,38 +115,8 @@ public class AuthView extends JDialog {
         });
 
     }
-    protected class UserListDataLoader extends SwingWorker<List<User>, Void>{
-        @Override
-        protected List<User> doInBackground() {
-            AtomicReference<List<User>> list = new AtomicReference<>(List.of());
-            try{
-                HibernateUtil.getSessionFactory().inTransaction(session -> list.set(new UserQuery_(session).findAll()));
-            } catch (Exception e) {
-                showError("Error al obtener los subtipos de cuentas", e);
-            }
-            return list.get();
-        }
-
-        @Override
-        protected void done() {
-            try {
-                userListModel.removeAllElements();
-                userListModel.addAll(get());
-                userListModel.addElement(adminUser);
-                if (!userListModel.isEmpty()) {
-                    lstUser.setSelectedIndex(0);
-                    btnOk.setEnabled(true);
-                }
-            } catch (Exception e) {
-                showError("Error al cargar datos de usuario",
-                        new ApplicationException("Failure to find all users.", e));
-            }
-        }
-    }
-    void showError(@NotNull String message, @Nullable Exception cause) {
-        if (cause != null)
-            log.error(cause.getMessage(), cause);
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    void showError(@Nullable ApplicationException cause) {
+        JOptionPane.showMessageDialog(this, cause.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     /**

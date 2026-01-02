@@ -22,7 +22,7 @@ public class CustomListCellRenderer extends DefaultListCellRenderer {
             }
             case DocumentType dt -> setText(dt.getName());
             case Permission p -> setText(p.getName());
-            case AccountSubtypeMinData(var number, var name, var _) -> {
+            case AccountSubtypeMinData(var _, var name, var number) -> {
                 setText(AccountNumber.getFormattedNumber(number));
                 setToolTipText(name);
             }

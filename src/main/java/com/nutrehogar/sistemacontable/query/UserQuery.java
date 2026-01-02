@@ -16,7 +16,7 @@ public interface UserQuery extends Query {
     @Find
     Optional<User> findById(Integer id);
 
-    @HQL("select distinct a from User a")
-    List<User> findAccountsAndSubtypes();
+    @HQL("select distinct a from User a where a.enabled = true")
+    List<User> findAllEnables();
 
 }

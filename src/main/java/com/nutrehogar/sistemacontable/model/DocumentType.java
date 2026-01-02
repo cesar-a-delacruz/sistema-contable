@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum DocumentType {
-    INCOME("INGRESO"), EXPENDITURE("EGRESO"), ADJUSTMENT("AJUSTE");
+    INCOME("Ingreso"), EXPENDITURE("Egreso"), ADJUSTMENT("Ajuste");
 
     String name;
 }
