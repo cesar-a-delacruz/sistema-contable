@@ -9,7 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -50,13 +52,13 @@ public class JournalEntry extends AuditableEntity {
     @Basic(optional = false)
     @NotNull LocalDate date;
 
-    @OneToMany(mappedBy = LedgerRecord_.ENTRY, cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
-    @NotNull Set<LedgerRecord> records = new HashSet<>();
+    @OneToMany(mappedBy = LedgerRecord_.ENTRY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @NotNull List<LedgerRecord> records = new ArrayList<>();
 
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "period_id", nullable = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
-    @NotNull AccountingPeriod period;
+    @Nullable AccountingPeriod period;
 
     public JournalEntry(@NotNull Integer number, @NotNull DocumentType type, @NotNull String name, @NotNull String concept, @NotNull String checkNumber, @NotNull LocalDate date, @NotNull String updatedBy) {
         super(updatedBy);

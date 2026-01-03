@@ -44,9 +44,9 @@
                   <Component id="pnlAside" min="-2" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="lblTitle" min="-2" pref="62" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="pnlEntryForm" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane3" pref="0" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="pnlSourceDocuments" min="-2" max="-2" attributes="0"/>
@@ -349,9 +349,10 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="lblEntryCeckNumber" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="lblStart" max="32767" attributes="0"/>
+                      <Component id="lblEntryCeckNumber" alignment="0" max="32767" attributes="0"/>
                       <Component id="lblConcept" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Component id="lblEntryName" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -365,25 +366,30 @@
                               <Component id="btnJSave" min="-2" pref="115" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="txtJName" pref="82" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="lblEntryDocumentNumber" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="spnJDocNumber" min="-2" pref="105" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="cbxJDocType" min="-2" pref="116" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnJDelete" min="-2" pref="115" max="-2" attributes="0"/>
-                      </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="txtJCheckNumber" max="32767" attributes="0"/>
+                          <Component id="cbxPeriod" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="lblEntryDate" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="spnJDate" min="-2" pref="118" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnJUpdate" min="-2" pref="115" max="-2" attributes="0"/>
+                          <Component id="lblEntryDocumentNumber" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="spnJDocNumber" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="cbxJDocType" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="113" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="txtJCheckNumber" max="32767" attributes="0"/>
+                              <Component id="txtJName" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="btnJUpdate" alignment="1" min="-2" pref="115" max="-2" attributes="0"/>
+                              <Component id="btnJDelete" alignment="1" min="-2" pref="115" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -399,20 +405,31 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="lblEntryName" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="txtJName" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lblEntryDocumentNumber" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cbxJDocType" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="spnJDocNumber" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lblEntryCeckNumber" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
                       <Component id="txtJCheckNumber" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblEntryDate" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="spnJDate" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnJUpdate" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                          <Component id="lblEntryDocumentNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spnJDocNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbxJDocType" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lblEntryDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spnJDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lblStart" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbxPeriod" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="btnJAdd" min="-2" max="-2" attributes="0"/>
@@ -422,7 +439,7 @@
                       <Component id="jScrollPane2" min="-2" pref="66" max="-2" attributes="0"/>
                       <Component id="lblConcept" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -476,7 +493,7 @@
         <Component class="javax.swing.JLabel" name="lblEntryDocumentNumber">
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
-            <Property name="text" type="java.lang.String" value="No Documento:"/>
+            <Property name="text" type="java.lang.String" value="Doc:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lblEntryDate">
@@ -563,6 +580,23 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JSpinner(spnModelJDocNumber)"/>
           </AuxValues>
         </Component>
+        <Component class="javax.swing.JLabel" name="lblStart">
+          <Properties>
+            <Property name="horizontalAlignment" type="int" value="4"/>
+            <Property name="text" type="java.lang.String" value="Per&#xed;odo:"/>
+          </Properties>
+        </Component>
+        <Component class="com.nutrehogar.sistemacontable.ui_2.component.CustomComboBox" name="cbxPeriod">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="cbxModelPeriod" type="code"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.component.CustomComboBox&lt;&gt;(cbxModelPeriod)"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;AccountingPeriod&gt;"/>
+          </AuxValues>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="pnlSourceDocuments">
@@ -584,7 +618,7 @@
                       <Component id="btnGeneratePaymentVoucher" max="32767" attributes="0"/>
                       <Component id="btnGenerateRegistrationForm" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel1" pref="90" max="32767" attributes="0"/>
                       <Component id="jLabel2" max="32767" attributes="0"/>
@@ -716,7 +750,7 @@
         <Component class="com.nutrehogar.sistemacontable.ui_2.builder.CustomTable" name="tblRecord">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(recordController.tblModelRecord)"/>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;RecordTableData&gt;"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;RecordTableRow&gt;"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -735,7 +769,7 @@
           <Connection code="Theme.SVGs.FORM.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD)" type="code"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="LabelBuilder.build(&quot;Subtipos de Cuentas&quot;)" type="code"/>
+          <Connection code="LabelBuilder.build(&quot;Formulario de Entrada&quot;)" type="code"/>
         </Property>
       </Properties>
     </Component>

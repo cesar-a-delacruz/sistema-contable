@@ -1,6 +1,5 @@
 package com.nutrehogar.sistemacontable.ui_2.builder;
 
-import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.ui.business.AccountMinData;
 
@@ -53,7 +52,7 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
                 setToolTipText(account.getName());
             }
             case AccountMinData(var number, var name, var _) -> {
-                setText(AccountNumber.getFormattedNumber(number));
+                setText(AccountEntity.getFormattedNumber(number));
                 setToolTipText(name);
             }
             case AccountType accountType -> setText(accountType.getName());

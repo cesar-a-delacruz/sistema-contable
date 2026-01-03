@@ -27,12 +27,14 @@ public class LocalDateSpinnerModel extends AbstractSpinnerModel {
      * Fecha minima que puede optiene el valor del spinner (opcional)
      */
     @Getter
+    @Setter
     @Nullable
     private LocalDate minDate;
     /**
      * Fecha maxima que puede optiene el valor del spinner (opcional)
      */
     @Getter
+    @Setter
     @Nullable
     private LocalDate maxDate;
     /**

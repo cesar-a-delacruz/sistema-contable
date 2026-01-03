@@ -1,6 +1,6 @@
 package com.nutrehogar.sistemacontable.exception;
 
-public class InvalidFieldException extends AppException {
+public class InvalidFieldException extends ApplicationException {
     public InvalidFieldException() {
         super();
     }

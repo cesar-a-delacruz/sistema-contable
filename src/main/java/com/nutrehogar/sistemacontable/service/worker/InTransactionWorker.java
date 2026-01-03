@@ -3,6 +3,7 @@ package com.nutrehogar.sistemacontable.service.worker;
 import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
+import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

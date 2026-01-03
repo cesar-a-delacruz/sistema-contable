@@ -1,5 +1,6 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
+import com.nutrehogar.sistemacontable.model.AccountingPeriod;
 import com.nutrehogar.sistemacontable.model.DocumentType;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +13,8 @@ public record JournalFormData(
         @NotNull String concept,
         @NotNull String checkNumber,
         @NotNull LocalDate date,
+
+        @NotNull AccountingPeriod period,
         @NotNull String user
         ) {
 }

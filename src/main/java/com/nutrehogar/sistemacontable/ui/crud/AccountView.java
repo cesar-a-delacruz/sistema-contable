@@ -1,6 +1,5 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
-import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
@@ -17,17 +16,11 @@ import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
-import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 @Getter
@@ -48,7 +41,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var dto = data.get(rowIndex);
                 return switch (columnIndex) {
-                    case 0 -> AccountNumber.getFormattedNumber(dto.number());
+                    case 0 -> AccountEntity.getFormattedNumber(dto.number());
                     case 1 -> dto.name();
                     case 2 -> dto.type();
                     case 3 -> dto.subtypeName() == null ? null : dto.subtypeName();
@@ -120,12 +113,11 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
         if (subtype == null)
             throw new InvalidFieldException("El subtipo no puede estar vacío");
 
-
         Optional<Integer> subtypeId = Optional.ofNullable(rbAddSubtype.isSelected() ? subtype.id() : null);
 
         return new AccountFormData(
                 txtName.getText(),
-                AccountNumber.generateNumber(spnModelNumber.getNumber().intValue(), type),
+                AccountEntity.generateNumber(spnModelNumber.getNumber().intValue(), type),
                 type,
                 subtypeId,
                 user.getUsername()
@@ -135,7 +127,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     @Override
     public void setEntityDataInForm(@NotNull AccountData entity) {
         txtName.setText(entity.name());
-        spnModelNumber.setValue(AccountNumber.getSubNumber(entity.number()));
+        spnModelNumber.setValue(AccountEntity.getSubNumber(entity.number()));
         cbxType.setSelectedItem(entity.type());
 
         if (entity.subtypeId() == null) {
@@ -199,7 +191,24 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
                     .ifPresentOrElse(
                             accountData ->
                                     new InTransactionWorker(
-                                            session -> new AccountQuery_(session).findById(accountData.id()).ifPresent(session::remove),
+                                            session -> {
+                                                var queries = new AccountQuery_(session);
+                                                var response = queries.findById(accountData.id());
+
+                                                if (response.isEmpty())
+                                                    throw new InvalidFieldException("La cuenta no pudo ser encontrada");
+
+                                                var account = response.get();
+
+                                                if (queries.isUsed(account))
+                                                    throw new InvalidFieldException(
+                                                            LabelBuilder.of("Existen Documentos que usan esta cuenta")
+                                                                    .p("Para eliminarla debe eliminar primero esos registros, puede hacerlo desde la pantalla de Mayor General")
+                                                                    .build()
+                                                    );
+
+                                                session.remove(account);
+                                            },
                                             this::loadData,
                                             this::showError
                                     ).execute(),

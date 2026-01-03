@@ -29,14 +29,14 @@ public class Main {
 //        HibernateUtil
 //                .getSessionFactory()
 //                .inTransaction(session ->
-//                        session.persist(new AccountingPeriod(2025, 1, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), false, adminUser.getUsername())));
+//                        session.persist(new AccountingPeriod(2025,  LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), false, adminUser.getUsername())));
 //
 //        HibernateUtil
 //                .getSessionFactory()
 //                .inTransaction(session -> {
 //                    for (var type : AccountType.values()) {
 //                        for (int i = 1000; i < 1010; i++) {
-//                            session.persist(new AccountSubtype(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
+//                            session.persist(new AccountSubtype(Account.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
 //                        }
 //                    }
 //                });
@@ -45,7 +45,7 @@ public class Main {
 //                .inTransaction(session -> {
 //                    for (var type : AccountType.values()) {
 //                        for (int i = 1000; i < 1020; i++) {
-//                            session.persist(new Account(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
+//                            session.persist(new Account(Account.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
 //                        }
 //                    }
 //                });

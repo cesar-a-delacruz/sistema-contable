@@ -1,5 +1,6 @@
 package com.nutrehogar.sistemacontable.query;
 
+import com.nutrehogar.sistemacontable.model.AccountingPeriod;
 import com.nutrehogar.sistemacontable.model.DocumentType;
 import com.nutrehogar.sistemacontable.model.JournalEntry;
 import com.nutrehogar.sistemacontable.model.JournalEntry;
@@ -20,11 +21,11 @@ public interface JournalEntryQuery extends Query {
     @HQL("select coalesce(max(j.number), 2) from JournalEntry j")
     Integer findNexTDocNumber();
 
-    @HQL("select (coalesce(max(j.number), 1) + 1) from JournalEntry j where j.type = :type")
-    Integer findNextDocNumberByType(DocumentType type);
+    @HQL("select (coalesce(max(j.number), 1) + 1) from JournalEntry j where j.period = :period and j.type = :type")
+    Integer findNextNumByTypeAndPeriod(DocumentType type, AccountingPeriod  period);
     @HQL("select j from JournalEntry j inner join fetch j.period where j.id = :id")
     Optional<JournalEntry> findAndPeriodById(Long id);
 
-    @HQL("select cast(count(j.id) as boolean) from JournalEntry j where j.type = :type and j.number = :number")
-    boolean existByDocNumAndType(DocumentType type, Integer number);
+    @HQL("select cast(count(j.id) as boolean) from JournalEntry j where j.period = :period and j.type = :type and j.number = :number")
+    boolean existByNumAndTypeAndPeriod(DocumentType type, Integer number, AccountingPeriod period);
 }

@@ -9,9 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -20,32 +18,14 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "accounts")
-public class Account extends AuditableEntity {
-    @Id
-    @Column(nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Nullable Integer id;
+public class Account extends AccountEntity {
 
-    @Column(nullable = false, unique = true)
-    @Basic(optional = false)
-    @NaturalId(mutable = true)
-    @NotNull Integer number;
-
-    @Column(nullable = false, unique = true)
-    @Basic(optional = false)
-    @NotNull String name;
-
-    @Enumerated(EnumType.STRING)
-    @Basic(optional = false)
-    @Column(name = "account_type", nullable = false)
-    @NotNull AccountType type;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @Nullable AccountSubtype subtype;
 
-    @OneToMany(mappedBy = LedgerRecord_.ACCOUNT, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @NotNull Set<LedgerRecord> records = new HashSet<>();
+    @OneToMany(mappedBy = LedgerRecord_.ACCOUNT, fetch = FetchType.LAZY)
+    @NotNull List<LedgerRecord> records = new ArrayList<>();
 
     public Account(@NotNull String updatedBy) {
         super(updatedBy);
@@ -62,18 +42,6 @@ public class Account extends AuditableEntity {
         super(updatedBy);
         this.subtype = subtype;
         this.name = name;
-    }
-
-    public void setNumber(@NotNull String subNumber, @NotNull AccountType type) {
-        this.number = AccountNumber.generateNumber(subNumber, type);
-    }
-
-    public Integer getSubNumber() {
-        return AccountNumber.getSubNumber(number);
-    }
-
-    public String getFormattedNumber() {
-        return AccountNumber.getFormattedNumber(number);
     }
 
     @Override

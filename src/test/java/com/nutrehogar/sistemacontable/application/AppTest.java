@@ -2,14 +2,12 @@ package com.nutrehogar.sistemacontable.application;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.model.Account;
-import com.nutrehogar.sistemacontable.model.AccountNumber;
+import com.nutrehogar.sistemacontable.model.AccountEntity;
 import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.AccountType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
 
@@ -31,7 +29,7 @@ class AppTest {
         HibernateUtil.getSessionFactory().inTransaction(session -> {
             for (var type : AccountType.values()) {
                 for (int i = 1000; i < 1010; i++) {
-                    session.persist(new AccountSubtype(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
+                    session.persist(new AccountSubtype(AccountEntity.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
                 }
             }
         });
@@ -42,7 +40,7 @@ class AppTest {
         HibernateUtil.getSessionFactory().inTransaction(session -> {
             for (var type : AccountType.values()) {
                 for (int i = 1000; i < 1020; i++) {
-                    session.persist(new Account(AccountNumber.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
+                    session.persist(new Account(AccountEntity.generateNumber(String.valueOf(i), type), type.getName() + " " + i, type, "Root"));
                 }
             }
         });

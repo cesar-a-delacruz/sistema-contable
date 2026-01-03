@@ -25,22 +25,22 @@ public class LedgerRecord extends AuditableEntity {
     @Nullable Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "journal_entry_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Nullable JournalEntry entry;
+    @NotNull JournalEntry entry;
 
     @Column(nullable = false, length = 600)
     @Basic(optional = false)
     @NotNull String reference;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "account_id", nullable = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @Nullable Account account;
-
 
     @Basic(optional = false)
     @Column(precision = 15, scale = 2, nullable = false)
     @NotNull BigDecimal debit;
-
 
     @Basic(optional = false)
     @Column(precision = 15, scale = 2, nullable = false)

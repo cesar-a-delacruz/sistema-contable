@@ -2,9 +2,8 @@ package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
-import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
-import com.nutrehogar.sistemacontable.model.AccountNumber;
+import com.nutrehogar.sistemacontable.model.AccountEntity;
 import com.nutrehogar.sistemacontable.model.AccountSubtype;
 import com.nutrehogar.sistemacontable.model.AccountType;
 
@@ -16,12 +15,9 @@ import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
-import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.List;
 
 
 public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CRUDView<AccountSubtype, AccountSubtypeFormData> {
@@ -82,7 +78,7 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
         if (type == null)
             throw new InvalidFieldException("El tipo de cuenta no puede estar vacío");
 
-        return new AccountSubtypeFormData(txtName.getText(), AccountNumber.generateNumber(spnModelNumber.getNumber().intValue(), type), type, user.getUsername());
+        return new AccountSubtypeFormData(txtName.getText(), AccountEntity.generateNumber(spnModelNumber.getNumber().intValue(), type), type, user.getUsername());
     }
 
     @Override

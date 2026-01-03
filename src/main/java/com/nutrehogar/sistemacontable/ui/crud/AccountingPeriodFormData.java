@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public record AccountingPeriodFormData(
         @NotNull Integer year,
-        @NotNull Integer periodNumber,
         @NotNull LocalDate startDate,
         @NotNull LocalDate endDate,
         @NotNull Boolean closed,

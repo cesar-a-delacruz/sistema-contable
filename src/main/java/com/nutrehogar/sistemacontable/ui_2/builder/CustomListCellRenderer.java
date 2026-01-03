@@ -24,10 +24,11 @@ public class CustomListCellRenderer extends DefaultListCellRenderer {
             case DocumentType dt -> setText(dt.getName());
             case Permission p -> setText(p.getName());
             case AccountSubtypeMinData(var _, var name, var number) -> {
-                setText(AccountNumber.getFormattedNumber(number));
+                setText(AccountEntity.getFormattedNumber(number));
                 setToolTipText(name);
             }
             case Period(var _, var name) -> setText(String.valueOf(name));
+            case AccountingPeriod ap -> setText(ap.getYear().toString());
             case null -> setText("");
             default -> setText(value.toString());
         }
