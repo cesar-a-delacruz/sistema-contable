@@ -1,6 +1,5 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
-import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import org.jetbrains.annotations.NotNull;
 

@@ -57,7 +57,7 @@ public class AccountingEntryView extends View{
     @NotNull
     private final CustomComboBoxModel<AccountingPeriod> cbxModelPeriod;
 
-    public AccountingEntryView(@NotNull User user, @NotNull Optional<Long> journalId) {
+    public AccountingEntryView(@NotNull User user) {
         super(user);
         this.entityName = "Entrada de Diario";
         this.spnModelJDate = new LocalDateSpinnerModel();
@@ -66,6 +66,40 @@ public class AccountingEntryView extends View{
         this.spnModelJDocNumber = new SpinnerNumberModel(2, 2, Integer.MAX_VALUE, 1);
         recordController = new RecordController();
         initComponents();
+        recordController.init();
+        txtJName.putClientProperty("JTextField.placeholderText", "Ventas S.A.");
+        taJConcept.putClientProperty("JTextArea.placeholderText", "Cancelación de factura al crédito");
+        txtJCheckNumber.putClientProperty("JTextField.placeholderText", "4987");
+        cbxPeriod.addActionListener(_ -> {
+            var period = cbxModelPeriod.getSelectedItem();
+            var date = spnModelJDate.getValue();
+            if(period == null){
+                return;
+            }
+            spnModelJDate.setValue(LocalDate.of(period.getYear(), date.getMonth(), date.getDayOfMonth()));
+            spnModelJDate.setMinDate(period.getStartDate());
+            spnModelJDate.setMaxDate(period.getEndDate());
+            findNexNumber();
+        });
+        cbxJDocType.addActionListener(_-> findNexNumber());
+        cbxJDocType.setRenderer(new CustomListCellRenderer());
+        txtRReference.addActionListener(_ -> btnRSave.doClick());
+        btnJSave.addActionListener(_ -> save());
+        btnJAdd.addActionListener(_ -> prepareToAdd());
+        btnJDelete.addActionListener(_ -> delete());
+        prepareToAdd();
+    }
+
+    public void findNexNumber() {
+        var type = cbxModelJDocType.getSelectedItem();
+        var period = cbxModelPeriod.getSelectedItem();
+        new FromTransactionWorker<>(
+                session -> new JournalEntryQuery_(session).findNextNumByTypeAndPeriod(type, period),
+                spnModelJDocNumber::setValue,
+                this::showError
+        ).execute();
+    }
+    public void findPeriods(){
         new FromTransactionWorker<>(
                 session -> new AccountingPeriodQuery_(session).findAllOpen(),
                 periods -> {
@@ -80,36 +114,6 @@ public class AccountingEntryView extends View{
                         if(p.getYear() == thisYear)
                             cbxModelPeriod.setSelectedItem(p);
                 },
-                this::showError
-        ).execute();
-        recordController.init();
-        txtJName.putClientProperty("JTextField.placeholderText", "Ventas S.A.");
-        taJConcept.putClientProperty("JTextArea.placeholderText", "Cancelación de factura al crédito");
-        txtJCheckNumber.putClientProperty("JTextField.placeholderText", "4987");
-        cbxPeriod.addActionListener(_ -> {
-            var period = cbxModelPeriod.getSelectedItem();
-            var date = spnModelJDate.getValue();
-            spnModelJDate.setValue(LocalDate.of(period.getYear(), date.getMonth(), date.getDayOfMonth()));
-            IO.println("Period: " + period);
-            spnModelJDate.setMinDate(period.getStartDate());
-            spnModelJDate.setMaxDate(period.getEndDate());
-            findNexNumber();
-        });
-        cbxJDocType.addActionListener(_-> findNexNumber());
-        cbxJDocType.setRenderer(new CustomListCellRenderer());
-        txtRReference.addActionListener(_ -> btnRSave.doClick());
-        btnJSave.addActionListener(_ -> save());
-        btnJAdd.addActionListener(_ -> prepareToAdd());
-        btnJDelete.addActionListener(_ -> delete());
-        journalId.ifPresentOrElse(this::edit, this::prepareToAdd);
-    }
-
-    public void findNexNumber() {
-        var type = cbxModelJDocType.getSelectedItem();
-        var period = cbxModelPeriod.getSelectedItem();
-        new FromTransactionWorker<>(
-                session -> new JournalEntryQuery_(session).findNextNumByTypeAndPeriod(type, period),
-                spnModelJDocNumber::setValue,
                 this::showError
         ).execute();
     }
@@ -145,8 +149,7 @@ public class AccountingEntryView extends View{
                 user.getUsername()
         );
     }
-
-    public void edit(@NotNull Long journalEntryId) {
+    public void edit(Long journalEntryId) {
         new FromTransactionWorker<>(
                 session -> new JournalEntryQuery_(session).findAndPeriodById(journalEntryId),
                 journal -> {
@@ -163,6 +166,8 @@ public class AccountingEntryView extends View{
     }
 
     public void prepareToAdd() {
+        findPeriods();
+        recordController.clear();
         journalEntry = Optional.empty();
         btnJSave.setEnabled(true);
         btnJUpdate.setEnabled(false);
@@ -178,7 +183,6 @@ public class AccountingEntryView extends View{
         lblCreateBy.setText(NA);
         lblUpdateBy.setText(NA);
         lblVersion.setText(NA);
-        recordController.clear();
     }
 
     public void prepareToEdit(@NotNull JournalEntry journalEntry) {
@@ -214,7 +218,6 @@ public class AccountingEntryView extends View{
                 this::showError
         ).execute();
     }
-
 
     public void save() {
         if (journalEntry.isPresent()) {
@@ -281,7 +284,6 @@ public class AccountingEntryView extends View{
         }
     }
 
-
     public void update() {
 
     }
@@ -295,7 +297,6 @@ public class AccountingEntryView extends View{
         public final SpinnerNumberModel spnModelRAmount;
         @NotNull
         private final SpinnerNumberModel spnModelRAccountNumber;
-
         @NotNull
         public final String entityName;
         @NotNull
@@ -343,20 +344,12 @@ public class AccountingEntryView extends View{
             };
         }
         public void clear(){
+            loadAccounts();
             formRecords.clear();
             loadData();
         }
 
         public void init() {
-            loadData();
-            new FromTransactionWorker<>(
-                    session -> new AccountQuery_(session).findAll(),
-                    a -> {
-                        accounts.addAll(a);
-                        filterAccounts();
-                    },
-                    AccountingEntryView.this::showError
-            ).execute();
             spnRAccountNumber.setEditor(new JSpinner.NumberEditor(spnRAccountNumber, "#"));
             cbxRAccount.setRenderer(new CustomListCellRenderer());
             txtRReference.putClientProperty("JTextField.placeholderText", "Pago de factura");
@@ -368,6 +361,19 @@ public class AccountingEntryView extends View{
             btnRUpdate.addActionListener(_ -> update());
             OpRecord.getBtnDelete().addActionListener(_ -> delete());
             spnRAccountNumber.addChangeListener(_ -> filterAccounts());
+            clear();
+        }
+
+        public void loadAccounts(){
+            new FromTransactionWorker<>(
+                    session -> new AccountQuery_(session).findAll(),
+                    a -> {
+                        accounts.clear();
+                        accounts.addAll(a);
+                        filterAccounts();
+                    },
+                    AccountingEntryView.this::showError
+            ).execute();
         }
 
         public void filterAccounts() {
@@ -465,7 +471,6 @@ public class AccountingEntryView extends View{
             btnRUpdate.setEnabled(false);
         }
 
-
         public void prepareToEdit() {
             if(tblRecord.getSelected().isEmpty() || tblRecord.getSelected().get() instanceof RecordTableTotal){
                 showWarning("Seleccione un elemento de la tabla");
@@ -474,7 +479,6 @@ public class AccountingEntryView extends View{
             btnRSave.setEnabled(false);
             btnRUpdate.setEnabled(true);
         }
-
 
         public void onSelected(@NotNull RecordTableRow row) {
             if (row instanceof RecordTableTotal) {
@@ -488,13 +492,11 @@ public class AccountingEntryView extends View{
             OpRecord.getBtnPrepareToEdit().setEnabled(true);
         }
 
-
         public void onDeselected() {
             ApRecord.clear();
             OpRecord.getBtnDelete().setEnabled(false);
             OpRecord.getBtnPrepareToEdit().setEnabled(false);
         }
-
 
         public void delete() {
             if(tblRecord.getSelected().isEmpty()){
@@ -529,7 +531,6 @@ public class AccountingEntryView extends View{
                 showWarning(e);
             }
         }
-
 
         public void update() {
             if(tblRecord.getSelected().isEmpty()){

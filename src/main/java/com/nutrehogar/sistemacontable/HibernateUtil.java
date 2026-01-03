@@ -48,7 +48,7 @@ public class HibernateUtil {
                             .property("hibernate.dialect", "org.hibernate.dialect.HSQLDialect")
                             .property("hibernate.connection.provider_class", "agroal")
                             .jdbcPoolSize(1)
-                            .schemaToolingAction(Action.UPDATE)
+                            .schemaToolingAction(Action.NONE)
                             .showSql(true, true, true)
                             .createEntityManagerFactory();
         } catch (Exception e) {

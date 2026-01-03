@@ -6,16 +6,15 @@ import com.nutrehogar.sistemacontable.model.Account;
 import com.nutrehogar.sistemacontable.model.AccountType;
 import com.nutrehogar.sistemacontable.model.DocumentType;
 import com.nutrehogar.sistemacontable.model.User;
+import com.nutrehogar.sistemacontable.query.AccountQuery_;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
 import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
+import com.nutrehogar.sistemacontable.ui.crud.AccountingEntryView;
 import com.nutrehogar.sistemacontable.ui.crud.RecordTableData;
-import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
-import com.nutrehogar.sistemacontable.ui_2.builder.CustomTable;
-import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
-import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
+import com.nutrehogar.sistemacontable.ui_2.builder.*;
 
 import com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner;
 import lombok.Getter;
@@ -27,6 +26,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -42,6 +42,7 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
     public final CustomComboBoxModel<Account> cbxModelAccount;
     @NotNull
     private final SpinnerNumberModel spnModelAccountNumber;
+    private final List<Account> accounts = new ArrayList<>();
     public GeneralLedgerView(@NotNull User user, @NotNull Consumer<Long> editJournal) {
         super(user, "Libro Diario");
         this.cbxModelPeriod = new CustomComboBoxModel<>();
@@ -95,14 +96,25 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
                     cbxModelPeriod.setData(periods);
 
                     var thisYear = LocalDate.now().getYear();
+
                     for (var period : periods)
                         if (period.year() == thisYear)
                             cbxModelPeriod.setSelectedItem(period);
 
-                    loadData();
                 },
                 this::showError
         ).execute();
+        new FromTransactionWorker<>(
+                session -> new AccountQuery_(session).findAll(),
+                list->{
+                    accounts.clear();
+                    accounts.addAll(list);
+                    filterAccounts();
+                },
+                this::showError
+        ).execute();
+        cbxAccount.setRenderer(new CustomListCellRenderer());
+        spnAccountNumber.setEditor(new JSpinner.NumberEditor(spnAccountNumber, "#"));
         btnEdit.setEnabled(false);
         tblData.setOnDeselected(() -> btnEdit.setEnabled(false));
         tblData.setOnSelected(e -> {
@@ -120,60 +132,64 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
             tblData.setEmpty();
         }));
         cbxPeriod.addActionListener(_->loadData());
-        spnMonth.addChangeListener(_ -> loadData());
         btnFilter.addActionListener(_ -> loadData());
+        cbxAccount.addActionListener(_ -> loadData());
+        spnAccountNumber.addChangeListener(_->filterAccounts());
+    }
+
+    public void filterAccounts() {
+        var value = spnModelAccountNumber.getNumber().intValue();
+        if (value == 0) {
+            cbxModelAccount.setData(accounts);
+            return;
+        }
+        cbxModelAccount.setData(
+                accounts
+                        .stream()
+                        .filter(a -> a
+                                .getNumber()
+                                .toString()
+                                .contains(String.valueOf(value)))
+                        .toList()
+        );
     }
 
     public void loadData() {
         tblData.setEmpty();
         var period = cbxModelPeriod.getSelectedItem();
         if (period == null) {
-            showWarning("El periodo seleccionado no es valido");
             return;
         }
-        var month = getSpnModelMonth().getNumber().intValue();
+        var account = cbxModelAccount.getSelectedItem();
+        if (account == null) {
+            return;
+        }
         new FromTransactionWorker<>(
                 session -> {
-                    var journal = new BussinessQuery_(session).findJournalByPeriodIdAndMonth(period.id(), month);
+                    var journal = new BussinessQuery_(session).findJournalByPeriodIdAndAccount(period.id(), account);
                     var trialBalance = new ArrayList<TrialBalanceRow>(journal.size());
-                    var groupByAccountType = journal
-                            .stream()
-                            .sorted(
-                                    comparing(JournalData::date)
-                                            .thenComparing(JournalData::type)
-                                            .thenComparing(JournalData::number)
-                            ).collect(
-                                    groupingBy(
-                                            JournalData::account,
-                                            TreeMap::new,
-                                            toList()
-                                    )
-                            );
-                    for (var entry : groupByAccountType.entrySet()) {
-                        var accountMinData = entry.getKey();
-                        var debitSum = BigDecimal.ZERO;
-                        var creditSum = BigDecimal.ZERO;
-                        var totalSum = BigDecimal.ZERO;
-                        for (var record : entry.getValue()) {
-                            debitSum = debitSum.add(record.debit(), DECIMAL128);
-                            creditSum = creditSum.add(record.credit(), DECIMAL128);
-                            totalSum = accountMinData.type().getBalance(totalSum, record.credit(), record.debit());
-                            trialBalance.add(
-                                    new TrialBalanceData(
-                                            record.journalId(),
-                                            record.date(),
-                                            record.number(),
-                                            record.type(),
-                                            accountMinData,
-                                            record.reference(),
-                                            record.credit(),
-                                            record.debit(),
-                                            totalSum
-                                    )
-                            );
-                        }
-                        trialBalance.add(new TrialBalanceTotal(totalSum, creditSum, debitSum));
+                    var debitSum = BigDecimal.ZERO;
+                    var creditSum = BigDecimal.ZERO;
+                    var totalSum = BigDecimal.ZERO;
+                    for (var record : journal) {
+                        debitSum = debitSum.add(record.debit(), DECIMAL128);
+                        creditSum = creditSum.add(record.credit(), DECIMAL128);
+                        totalSum = record.account().type().getBalance(totalSum, record.credit(), record.debit());
+                        trialBalance.add(
+                                new TrialBalanceData(
+                                        record.journalId(),
+                                        record.date(),
+                                        record.number(),
+                                        record.type(),
+                                        record.account(),
+                                        record.reference(),
+                                        record.credit(),
+                                        record.debit(),
+                                        totalSum
+                                )
+                        );
                     }
+                    trialBalance.add(new TrialBalanceTotal(totalSum, creditSum, debitSum));
                     return trialBalance;
                 },
                 tblModel::setData,
@@ -201,8 +217,8 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
         lblEdit = new javax.swing.JLabel();
         cbxPeriod = new com.nutrehogar.sistemacontable.ui_2.component.CustomComboBox<>(cbxModelPeriod);
         lblStart = new javax.swing.JLabel();
-        cbxRAccount = new javax.swing.JComboBox<>();
-        spnRAccountNumber = new javax.swing.JSpinner(recordController.spnModelRAccountNumber);
+        cbxAccount = new javax.swing.JComboBox<>();
+        spnAccountNumber = new javax.swing.JSpinner(spnModelAccountNumber);
         lblRecordAccount = new javax.swing.JLabel();
         btnGenerateReport = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -247,7 +263,7 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
         lblStart.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblStart.setText("Período:");
 
-        cbxRAccount.setModel(recordController.cbxModelRAccount);
+        cbxAccount.setModel(cbxModelAccount);
 
         lblRecordAccount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecordAccount.setText("Cuenta:");
@@ -274,9 +290,9 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlOperationsLayout.createSequentialGroup()
                         .addComponent(lblRecordAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spnRAccountNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(spnAccountNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbxRAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cbxAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         pnlOperationsLayout.setVerticalGroup(
@@ -289,8 +305,8 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRecordAccount)
-                    .addComponent(cbxRAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spnRAccountNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbxAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(spnAccountNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnFilter)
@@ -364,8 +380,8 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnGenerateReport;
+    private javax.swing.JComboBox<Account> cbxAccount;
     private com.nutrehogar.sistemacontable.ui_2.component.CustomComboBox<Period> cbxPeriod;
-    private javax.swing.JComboBox<Account> cbxRAccount;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblEdit;
@@ -375,7 +391,8 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
     private javax.swing.JLabel lblTitle;
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlOperations;
-    private javax.swing.JSpinner spnRAccountNumber;
+    private javax.swing.JSpinner spnAccountNumber;
     private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<TrialBalanceRow> tblData;
     // End of variables declaration//GEN-END:variables
+
 }

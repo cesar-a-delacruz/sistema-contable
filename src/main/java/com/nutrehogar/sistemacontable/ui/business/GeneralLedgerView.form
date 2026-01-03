@@ -135,9 +135,9 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="lblRecordAccount" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="spnRAccountNumber" min="-2" pref="104" max="-2" attributes="0"/>
+                              <Component id="spnAccountNumber" min="-2" pref="104" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="cbxRAccount" min="-2" pref="143" max="-2" attributes="0"/>
+                              <Component id="cbxAccount" min="-2" pref="143" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -155,8 +155,8 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="lblRecordAccount" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cbxRAccount" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="spnRAccountNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbxAccount" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spnAccountNumber" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -227,19 +227,19 @@
                 <Property name="text" type="java.lang.String" value="Per&#xed;odo:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="cbxRAccount">
+            <Component class="javax.swing.JComboBox" name="cbxAccount">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="recordController.cbxModelRAccount" type="code"/>
+                  <Connection code="cbxModelAccount" type="code"/>
                 </Property>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Account&gt;"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JSpinner" name="spnRAccountNumber">
+            <Component class="javax.swing.JSpinner" name="spnAccountNumber">
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JSpinner(recordController.spnModelRAccountNumber)"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JSpinner(spnModelAccountNumber)"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="lblRecordAccount">
