@@ -69,4 +69,16 @@ public class JournalEntry extends AuditableEntity {
         this.checkNumber = checkNumber;
         this.date = date;
     }
+
+    public @NotNull String getFormattedNumber() {
+        return JournalEntry.formatNumber(number);
+    }
+
+    @NotNull
+    public static String formatNumber(@NotNull Integer number) {
+        var str = number.toString();
+        if (str.length() > 2) return str;
+        var toRepet = 3 - str.length();
+        return "0".repeat(toRepet).concat(str);
+    }
 }

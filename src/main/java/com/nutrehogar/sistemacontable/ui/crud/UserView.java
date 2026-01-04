@@ -26,14 +26,14 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
     public UserView(User user) {
         super(user,"Subtipo de Cuenta");
         this.cbxModelPermision = new CustomComboBoxModel<>(Permission.values());
-        this.tblModel = new CustomTableModel<>("Nombre", "Contraseña", "Habilitado", "Permiso") {
+        this.tblModel = new CustomTableModel<>("Nombre", "Contraseña", "Estado", "Permiso") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var user = data.get(rowIndex);
                 return switch (columnIndex) {
                     case 0 -> user.getUsername();
                     case 1 -> "************";
-                    case 2 -> user.getEnabled();
+                    case 2 -> user.getEnabled()?"Habilitado":"Deshabilitado";
                     case 3 -> user.getPermissions();
                     default -> "que haces?";
                 };
@@ -42,14 +42,12 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 return switch (columnIndex) {
-                    case 2 -> Boolean.class;
                     case 3 -> Permission.class;
                     default -> String.class;
                 };
             }
         };
         initComponents();
-        loadData();
         cbxPermissions.setRenderer(new CustomListCellRenderer());
         txtName.putClientProperty("JTextField.placeholderText", "Lic. Ema Perez");
         txtPassword.putClientProperty("JTextField.placeholderText", "20010");

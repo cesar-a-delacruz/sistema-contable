@@ -12,6 +12,7 @@ public record GeneralLedgerEntity(
         @NotNull Integer number,
         @NotNull DocumentType type,
         @NotNull String reference,
+        @NotNull String concept,
         @NotNull BigDecimal debit,
         @NotNull BigDecimal credit,
         @NotNull BigDecimal total

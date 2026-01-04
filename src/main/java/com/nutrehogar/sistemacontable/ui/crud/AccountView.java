@@ -55,7 +55,6 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
             }
         };
         initComponents();
-        loadData();
         cbxType.setRenderer(new CustomListCellRenderer());
         cbxSubtype.setRenderer(new CustomListCellRenderer());
         spnNumber.setEditor(new JSpinner.NumberEditor(spnNumber, "#"));

@@ -4,6 +4,7 @@ import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.Account;
 import com.nutrehogar.sistemacontable.model.DocumentType;
+import com.nutrehogar.sistemacontable.model.JournalEntry;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.AccountQuery_;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
@@ -44,7 +45,7 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
         this.cbxModelAccount = new CustomComboBoxModel<>();
         this.accounts = new ArrayList<>();
         this.spnModelAccountNumber = new SpinnerNumberModel(0, 0, 99999, 1);
-        this.tblModel = new CustomTableModel<>("Fecha", "Comprobante", "Tipo", "Referencia", "Débito", "Crédito", "Saldo") {
+        this.tblModel = new CustomTableModel<>("Fecha", "Doc", "Referencia", "Concepto", "Débito", "Crédito", "Saldo") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 return switch (data.get(rowIndex)) {
@@ -65,13 +66,13 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
                     };
                     case GeneralLedgerEntity dto -> switch (columnIndex) {
                         case 0 -> dto.date();
-                        case 1 -> dto.number();
-                        case 2 -> dto.type();
-                        case 3 -> dto.reference();
+                        case 1 -> dto.type().getName() + "-" + JournalEntry.formatNumber(dto.number());
+                        case 2 -> dto.reference();
+                        case 3 -> dto.concept();
                         case 4 -> dto.debit();
                         case 5 -> dto.credit();
                         case 6 -> dto.total();
-                        default -> "Element not found";
+                        default -> "";
                     };
                 };
             }
@@ -80,8 +81,6 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
             public Class<?> getColumnClass(int columnIndex) {
                 return switch (columnIndex) {
                     case 0 -> LocalDate.class;
-                    case 1 -> Integer.class;
-                    case 2 -> DocumentType.class;
                     case 4, 5, 6 -> BigDecimal.class;
                     default -> String.class;
                 };
@@ -207,6 +206,7 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
                                         record.number(),
                                         record.type(),
                                         record.reference(),
+                                        record.concept(),
                                         record.debit(),
                                         record.credit(),
                                         totalSum

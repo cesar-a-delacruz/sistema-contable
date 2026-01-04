@@ -37,13 +37,13 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         this.spnModelStartPeriod = new LocalDateSpinnerModel(LocalDate.of(currentYear, 1, 1));
         this.spnModelEndPeriod = new LocalDateSpinnerModel(LocalDate.of(currentYear, 12, 31));
         this.spnModelYear = new SpinnerNumberModel(currentYear, 1500, null, 1);
-        this.tblModel = new CustomTableModel<>( "Año", "Cerrado", "Fecha de inicio", "Fecha de cierre") {
+        this.tblModel = new CustomTableModel<>( "Año", "Estado", "Fecha de inicio", "Fecha de cierre") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 var dto = data.get(rowIndex);
                 return switch (columnIndex) {
-                    case 0 -> dto.getYear();
-                    case 1 -> dto.getClosed();
+                    case 0 -> dto.getYear().toString();
+                    case 1 -> dto.getClosed() ? "Cerrado" : "Abierto";
                     case 2 -> dto.getStartDate();
                     case 3 -> dto.getEndDate();
                     default -> "que haces?";
@@ -53,15 +53,12 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 return switch (columnIndex) {
-                    case 0 -> Integer.class;
-                    case 1 -> Boolean.class;
                     case 2, 3 -> LocalDate.class;
                     default -> String.class;
                 };
             }
         };
         initComponents();
-        loadData();
         spnYear.setEditor(new JSpinner.NumberEditor(spnYear, "#"));
         tblData.setOnDeselected(this::onDeselected);
         tblData.setOnSelected(this::onSelected);

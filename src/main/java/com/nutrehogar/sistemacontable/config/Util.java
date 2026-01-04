@@ -8,13 +8,14 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.function.Function;
 
-public class Util {{
-}
-    public static final DateTimeFormatter AUDITABLE_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
-    public static final DateTimeFormatter SMALL_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    public static final DateTimeFormatter LARGE_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE d 'de' LLLL 'del' yyyy");
+public class Util {
+    public static final Locale LOCALE = Locale.of("es", "PA");
+    public static final DateTimeFormatter AUDITABLE_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss", LOCALE);
+    public static final DateTimeFormatter SMALL_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy", LOCALE);
+    public static final DateTimeFormatter LARGE_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE d 'de' LLLL 'del' yyyy", LOCALE);
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.00");
 
     public static final String NA = "N/A";
@@ -23,6 +24,7 @@ public class Util {{
     public static @NotNull String toStringSafe(@Nullable Object obj) {
         return (obj != null) ? obj.toString() : "";
     }
+
     public static @NotNull String toStringSafe(@Nullable Object obj, @NotNull String defaultValue) {
         return (obj != null) ? obj.toString() : defaultValue;
     }
@@ -31,6 +33,7 @@ public class Util {{
     public static <T> @NotNull String toStringSafe(@Nullable T obj, Function<@NotNull T, @NotNull String> extractor) {
         return (obj != null) ? extractor.apply(obj) : "";
     }
+
     public static <T> @NotNull String toStringSafe(@Nullable T obj, Function<@NotNull T, @NotNull String> extractor, @NotNull String defaultValue) {
         return (obj != null) ? extractor.apply(obj) : defaultValue;
     }

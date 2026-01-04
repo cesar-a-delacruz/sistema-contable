@@ -1,9 +1,12 @@
 package com.nutrehogar.sistemacontable.ui_2.builder;
 
+import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.ui.business.AccountMinData;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -61,5 +64,31 @@ public class CustomTableCellRenderer extends DefaultTableCellRenderer {
             case null -> setText("");
             default -> setText(value.toString());
         }
+    }
+
+    @Override
+    public Component getTableCellRendererComponent(
+            JTable table,
+            Object value,
+            boolean isSelected,
+            boolean hasFocus,
+            int row,
+            int column
+    ) {
+        Component c = super.getTableCellRendererComponent(
+                table, value, isSelected, hasFocus, row, column
+        );
+
+        if (isSelected) {
+            return c;
+        }
+
+        if (row % 2 == 0) {
+            c.setBackground(Theme.Palette.SOLITUDE_50);
+        } else {
+            c.setBackground(Color.WHITE);
+        }
+
+        return c;
     }
 }

@@ -2,10 +2,7 @@ package com.nutrehogar.sistemacontable.ui.business;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
-import com.nutrehogar.sistemacontable.model.Account;
-import com.nutrehogar.sistemacontable.model.AccountType;
-import com.nutrehogar.sistemacontable.model.DocumentType;
-import com.nutrehogar.sistemacontable.model.User;
+import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
 import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
@@ -44,7 +41,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
         super(user, "Libro Diario");
         this.cbxModelPeriod = new CustomComboBoxModel<>();
         this.spnModelMonth = new SpinnerNumberModel(LocalDate.now().getMonthValue(), 1, 12, 1);
-        this.tblModel = new CustomTableModel<>("Fecha", "Comprobante", "Tipo", "Cuenta", "Referencia", "Débito", "Crédito", "Saldo") {
+        this.tblModel = new CustomTableModel<>("Fecha", "Doc", "Cuenta", "Referencia", "Concepto", "Débito", "Crédito", "Saldo") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 return switch (data.get(rowIndex)) {
@@ -57,14 +54,14 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
                     };
                     case TrialBalanceData dto -> switch (columnIndex) {
                         case 0 -> dto.date();
-                        case 1 -> dto.number();
-                        case 2 -> dto.type();
-                        case 3 -> dto.account();
-                        case 4 -> dto.reference();
+                        case 1 -> dto.type().getName() + "-" + JournalEntry.formatNumber(dto.number());
+                        case 2 -> dto.account();
+                        case 3 -> dto.reference();
+                        case 4 -> dto.concept();
                         case 5 -> dto.debit();
                         case 6 -> dto.credit();
                         case 7 -> dto.total();
-                        default -> "Element not found";
+                        default -> "";
                     };
                 };
             }
@@ -73,9 +70,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
             public Class<?> getColumnClass(int columnIndex) {
                 return switch (columnIndex) {
                     case 0 -> LocalDate.class;
-                    case 1 -> Integer.class;
-                    case 2 -> DocumentType.class;
-                    case 3 -> Account.class;
+                    case 2 -> Account.class;
                     case 5, 6, 7 -> BigDecimal.class;
                     default -> String.class;
                 };
@@ -121,7 +116,6 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
                         if (period.year() == thisYear)
                             cbxModelPeriod.setSelectedItem(period);
                     hideLoadingCursor();
-                    loadData();
                 },
                 this::showError
         ).execute();
@@ -171,6 +165,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
                                             record.type(),
                                             accountMinData,
                                             record.reference(),
+                                            record.concept(),
                                             record.debit(),
                                             record.credit(),
                                             totalSum

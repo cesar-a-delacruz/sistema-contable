@@ -12,10 +12,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 
+import static com.nutrehogar.sistemacontable.config.Util.LOCALE;
+
 @Slf4j
 @Getter
 public abstract class Report<T> {
-    public static final Locale LOCALE = Locale.of("es", "PA");
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d 'de' MMMM 'de' yyyy", LOCALE);
     public static final DateTimeFormatter FILE_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd", LOCALE);
     protected static final String TEMPLATE_PATH = "/template/";

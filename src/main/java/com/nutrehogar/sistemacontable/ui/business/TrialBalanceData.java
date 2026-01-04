@@ -9,6 +9,6 @@ import java.time.LocalDate;
 
 public record TrialBalanceData(@NotNull Long journalId, @NotNull LocalDate date, @NotNull Integer number,
                                @NotNull DocumentType type, @NotNull AccountMinData account,
-                               @NotNull String reference, @NotNull BigDecimal debit, @NotNull BigDecimal credit,
+                               @NotNull String reference, @NotNull String concept, @NotNull BigDecimal debit, @NotNull BigDecimal credit,
                                @NotNull BigDecimal total) implements TrialBalanceRow {
 }
