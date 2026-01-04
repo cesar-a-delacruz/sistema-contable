@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.function.Consumer;
 
 @Getter
-public class JournalView extends SimpleView<JournalData> {
+public class JournalView extends SimpleView<JournalData> implements BusinessView {
     @NotNull
     private final CustomComboBoxModel<Period> cbxModelPeriod;
     @NotNull
@@ -62,6 +62,17 @@ public class JournalView extends SimpleView<JournalData> {
             }
         };
         initComponents();
+        load();
+        btnEdit.setEnabled(false);
+        tblData.setOnDeselected(() -> btnEdit.setEnabled(false));
+        tblData.setOnSelected(_ -> btnEdit.setEnabled(true));
+        btnEdit.addActionListener(_ -> tblData.getSelected().ifPresent(e -> editJournal.accept(e.journalId())));
+        cbxPeriod.addActionListener(_->loadData());
+        spnMonth.addChangeListener(_ -> loadData());
+        btnFilter.addActionListener(_ -> loadData());
+    }
+    @Override
+    public void load(){
         new FromTransactionWorker<>(
                 session -> new AccountingPeriodQuery_(session).findAllMinData(),
                 periods -> {
@@ -80,15 +91,8 @@ public class JournalView extends SimpleView<JournalData> {
                 },
                 this::showError
         ).execute();
-        btnEdit.setEnabled(false);
-        tblData.setOnDeselected(() -> btnEdit.setEnabled(false));
-        tblData.setOnSelected(_ -> btnEdit.setEnabled(true));
-        btnEdit.addActionListener(_ -> tblData.getSelected().ifPresent(e -> editJournal.accept(e.journalId())));
-        cbxPeriod.addActionListener(_->loadData());
-        spnMonth.addChangeListener(_ -> loadData());
-        btnFilter.addActionListener(_ -> loadData());
     }
-
+    @Override
     public void loadData() {
         tblData.setEmpty();
         var period = cbxModelPeriod.getSelectedItem();
@@ -104,6 +108,13 @@ public class JournalView extends SimpleView<JournalData> {
         ).execute();
     }
 
+    @Override
+    public void setVisible(boolean aFlag) {
+        super.setVisible(aFlag);
+        if(aFlag){
+            loadData();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

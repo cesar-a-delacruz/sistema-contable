@@ -180,6 +180,13 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
             showWarning(e);
         }
     }
+    @Override
+    public void setVisible(boolean aFlag) {
+        super.setVisible(aFlag);
+        if(aFlag){
+            loadData();
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated

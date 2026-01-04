@@ -35,7 +35,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
 
 @Getter
-public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
+public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements BusinessView{
     @NotNull
     private final CustomComboBoxModel<Period> cbxModelPeriod;
     @NotNull
@@ -48,7 +48,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 return switch (data.get(rowIndex)) {
-                    case TrialBalanceTotal(var total, var debit, var credit) -> switch (columnIndex) {
+                    case RowTotal(var debit, var credit, var total) -> switch (columnIndex) {
                         case 4 -> "Total";
                         case 5 -> debit;
                         case 6 -> credit;
@@ -82,24 +82,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
             }
         };
         initComponents();
-        new FromTransactionWorker<>(
-                session -> new AccountingPeriodQuery_(session).findAllMinData(),
-                periods -> {
-                    if (periods.isEmpty()) {
-                        showWarning("No hay periodos disponibles, antes de continuar debe crear al menos uno");
-                        return;
-                    }
-                    cbxModelPeriod.setData(periods);
-
-                    var thisYear = LocalDate.now().getYear();
-                    for (var period : periods)
-                        if (period.year() == thisYear)
-                            cbxModelPeriod.setSelectedItem(period);
-
-                    loadData();
-                },
-                this::showError
-        ).execute();
+        load();
         btnEdit.setEnabled(false);
         tblData.setOnDeselected(() -> btnEdit.setEnabled(false));
         tblData.setOnSelected(e -> {
@@ -121,6 +104,30 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
         btnFilter.addActionListener(_ -> loadData());
     }
 
+    @Override
+    public void load() {
+        showLoadingCursor();
+        new FromTransactionWorker<>(
+                session -> new AccountingPeriodQuery_(session).findAllMinData(),
+                periods -> {
+                    if (periods.isEmpty()) {
+                        showWarning("No hay periodos disponibles, antes de continuar debe crear al menos uno");
+                        return;
+                    }
+                    cbxModelPeriod.setData(periods);
+
+                    var thisYear = LocalDate.now().getYear();
+                    for (var period : periods)
+                        if (period.year() == thisYear)
+                            cbxModelPeriod.setSelectedItem(period);
+                    hideLoadingCursor();
+                    loadData();
+                },
+                this::showError
+        ).execute();
+    }
+
+    @Override
     public void loadData() {
         tblData.setEmpty();
         var period = cbxModelPeriod.getSelectedItem();
@@ -129,10 +136,11 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
             return;
         }
         var month = getSpnModelMonth().getNumber().intValue();
+        showLoadingCursor();
         new FromTransactionWorker<>(
                 session -> {
                     var journal = new BussinessQuery_(session).findJournalByPeriodIdAndMonth(period.id(), month);
-                    var trialBalance = new ArrayList<TrialBalanceRow>(journal.size());
+                    var trialBalance = new ArrayList<TrialBalanceRow>(journal.size()+1);
                     var groupByAccountType = journal
                             .stream()
                             .sorted(
@@ -163,21 +171,31 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> {
                                             record.type(),
                                             accountMinData,
                                             record.reference(),
-                                            record.credit(),
                                             record.debit(),
+                                            record.credit(),
                                             totalSum
                                     )
                             );
                         }
-                        trialBalance.add(new TrialBalanceTotal(totalSum, creditSum, debitSum));
+                        trialBalance.add(new RowTotal(debitSum, creditSum, totalSum));
                     }
                     return trialBalance;
                 },
-                tblModel::setData,
+                rest -> {
+                    hideLoadingCursor();
+                    tblModel.setData(rest);
+                },
                 this::showError
         ).execute();
     }
 
+    @Override
+    public void setVisible(boolean aFlag) {
+        super.setVisible(aFlag);
+        if(aFlag){
+            loadData();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

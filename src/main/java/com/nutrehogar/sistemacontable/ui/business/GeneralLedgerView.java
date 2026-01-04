@@ -3,7 +3,6 @@ package com.nutrehogar.sistemacontable.ui.business;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.Account;
-import com.nutrehogar.sistemacontable.model.AccountType;
 import com.nutrehogar.sistemacontable.model.DocumentType;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.AccountQuery_;
@@ -12,62 +11,66 @@ import com.nutrehogar.sistemacontable.query.BussinessQuery_;
 import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
-import com.nutrehogar.sistemacontable.ui.crud.AccountingEntryView;
-import com.nutrehogar.sistemacontable.ui.crud.RecordTableData;
 import com.nutrehogar.sistemacontable.ui_2.builder.*;
 
-import com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.svg.SVGAnimatedRect;
 
 import javax.swing.*;
-import java.awt.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static java.math.MathContext.DECIMAL128;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.*;
 
 @Getter
-public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
+public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements BusinessView {
     @NotNull
     private final CustomComboBoxModel<Period> cbxModelPeriod;
     @NotNull
     public final CustomComboBoxModel<Account> cbxModelAccount;
     @NotNull
     private final SpinnerNumberModel spnModelAccountNumber;
-    private final List<Account> accounts = new ArrayList<>();
+    @NotNull
+    private final List<Account> accounts;
+
     public GeneralLedgerView(@NotNull User user, @NotNull Consumer<Long> editJournal) {
         super(user, "Libro Diario");
         this.cbxModelPeriod = new CustomComboBoxModel<>();
         this.cbxModelAccount = new CustomComboBoxModel<>();
+        this.accounts = new ArrayList<>();
         this.spnModelAccountNumber = new SpinnerNumberModel(0, 0, 99999, 1);
-        this.tblModel = new CustomTableModel<>("Fecha", "Comprobante", "Tipo", "Cuenta", "Referencia", "Débito", "Crédito", "Saldo") {
+        this.tblModel = new CustomTableModel<>("Fecha", "Comprobante", "Tipo", "Referencia", "Débito", "Crédito", "Saldo") {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 return switch (data.get(rowIndex)) {
-                    case TrialBalanceTotal(var total, var debit, var credit) -> switch (columnIndex) {
-                        case 4 -> "Total";
-                        case 5 -> debit;
-                        case 6 -> credit;
-                        case 7 -> total;
+                    case RowTotal(var debit, var credit,var total) -> switch (columnIndex) {
+                        case 3 -> "Total";
+                        case 4 -> debit;
+                        case 5 -> credit;
+                        case 6 -> total;
                         default -> "";
                     };
-                    case TrialBalanceData dto -> switch (columnIndex) {
+                    case GeneralLedgerPreviousPeriods(var total, var debit, var credit) -> switch (columnIndex) {
+                        case 3 ->
+                                total.setScale(0, RoundingMode.HALF_UP).equals(BigDecimal.ZERO) ? "No hay saldo de periodos anteriores" : "Saldo de periodos anteriores";
+                        case 4 -> debit;
+                        case 5 -> credit;
+                        case 6 -> total;
+                        default -> "";
+                    };
+                    case GeneralLedgerEntity dto -> switch (columnIndex) {
                         case 0 -> dto.date();
                         case 1 -> dto.number();
                         case 2 -> dto.type();
-                        case 3 -> dto.account();
-                        case 4 -> dto.reference();
-                        case 5 -> dto.debit();
-                        case 6 -> dto.credit();
-                        case 7 -> dto.total();
+                        case 3 -> dto.reference();
+                        case 4 -> dto.debit();
+                        case 5 -> dto.credit();
+                        case 6 -> dto.total();
                         default -> "Element not found";
                     };
                 };
@@ -79,13 +82,39 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
                     case 0 -> LocalDate.class;
                     case 1 -> Integer.class;
                     case 2 -> DocumentType.class;
-                    case 3 -> Account.class;
-                    case 5, 6, 7 -> BigDecimal.class;
+                    case 4, 5, 6 -> BigDecimal.class;
                     default -> String.class;
                 };
             }
         };
         initComponents();
+        load();
+        cbxAccount.setRenderer(new CustomListCellRenderer());
+        spnAccountNumber.setEditor(new JSpinner.NumberEditor(spnAccountNumber, "#"));
+        btnEdit.setEnabled(false);
+        tblData.setOnDeselected(() -> btnEdit.setEnabled(false));
+        tblData.setOnSelected(e -> {
+            if (e instanceof GeneralLedgerEntity) {
+                btnEdit.setEnabled(true);
+                return;
+            }
+            tblData.setEmpty();
+        });
+        btnEdit.addActionListener(_ -> tblData.getSelected().ifPresent(e -> {
+            if (e instanceof GeneralLedgerEntity t) {
+                editJournal.accept(t.journalId());
+                return;
+            }
+            tblData.setEmpty();
+        }));
+        cbxPeriod.addActionListener(_ -> loadData());
+        btnFilter.addActionListener(_ -> loadData());
+        cbxAccount.addActionListener(_ -> loadData());
+        spnAccountNumber.addChangeListener(_ -> filterAccounts());
+    }
+
+    @Override
+    public void load() {
         new FromTransactionWorker<>(
                 session -> new AccountingPeriodQuery_(session).findAllMinData(),
                 periods -> {
@@ -106,35 +135,13 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
         ).execute();
         new FromTransactionWorker<>(
                 session -> new AccountQuery_(session).findAll(),
-                list->{
+                list -> {
                     accounts.clear();
                     accounts.addAll(list);
                     filterAccounts();
                 },
                 this::showError
         ).execute();
-        cbxAccount.setRenderer(new CustomListCellRenderer());
-        spnAccountNumber.setEditor(new JSpinner.NumberEditor(spnAccountNumber, "#"));
-        btnEdit.setEnabled(false);
-        tblData.setOnDeselected(() -> btnEdit.setEnabled(false));
-        tblData.setOnSelected(e -> {
-            if (e instanceof TrialBalanceData) {
-                btnEdit.setEnabled(true);
-                return;
-            }
-            tblData.setEmpty();
-        });
-        btnEdit.addActionListener(_ -> tblData.getSelected().ifPresent(e -> {
-            if (e instanceof TrialBalanceData t) {
-                editJournal.accept(t.journalId());
-                return;
-            }
-            tblData.setEmpty();
-        }));
-        cbxPeriod.addActionListener(_->loadData());
-        btnFilter.addActionListener(_ -> loadData());
-        cbxAccount.addActionListener(_ -> loadData());
-        spnAccountNumber.addChangeListener(_->filterAccounts());
     }
 
     public void filterAccounts() {
@@ -154,6 +161,7 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
         );
     }
 
+    @Override
     public void loadData() {
         tblData.setEmpty();
         var period = cbxModelPeriod.getSelectedItem();
@@ -164,32 +172,48 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
         if (account == null) {
             return;
         }
+        var type = account.getType();
         new FromTransactionWorker<>(
                 session -> {
-                    var journal = new BussinessQuery_(session).findJournalByPeriodIdAndAccount(period.id(), account);
-                    var trialBalance = new ArrayList<TrialBalanceRow>(journal.size());
+                    var queries = new BussinessQuery_(session);
+                    var journal = queries.findJournalByPeriodIdAndAccount(period.id(), account);
+                    var arraySize = journal.size() + 1;
                     var debitSum = BigDecimal.ZERO;
                     var creditSum = BigDecimal.ZERO;
-                    var totalSum = BigDecimal.ZERO;
+
+                    if (type.isCumulative()) {
+                        arraySize++;
+                        var preTotal = queries.findAccountPreTotal(period.year(), account);
+                        if (preTotal.isPresent()) {
+                            debitSum = preTotal.get().debit();
+                            creditSum = preTotal.get().credit();
+                        }
+                    }
+                    var trialBalance = new ArrayList<GeneralLedgerRow>(arraySize);
+
+                    var totalSum = type.getBalance(BigDecimal.ZERO, creditSum, debitSum);
+
+                    if (type.isCumulative())
+                        trialBalance.add(new GeneralLedgerPreviousPeriods(totalSum, debitSum, creditSum));
+
                     for (var record : journal) {
                         debitSum = debitSum.add(record.debit(), DECIMAL128);
                         creditSum = creditSum.add(record.credit(), DECIMAL128);
-                        totalSum = record.account().type().getBalance(totalSum, record.credit(), record.debit());
+                        totalSum = type.getBalance(totalSum, record.credit(), record.debit());
                         trialBalance.add(
-                                new TrialBalanceData(
+                                new GeneralLedgerEntity(
                                         record.journalId(),
                                         record.date(),
                                         record.number(),
                                         record.type(),
-                                        record.account(),
                                         record.reference(),
-                                        record.credit(),
                                         record.debit(),
+                                        record.credit(),
                                         totalSum
                                 )
                         );
                     }
-                    trialBalance.add(new TrialBalanceTotal(totalSum, creditSum, debitSum));
+                    trialBalance.add(new RowTotal(debitSum, creditSum, totalSum));
                     return trialBalance;
                 },
                 tblModel::setData,
@@ -197,6 +221,13 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
         ).execute();
     }
 
+    @Override
+    public void setVisible(boolean aFlag) {
+        super.setVisible(aFlag);
+        if (aFlag) {
+            loadData();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -347,8 +378,8 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
-        lblTitle.setIcon(Theme.SVGs.TRIAL_BALANCE.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
-        lblTitle.setText(LabelBuilder.build("Balance de comprobacion"));
+        lblTitle.setIcon(Theme.SVGs.GENERAL_LEDGER.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
+        lblTitle.setText(LabelBuilder.build("Mayor general"));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -392,7 +423,7 @@ public class GeneralLedgerView extends SimpleView<TrialBalanceRow> {
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlOperations;
     private javax.swing.JSpinner spnAccountNumber;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<TrialBalanceRow> tblData;
+    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<GeneralLedgerRow> tblData;
     // End of variables declaration//GEN-END:variables
 
 }

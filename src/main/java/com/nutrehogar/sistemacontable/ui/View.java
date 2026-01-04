@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Optional;
 
 /**
@@ -73,5 +74,14 @@ public abstract class View extends JPanel {
     public void showWarning(@NotNull String message) {
         JOptionPane.showMessageDialog(this, message, "Advertencia!", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    protected void showLoadingCursor() {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    }
+
+    protected void hideLoadingCursor() {
+        setCursor(Cursor.getDefaultCursor());
+    }
+
 
 }

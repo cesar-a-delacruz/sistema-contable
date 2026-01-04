@@ -182,7 +182,13 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
             showWarning(e);
         }
     }
-
+    @Override
+    public void setVisible(boolean aFlag) {
+        super.setVisible(aFlag);
+        if(aFlag){
+            loadData();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

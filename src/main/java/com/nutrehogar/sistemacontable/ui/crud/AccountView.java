@@ -298,6 +298,13 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
                             throw new InvalidFieldException("Seleccione un elemento de la tabla");
                         });
     }
+    @Override
+    public void setVisible(boolean aFlag) {
+        super.setVisible(aFlag);
+        if(aFlag){
+            loadData();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

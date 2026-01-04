@@ -6,82 +6,71 @@ import com.nutrehogar.sistemacontable.ui.business.TrialBalanceView;
 import com.nutrehogar.sistemacontable.ui.crud.*;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.User;
-//import com.nutrehogar.sistemacontable.ui.crud.AccountView;
-//import com.nutrehogar.sistemacontable.ui.crud.UserView;
-//import com.nutrehogar.sistemacontable.ui.crud.AccountView;
-//import com.nutrehogar.sistemacontable.ui.crud.AccountingPeriodView;
-//import com.nutrehogar.sistemacontable.ui.crud.UserView;
 import com.nutrehogar.sistemacontable.ui_2.component.Background;
 
-import com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 public class DashboardView extends Background {
     @NotNull
     private User user;
-    @NotNull
     private AccountingEntryView  accountingEntryView;
+    private final CardLayout cardLayout = new CardLayout();
+    private final HomeView homeView;
     public DashboardView(@NotNull User adminUser) {
         this.user = adminUser;
         initComponents();
+        pnlContent.setLayout(cardLayout);
         pnlNav.setVisible(false);
-        pnlContent.setOpaque(false);
-        buttonPermissionSettings();
+        this.homeView = new HomeView();
+        addView(homeView, "HOME");
+        btnHome.addActionListener(_ -> show("HOME"));
     }
-
+    private void addView(@NotNull JPanel panel, @NotNull String name) {
+        pnlContent.add(panel, name);
+    }
+    private void show(@NotNull String name){
+        if(name.equals("HOME")){
+            pnlNav.setVisible(false);
+        }else{
+            pnlNav.setVisible(true);
+            homeView.resetButtons();
+        }
+        cardLayout.show(pnlContent, name);
+    }
     public void setUser(@NotNull User user) {
         this.user = user;
         buttonPermissionSettings();
-        accountingEntryView = new AccountingEntryView(user);
-        btnAccountSubtype.addActionListener(_ -> setContent(new AccountSubtypeView(user)));
-        btnAccount.addActionListener(_ -> setContent(new AccountView(user)));
-        btnUser.addActionListener(_ -> setContent(new UserView(user)));
-        btnAccountingPeriod.addActionListener(_ -> setContent(new AccountingPeriodView(user)));
-        btnHome.addActionListener(_ -> setContent(pnlHome));
-        btnForm.addActionListener(_->setContent(accountingEntryView));
-        btnJournal.addActionListener(_->setContent(new JournalView(user,this::editJournal)));
-        btnTrialBalance.addActionListener(_->setContent(new TrialBalanceView(user,this::editJournal)));
-        btnGeneralLedger.addActionListener(_->setContent(new GeneralLedgerView(user,this::editJournal)));
+        addView(new AccountSubtypeView(user), "SUBTYPE");
+        addView(new AccountView(user), "ACCOUNT");
+        addView(new UserView(user), "USER");
+        this.accountingEntryView = new AccountingEntryView(user);
+        addView(accountingEntryView, "ENTRY");
+        addView(new AccountingPeriodView(user), "PERIOD");
+        addView(new JournalView(user,this::editJournal),"JOURNAL");
+        addView(new TrialBalanceView(user,this::editJournal),"TRIAL");
+        addView(new GeneralLedgerView(user,this::editJournal),"GENERAL");
+
+        homeView.getBtnForm().addActionListener(_ -> show("ENTRY"));
+        homeView.getBtnJournal().addActionListener(_ -> show("JOURNAL"));
+        homeView.getBtnTrialBalance().addActionListener(_ -> show("TRIAL"));
+        homeView.getBtnGeneralLedger().addActionListener(_ -> show("GENERAL"));
+        homeView.getBtnAccountSubtype().addActionListener(_ -> show("SUBTYPE"));
+        homeView.getBtnAccount().addActionListener(_ -> show("ACCOUNT"));
+        homeView.getBtnUser().addActionListener(_ -> show("USER"));
+        homeView.getBtnAccountingPeriod().addActionListener(_ -> show("PERIOD"));
+
     }
     private void buttonPermissionSettings() {
         if (user.isAdmin()) return;
-        btnUser.setVisible(false);
+        homeView.getBtnUser().setVisible(false);
         btnBackup.setEnabled(false);
     }
     private void editJournal(@NotNull Long id){
         accountingEntryView.edit(id);
-        setContent(accountingEntryView);
-    }
-
-    public void setupViewListeners() {
-
-    }
-
-    public void setContent(JPanel p) {
-        SwingUtilities.invokeLater(() -> {
-            if (p != pnlHome) {
-                pnlNav.setVisible(true);
-            } else {
-                pnlNav.setVisible(false);
-                btnForm.setBackground(Color.WHITE);
-                btnJournal.setBackground(Color.WHITE);
-                btnTrialBalance.setBackground(Color.WHITE);
-                btnGeneralLedger.setBackground(Color.WHITE);
-                btnAccount.setBackground(Color.WHITE);
-                btnAccountSubtype.setBackground(Color.WHITE);
-            }
-            pnlContent.removeAll();
-            pnlContent.setLayout(new BorderLayout());
-            pnlContent.add(p, BorderLayout.CENTER);
-            pnlContent.revalidate();
-            pnlContent.repaint();
-        });
+        show("ENTRY");
     }
 
     /**
@@ -94,197 +83,85 @@ public class DashboardView extends Background {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlContent = new JPanel();
-        pnlHome = new JPanel();
-        pnlGroupBtn = new JPanel();
-        btnForm = new DefaultPanelButton();
-        btnAccount = new DefaultPanelButton();
-        btnTrialBalance = new DefaultPanelButton();
-        btnAccountSubtype = new DefaultPanelButton();
-        btnGeneralLedger = new DefaultPanelButton();
-        btnJournal = new DefaultPanelButton();
-        btnUser = new DefaultPanelButton();
-        btnAccountingPeriod = new DefaultPanelButton();
-        pnlNav = new JPanel();
-        btnBackup = new DefaultPanelButton();
-        btnHome = new DefaultPanelButton();
+        pnlContent = new javax.swing.JPanel();
+        pnlNav = new javax.swing.JPanel();
+        btnBackup = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnHome = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
 
-        setBackground(new Color(255, 255, 255));
-        setColor1(new Color(184, 255, 255));
-        setColor2(new Color(229, 243, 255));
-        setColor3(new Color(239, 248, 255));
-        setColor4(new Color(255, 255, 255));
-        setNumberOfColors(NumberOfColors.FOUR);
+        setBackground(new java.awt.Color(255, 255, 255));
+        setColor1(new java.awt.Color(184, 255, 255));
+        setColor2(new java.awt.Color(229, 243, 255));
+        setColor3(new java.awt.Color(239, 248, 255));
+        setColor4(new java.awt.Color(255, 255, 255));
+        setNumberOfColors(com.nutrehogar.sistemacontable.ui_2.component.Background.NumberOfColors.FOUR);
         setRadioIncremento(250);
 
         pnlContent.setOpaque(false);
 
-        pnlHome.setOpaque(false);
-
-        pnlGroupBtn.setOpaque(false);
-
-        btnForm.setIcon(Theme.SVGs.FORM.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnForm.setText("Formulario");
-
-        btnAccount.setIcon(Theme.SVGs.ACCOUNT.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnAccount.setText("Cuentas");
-
-        btnTrialBalance.setIcon(Theme.SVGs.TRIAL_BALANCE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnTrialBalance.setText("Balance de Comprobación");
-
-        btnAccountSubtype.setIcon(Theme.SVGs.ACCOUNT_SUBTYPE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnAccountSubtype.setText("Subtipos de Cuentas");
-        btnAccountSubtype.setToolTipText("");
-
-        btnGeneralLedger.setIcon(Theme.SVGs.GENERAL_LEDGER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnGeneralLedger.setText("Mayor General");
-
-        btnJournal.setIcon(Theme.SVGs.JOURNAL.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnJournal.setText("Libro Diario");
-
-        btnUser.setIcon(Theme.SVGs.USER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnUser.setText("Usuarios");
-
-        btnAccountingPeriod.setIcon(Theme.SVGs.ACCOUNTING_PERIOD.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnAccountingPeriod.setText("Periodos Contables");
-
-        GroupLayout pnlGroupBtnLayout = new GroupLayout(pnlGroupBtn);
-        pnlGroupBtn.setLayout(pnlGroupBtnLayout);
-        pnlGroupBtnLayout.setHorizontalGroup(
-            pnlGroupBtnLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(pnlGroupBtnLayout.createSequentialGroup()
-                .addGroup(pnlGroupBtnLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnUser, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAccount, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnTrialBalance, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnForm, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(15, 15, 15)
-                .addGroup(pnlGroupBtnLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAccountSubtype, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnGeneralLedger, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnJournal, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAccountingPeriod, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
-        pnlGroupBtnLayout.setVerticalGroup(
-            pnlGroupBtnLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(pnlGroupBtnLayout.createSequentialGroup()
-                .addGroup(pnlGroupBtnLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlGroupBtnLayout.createSequentialGroup()
-                        .addComponent(btnForm, GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnTrialBalance, GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAccount, GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE))
-                    .addGroup(pnlGroupBtnLayout.createSequentialGroup()
-                        .addComponent(btnJournal, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnGeneralLedger, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAccountSubtype, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(5, 5, 5)
-                .addGroup(pnlGroupBtnLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(btnUser, GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
-                    .addComponent(btnAccountingPeriod, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(36, Short.MAX_VALUE))
-        );
-
-        GroupLayout pnlHomeLayout = new GroupLayout(pnlHome);
-        pnlHome.setLayout(pnlHomeLayout);
-        pnlHomeLayout.setHorizontalGroup(
-            pnlHomeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(pnlHomeLayout.createSequentialGroup()
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlGroupBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        pnlHomeLayout.setVerticalGroup(
-            pnlHomeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(pnlHomeLayout.createSequentialGroup()
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlGroupBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        GroupLayout pnlContentLayout = new GroupLayout(pnlContent);
+        javax.swing.GroupLayout pnlContentLayout = new javax.swing.GroupLayout(pnlContent);
         pnlContent.setLayout(pnlContentLayout);
         pnlContentLayout.setHorizontalGroup(
-            pnlContentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, pnlContentLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlHome, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            pnlContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 554, Short.MAX_VALUE)
         );
         pnlContentLayout.setVerticalGroup(
-            pnlContentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, pnlContentLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlHome, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            pnlContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 319, Short.MAX_VALUE)
         );
 
         pnlNav.setOpaque(false);
 
         btnBackup.setIcon(Theme.SVGs.BACKUP.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnBackup.setHorizontalAlignment(SwingConstants.CENTER);
-        btnBackup.setHorizontalTextPosition(SwingConstants.CENTER);
-        btnBackup.setVerticalTextPosition(SwingConstants.CENTER);
+        btnBackup.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnBackup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnBackup.setVerticalTextPosition(javax.swing.SwingConstants.CENTER);
 
         btnHome.setIcon(Theme.SVGs.HOME.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
         btnHome.setText("Inicio");
-        btnHome.setVerticalTextPosition(SwingConstants.CENTER);
+        btnHome.setVerticalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        GroupLayout pnlNavLayout = new GroupLayout(pnlNav);
+        javax.swing.GroupLayout pnlNavLayout = new javax.swing.GroupLayout(pnlNav);
         pnlNav.setLayout(pnlNavLayout);
         pnlNavLayout.setHorizontalGroup(
-            pnlNavLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            pnlNavLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlNavLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlNavLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnHome, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnBackup, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(pnlNavLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnHome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlNavLayout.setVerticalGroup(
-            pnlNavLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            pnlNavLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlNavLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnHome, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 260, Short.MAX_VALUE)
-                .addComponent(btnBackup, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnHome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 260, Short.MAX_VALUE)
+                .addComponent(btnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        GroupLayout layout = new GroupLayout(this);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(pnlNav, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlContent, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(pnlNav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(pnlContent, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(pnlNav, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlNav, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private DefaultPanelButton btnAccount;
-    private DefaultPanelButton btnAccountSubtype;
-    private DefaultPanelButton btnAccountingPeriod;
-    private DefaultPanelButton btnBackup;
-    private DefaultPanelButton btnForm;
-    private DefaultPanelButton btnGeneralLedger;
-    private DefaultPanelButton btnHome;
-    private DefaultPanelButton btnJournal;
-    private DefaultPanelButton btnTrialBalance;
-    private DefaultPanelButton btnUser;
-    private JPanel pnlContent;
-    private JPanel pnlGroupBtn;
-    private JPanel pnlHome;
-    private JPanel pnlNav;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnBackup;
+    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnHome;
+    private javax.swing.JPanel pnlContent;
+    private javax.swing.JPanel pnlNav;
     // End of variables declaration//GEN-END:variables
 
 }
