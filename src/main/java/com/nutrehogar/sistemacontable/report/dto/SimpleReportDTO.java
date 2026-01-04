@@ -6,4 +6,6 @@ import java.util.List;
 public record SimpleReportDTO<T>(
         LocalDate startDate,
         LocalDate endDate,
-        List<T> dto) {}
+        List<T> dto
+) {
+}

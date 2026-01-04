@@ -1,7 +1,6 @@
 package com.nutrehogar.sistemacontable.report;
 
-import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
-
+import com.nutrehogar.sistemacontable.config.ConfigLoader;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

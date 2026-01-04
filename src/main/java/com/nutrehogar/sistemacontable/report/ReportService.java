@@ -1,12 +1,13 @@
 package com.nutrehogar.sistemacontable.report;
 
-import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
-import com.nutrehogar.sistemacontable.domain.model.User;
+import com.nutrehogar.sistemacontable.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.exception.ReportException;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.nutrehogar.sistemacontable.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,13 +25,11 @@ public class ReportService {
     }
 
     private void initializeParams() {
-        Thread.startVirtualThread(() -> {
-            parameters.put("IMG_DIR", IMG_DIR);
-            parameters.put("LOCATION", "Finca 12, Changuinola, Bocas del toro, Panamá");
-            parameters.put("PHONE", "(+507) 758-6506");
-            parameters.put("EMAIL", "nutrehogar@gmail.com");
-            parameters.put("MANAGER_NAME", user.getUsername());
-        });
+        parameters.put("IMG_DIR", IMG_DIR);
+        parameters.put("LOCATION", "Finca 12, Changuinola, Bocas del toro, Panamá");
+        parameters.put("PHONE", "(+507) 758-6506");
+        parameters.put("EMAIL", "nutrehogar@gmail.com");
+        parameters.put("MANAGER_NAME", user.getUsername());
     }
 
     public static void initializeReports() {
@@ -46,6 +45,8 @@ public class ReportService {
     public <T> void generateReport(@NotNull Class<? extends Report<T>> reportClass, T dto) throws ReportException {
 
         Map<String, Object> params = new HashMap<>(parameters);
+
+        IO.println(params);
 
         @SuppressWarnings("unchecked")
         Report<T> generate = (Report<T>) reports.get(reportClass);

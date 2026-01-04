@@ -2,12 +2,17 @@ package com.nutrehogar.sistemacontable.ui.business;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
+import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.model.Account;
 import com.nutrehogar.sistemacontable.model.DocumentType;
 import com.nutrehogar.sistemacontable.model.JournalEntry;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
+import com.nutrehogar.sistemacontable.report.Journal;
+import com.nutrehogar.sistemacontable.report.ReportService;
+import com.nutrehogar.sistemacontable.report.dto.JournalReportDTO;
+import com.nutrehogar.sistemacontable.report.dto.SimpleReportDTO;
 import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
@@ -16,12 +21,17 @@ import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
 
 import lombok.Getter;
+import net.sf.jasperreports.repo.RepositoryService;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.function.Consumer;
+
+import static com.nutrehogar.sistemacontable.config.Util.formatDecimalSafe;
+import static com.nutrehogar.sistemacontable.config.Util.toStringSafe;
 
 @Getter
 public class JournalView extends SimpleView<JournalData> implements BusinessView {
@@ -69,6 +79,31 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
         cbxPeriod.addActionListener(_->loadData());
         spnMonth.addChangeListener(_ -> loadData());
         btnFilter.addActionListener(_ -> loadData());
+        ReportService.initializeReports();
+        btnGenerateReport.addActionListener(_ -> {
+            try {
+                var journalReportDTOs = new ArrayList<JournalReportDTO>(tblModel.getData().size());
+                for(var j : tblModel.getData()){
+                    journalReportDTOs.add(new JournalReportDTO(
+                            toStringSafe(j.date()),
+                            toStringSafe(j.type(), DocumentType::getName),
+                            toStringSafe(j.account().number(), Account::getFormattedNumber),
+                            toStringSafe(j.number()),
+                            toStringSafe(j.reference()),
+                            formatDecimalSafe(j.debit()),
+                            formatDecimalSafe(j.credit())
+                    ));
+                }
+                var simpleReportDTO = new SimpleReportDTO<>(
+                        LocalDate.now(),
+                        LocalDate.now(),
+                        journalReportDTOs.reversed());
+                new ReportService(user).generateReport(com.nutrehogar.sistemacontable.report.Journal.class, simpleReportDTO);
+                showMessage("Reporte generado!");
+            } catch (RepositoryException ex) {
+                showError("Error al crear el Reporte.", ex);
+            }
+        });
     }
     @Override
     public void load(){

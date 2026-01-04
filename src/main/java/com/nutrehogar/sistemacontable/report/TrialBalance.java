@@ -1,6 +1,6 @@
 package com.nutrehogar.sistemacontable.report;
 
-import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
+import com.nutrehogar.sistemacontable.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.exception.ReportException;
 import com.nutrehogar.sistemacontable.report.dto.TrialBalanceReportDTO;
 

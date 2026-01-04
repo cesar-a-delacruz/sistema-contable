@@ -5,6 +5,7 @@ import com.nutrehogar.sistemacontable.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.config.PasswordHasher;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
+import com.nutrehogar.sistemacontable.query.BussinessQuery_;
 import com.nutrehogar.sistemacontable.ui.DashboardView;
 import com.nutrehogar.sistemacontable.ui.service.AuthView;
 import org.slf4j.LoggerFactory;

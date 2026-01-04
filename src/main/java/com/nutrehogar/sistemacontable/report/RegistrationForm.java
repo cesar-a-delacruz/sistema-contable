@@ -1,6 +1,6 @@
 package com.nutrehogar.sistemacontable.report;
 
-import com.nutrehogar.sistemacontable.application.config.ConfigLoader;
+import com.nutrehogar.sistemacontable.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.exception.ReportException;
 
 public final class RegistrationForm extends EntryForm {
