@@ -2,11 +2,15 @@ package com.nutrehogar.sistemacontable.ui.business;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
+import com.nutrehogar.sistemacontable.config.Util;
 import com.nutrehogar.sistemacontable.model.Account;
 import com.nutrehogar.sistemacontable.model.JournalEntry;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
+import com.nutrehogar.sistemacontable.report.JournalReport;
+import com.nutrehogar.sistemacontable.report.dto.JournalReportData;
+import com.nutrehogar.sistemacontable.report.dto.JournalReportRow;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
@@ -17,11 +21,15 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-import static com.nutrehogar.sistemacontable.config.Util.toStringSafe;
+import static com.nutrehogar.sistemacontable.config.Util.*;
 
 @Getter
 public class JournalView extends SimpleView<JournalData> implements BusinessView {
@@ -69,31 +77,60 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
         cbxPeriod.addActionListener(_->loadData());
         spnMonth.addChangeListener(_ -> loadData());
         btnFilter.addActionListener(_ -> loadData());
-//        ReportService.initializeReports();
-//        btnGenerateReport.addActionListener(_ -> {
-//            try {
-//                var journalReportDTOs = new ArrayList<JournalReportDTO>(tblModel.getData().size());
-//                for(var j : tblModel.getData()){
-//                    journalReportDTOs.add(new JournalReportDTO(
-//                            toStringSafe(j.date()),
-//                            toStringSafe(j.type(), DocumentType::getName),
-//                            toStringSafe(j.account().number(), Account::getFormattedNumber),
-//                            toStringSafe(j.number()),
-//                            toStringSafe(j.reference()),
-//                            formatDecimalSafe(j.debit()),
-//                            formatDecimalSafe(j.credit())
-//                    ));
-//                }
-//                var simpleReportDTO = new SimpleReportDTO<>(
-//                        LocalDate.now(),
-//                        LocalDate.now(),
-//                        journalReportDTOs.reversed());
-//                new ReportService(user).generateReport(com.nutrehogar.sistemacontable.report.Journal.class, simpleReportDTO);
-//                showMessage("Reporte generado!");
-//            } catch (RepositoryException ex) {
-//                showError("Error al crear el Reporte.", ex);
-//            }
-//        });
+        btnGenerateReport.addActionListener(_->{
+            if(cbxModelPeriod.getSelectedItem() == null) {
+                showMessage("Selecione un periodo");
+                return;
+            }
+            btnGenerateReport.setEnabled(false);
+            showLoadingCursor();
+
+            var journalData = tblModel.getData();
+            var date = LocalDate.of(cbxModelPeriod.getSelectedItem().year(), spnModelMonth.getNumber().intValue(),1);
+
+            new SwingWorker<Path, Void>(){
+                @Override
+                protected Path doInBackground() {
+                    var dto = new JournalReportData<>(
+                            date,
+                            journalData
+                                    .stream()
+                                    .map(j ->
+                                            new JournalReportRow(
+                                                    j.date().format(SMALL_DATE_FORMATTER),
+                                                    JournalEntry.formatNaturalId(j.type(), j.number()),
+                                                    Account.getFormattedNumber(j.account().number()),
+                                                    j.reference(),
+                                                    j.concept(),
+                                                    formatDecimalSafe(j.debit()),
+                                                    formatDecimalSafe(j.credit())
+                                            )
+                                    )
+                                    .toList()
+                    );
+                    return JournalReport.generate(user, dto);
+                }
+
+                @Override
+                protected void done() {
+                    hideLoadingCursor();
+                    btnGenerateReport.setEnabled(true);
+                    try {
+                        var url = get().toUri();
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                Util.openFile(new File(url));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                    showMessage("Libro diario creado correctamente!");
+                }
+            }.execute();
+        });
     }
     @Override
     public void load(){

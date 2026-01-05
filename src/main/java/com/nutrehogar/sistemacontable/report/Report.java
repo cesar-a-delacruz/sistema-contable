@@ -1,6 +1,7 @@
 package com.nutrehogar.sistemacontable.report;
 
 import com.nutrehogar.sistemacontable.config.ConfigLoader;
+import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.exception.ReportException;
 
 import java.io.File;
@@ -23,6 +24,7 @@ import static com.nutrehogar.sistemacontable.config.Util.LOCALE;
 public abstract class Report<T> {
     protected static final String TEMPLATE_PATH = "/template/";
     protected static final String imgDir = ConfigLoader.Props.DIR_REPORTS_TEMPLATE_NAME.getPath().toString() + File.separator;
+
     protected final String name;
     protected final String templateName;
     protected final Path dirPath;
@@ -33,16 +35,23 @@ public abstract class Report<T> {
         this.templateName = templateName;
         this.dirPath = dirPath;
         try {
-            InputStream templateStream = Report.class.getResourceAsStream(TEMPLATE_PATH + templateName);
+            var templateStream = Report.class.getResourceAsStream(TEMPLATE_PATH + templateName);
             if (templateStream == null)
-                throw new ReportException("Template not found: " + TEMPLATE_PATH + templateName);
+                throw new ReportException(
+                        LabelBuilder.of("No se encontró la plantilla para los reportes de: " + name)
+                                .p("Inténtelo nuevamente, si el problema persiste reinicie el programa")
+                                .build()
+                );
             this.jasperReport = JasperCompileManager.compileReport(templateStream);
         } catch (JRException e) {
-            throw new ReportException("Failed to compile report template: " + e.getMessage(), e);
+            throw new ReportException(
+                    LabelBuilder.of("Ocurrió un error al procesar la plantilla para los reportes de: " + name)
+                            .p("Inténtelo nuevamente, si el problema persiste reinicie el programa")
+                            .build(), e);
         }
     }
 
-    public @NotNull Path generateReport(@NotNull User user, @NotNull T dto) throws ReportException {
+    protected @NotNull Path generateReport(@NotNull User user, @NotNull T dto) throws ReportException {
         Map<String, Object> params = new HashMap<>();
         params.put("MANAGER_NAME", user.getUsername());
         params.put("IMG_DIR", imgDir);
@@ -52,13 +61,15 @@ public abstract class Report<T> {
             var path = getDirReportPath(dto);
             JasperExportManager.exportReportToPdfFile(print, path.toString());
             return path;
-        } catch (Exception e) {
-            throw new ReportException(e.getMessage(), e);
+        } catch (JRException e) {
+            throw new ReportException(LabelBuilder.of("Ocurrió un error al generar el reporte y convertirlo en dpf")
+                    .p("Inténtelo nuevamente, si el problema persiste reinicie el programa")
+                    .build(), e);
         }
     }
 
     protected abstract void setProps(@NotNull Map<String, Object> params, @NotNull T dto);
 
-    protected abstract @NotNull Path getDirReportPath(@NotNull T dto);
+    protected abstract @NotNull Path getDirReportPath(@NotNull T dto) throws ReportException;
 
 }

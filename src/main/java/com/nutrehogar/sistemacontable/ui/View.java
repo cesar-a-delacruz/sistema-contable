@@ -75,11 +75,33 @@ public abstract class View extends JPanel {
         JOptionPane.showMessageDialog(this, message, "Advertencia!", JOptionPane.INFORMATION_MESSAGE);
     }
 
+//    protected void showLoadingCursor() {
+//        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//    }
+//
+//    protected void hideLoadingCursor() {
+//        setCursor(Cursor.getDefaultCursor());
+//    }
+    @Nullable
+    private Timer loadingTimer;
+    private boolean workerFinished = false;
+
     protected void showLoadingCursor() {
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        workerFinished = false;
+        loadingTimer = new Timer(300, _ -> {
+            if (!workerFinished) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            }
+        });
+        loadingTimer.setRepeats(false);
+        loadingTimer.start();
     }
 
     protected void hideLoadingCursor() {
+        workerFinished = true;
+        if (loadingTimer != null) {
+            loadingTimer.stop();
+        }
         setCursor(Cursor.getDefaultCursor());
     }
 

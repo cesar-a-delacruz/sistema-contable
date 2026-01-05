@@ -5,5 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 
 public sealed interface RecordTableRow permits RecordTableData, RecordTableTotal {
-    @NotNull BigDecimal total();
+    @NotNull BigDecimal debit();
+
+    @NotNull BigDecimal credit();
 }

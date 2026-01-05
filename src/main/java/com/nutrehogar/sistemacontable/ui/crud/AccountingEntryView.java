@@ -8,8 +8,8 @@ import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.query.*;
 import com.nutrehogar.sistemacontable.report.PaymentVoucherReport;
-import com.nutrehogar.sistemacontable.report.dto.JournalEntryReport;
-import com.nutrehogar.sistemacontable.report.dto.LedgerRecordReport;
+import com.nutrehogar.sistemacontable.report.dto.JournalEntryReportData;
+import com.nutrehogar.sistemacontable.report.dto.LedgerRecordReportRow;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.View;
@@ -23,7 +23,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
+import java.math.MathContext;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -95,6 +95,8 @@ public class AccountingEntryView extends View{
         btnGeneratePaymentVoucher.addActionListener(_ -> {
             if(journalEntry.isEmpty())
                 return;
+            btnGeneratePaymentVoucher.setEnabled(false);
+            btnGenerateRegistrationForm.setEnabled(false);
             showLoadingCursor();
             var jr = journalEntry.get();
 
@@ -102,6 +104,8 @@ public class AccountingEntryView extends View{
             for(var r : recordController.tblModelRecord.getData())
                 if(r instanceof RecordTableEntity re)
                     tableEntities.add(re);
+
+            var amount = recordController.tblModelRecord.getData().getLast().debit();
 
            new SwingWorker<Path, Void>(){
                @Override
@@ -111,31 +115,33 @@ public class AccountingEntryView extends View{
                        checkNumber.append(check.trim());
                        checkNumber.append("\n");
                    }
-                   var dto = new JournalEntryReport(
-                           jr.getType().getName() + "-" + jr.getFormattedNumber(),
+
+                   var dto = new JournalEntryReportData(
+                           jr.getFormattedNaturalId(),
                            checkNumber.toString(),
                            jr.getDate(),
                            jr.getName(),
                            jr.getConcept(),
-                           "",
-                           tableEntities
-                                   .stream()
+                           formatDecimalSafe(amount),
+                           tableEntities.stream()
                                    .map(r ->
-                                           new LedgerRecordReport(
+                                           new LedgerRecordReportRow(
                                                    r.account().getName(),
                                                    r.reference(),
-                                                   r.debit().equals(BigDecimal.ZERO) ? "" : DECIMAL_FORMAT.format(r.debit()),
-                                                   r.credit().equals(BigDecimal.ZERO) ? "" : DECIMAL_FORMAT.format(r.credit())
+                                                   formatDecimalSafe(r.debit()),
+                                                   formatDecimalSafe(r.credit())
                                            )
                                    )
                                    .toList()
                    );
-                   return PaymentVoucherReport.getInstance().generateReport(user, dto);
+                   return PaymentVoucherReport.generate(user, dto);
                }
 
                @Override
                protected void done() {
                    hideLoadingCursor();
+                   btnGeneratePaymentVoucher.setEnabled(true);
+                   btnGenerateRegistrationForm.setEnabled(true);
                    try {
                        var url = get().toUri();
                        SwingUtilities.invokeLater(() -> {
@@ -378,7 +384,7 @@ public class AccountingEntryView extends View{
             this.isBalanced = false;
             this.spnModelRAccountNumber = new SpinnerNumberModel(0, 0, 99999, 1);
             this.spnModelRAmount = new SpinnerNumberModel(1.0d, 0.0d, Integer.MAX_VALUE, 1.0d);
-            this.tblModelRecord = new CustomTableModel<>("Referencia", "Cuenta", "Débito", "Crédito", "Subtotal") {
+            this.tblModelRecord = new CustomTableModel<>("Referencia", "Cuenta", "Débito", "Crédito") {
                 @Override
                 public Object getValueAt(int rowIndex, int columnIndex) {
                     return switch (data.get(rowIndex)) {
@@ -387,12 +393,12 @@ public class AccountingEntryView extends View{
                             case 1 -> r.account();
                             case 2 -> r.debit();
                             case 3 -> r.credit();
-                            case 4 -> r.total();
                             default -> "que haces?";
                         };
-                        case RecordTableTotal(var total) -> switch (columnIndex) {
+                        case RecordTableTotal(var debit, var credit) -> switch (columnIndex) {
                             case 0 -> "Total";
-                            case 4 -> total;
+                            case 2 -> debit;
+                            case 3 -> credit;
                             default -> "";
                         };
                     };
@@ -402,7 +408,7 @@ public class AccountingEntryView extends View{
                 public Class<?> getColumnClass(int columnIndex) {
                     return switch (columnIndex) {
                         case 1 -> Account.class;
-                        case 2, 3, 4 -> BigDecimal.class;
+                        case 2, 3 -> BigDecimal.class;
                         default -> String.class;
                     };
                 }
@@ -472,7 +478,6 @@ public class AccountingEntryView extends View{
         public void setDataToTable(@NotNull List<LedgerRecord> records) {
             var debitSum = BigDecimal.ZERO;
             var creditSum = BigDecimal.ZERO;
-            var totalSum = BigDecimal.ZERO;
             var dtos = new ArrayList<RecordTableRow>(records.size() + formRecords.size() + 1);
             for (var record : records) {
                 var account = record.getAccount();
@@ -482,28 +487,15 @@ public class AccountingEntryView extends View{
                 }
                 debitSum = debitSum.add(record.getDebit(), DECIMAL128);
                 creditSum = creditSum.add(record.getCredit(), DECIMAL128);
-                totalSum = account.getType().getBalance(totalSum, record.getCredit(), record.getDebit());
-                dtos.add(
-                        new RecordTableEntity(
-                                record,
-                                totalSum
-                        )
-                );
+                dtos.add(new RecordTableEntity(record));
             }
             for (var record : formRecords) {
-                var account = record.account();
                 debitSum = debitSum.add(record.debit(), DECIMAL128);
                 creditSum = creditSum.add(record.credit(), DECIMAL128);
-                totalSum = account.getType().getBalance(totalSum, record.credit(), record.debit());
-                dtos.add(
-                        new RecordTableFormData(
-                                record,
-                                totalSum
-                        )
-                );
+                dtos.add(new RecordTableFormData(record));
             }
-            dtos.add(new RecordTableTotal(totalSum));
-            isBalanced = totalSum.equals(BigDecimal.ZERO);
+            dtos.add(new RecordTableTotal(debitSum, creditSum));
+            isBalanced = debitSum.equals(creditSum);
             tblModelRecord.setData(dtos);
         }
 
@@ -569,13 +561,13 @@ public class AccountingEntryView extends View{
                 return;
             }
             switch (tblRecord.getSelected().get()) {
-                case RecordTableEntity(var entity, var _) ->
+                case RecordTableEntity(var entity) ->
                         new InTransactionWorker(
                                 session -> session.remove(session.merge(entity)),
                                 this::loadData,
                                 AccountingEntryView.this::showError
                         ).execute();
-                case RecordTableFormData(var formData, var _) -> {
+                case RecordTableFormData(var formData) -> {
                     formRecords.removeIf(formData::equals);
                     loadData();
                 }
@@ -605,7 +597,7 @@ public class AccountingEntryView extends View{
             try {
                 var dto = getDataFromForm();
                 switch (tblRecord.getSelected().get()) {
-                    case RecordTableEntity(var entity, var _) ->
+                    case RecordTableEntity(var entity) ->
                             new InTransactionWorker(
                                     session -> {
                                         var tomerge = session.merge(entity);
@@ -618,7 +610,7 @@ public class AccountingEntryView extends View{
                                     this::loadData,
                                     AccountingEntryView.this::showError
                             ).execute();
-                    case RecordTableFormData(var formData, var _) -> {
+                    case RecordTableFormData(var formData) -> {
                         formRecords.removeIf(formData::equals);
                         formRecords.add(new RecordFormData(dto.reference(), dto.account(), dto.debit(), dto.credit(), user.getUsername()));
                         loadData();

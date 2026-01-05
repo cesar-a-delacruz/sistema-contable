@@ -6,8 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 
 public record RecordTableFormData(
-        @NotNull RecordFormData formData,
-        @NotNull BigDecimal total
+        @NotNull RecordFormData formData
 ) implements RecordTableData {
     @Override
     public @NotNull String reference() {

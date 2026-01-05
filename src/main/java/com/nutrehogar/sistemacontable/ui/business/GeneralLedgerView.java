@@ -2,12 +2,19 @@ package com.nutrehogar.sistemacontable.ui.business;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
+import com.nutrehogar.sistemacontable.config.Util;
 import com.nutrehogar.sistemacontable.model.Account;
 import com.nutrehogar.sistemacontable.model.JournalEntry;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.AccountQuery_;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
+import com.nutrehogar.sistemacontable.report.GeneralLedgerReport;
+import com.nutrehogar.sistemacontable.report.TrialBalanceReport;
+import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportData;
+import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportRow;
+import com.nutrehogar.sistemacontable.report.dto.JournalReportData;
+import com.nutrehogar.sistemacontable.report.dto.TrialBalanceReportRow;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
@@ -17,13 +24,19 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+import static com.nutrehogar.sistemacontable.config.Util.SMALL_DATE_FORMATTER;
+import static com.nutrehogar.sistemacontable.config.Util.formatDecimalSafe;
 import static java.math.MathContext.DECIMAL128;
 import static java.util.Comparator.comparing;
 
@@ -109,6 +122,76 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
         btnFilter.addActionListener(_ -> loadData());
         cbxAccount.addActionListener(_ -> loadData());
         spnAccountNumber.addChangeListener(_ -> filterAccounts());
+        btnGenerateReport.addActionListener(_->{
+            if(cbxModelPeriod.getSelectedItem() == null) {
+                showMessage("Selecione un periodo");
+                return;
+            }
+            if(cbxModelAccount.getSelectedItem() == null) {
+                showMessage("Selecione una cuenta");
+                return;
+            }
+            btnGenerateReport.setEnabled(false);
+            showLoadingCursor();
+
+            var journalData = tblModel.getData();
+            var period = String.valueOf(cbxModelPeriod.getSelectedItem().year());
+            var account = cbxModelAccount.getSelectedItem();
+
+            new SwingWorker<Path, Void>() {
+                @Override
+                protected Path doInBackground() {
+                    return GeneralLedgerReport.generate(user, new GeneralLedgerReportData(
+                            period,
+                            account.getFormattedNumber() + " " + account.getName(),
+                            journalData
+                                    .stream()
+                                    .map(j ->
+                                            switch (j) {
+                                                case RowTotal(var debit, var credit, var total) ->
+                                                        new GeneralLedgerReportRow("Total", formatDecimalSafe(debit), formatDecimalSafe(credit), formatDecimalSafe(total));
+                                                case GeneralLedgerPreviousPeriods(var debit, var credit, var total) ->
+                                                        new GeneralLedgerReportRow(
+                                                                total.setScale(0, RoundingMode.HALF_UP).equals(BigDecimal.ZERO) ? "No hay saldo de periodos anteriores" : "Saldo de periodos anteriores"
+                                                                , formatDecimalSafe(debit),
+                                                                formatDecimalSafe(credit),
+                                                                formatDecimalSafe(total)
+                                                        );
+                                                case GeneralLedgerEntity dto -> new GeneralLedgerReportRow(
+                                                        dto.date().format(SMALL_DATE_FORMATTER),
+                                                        JournalEntry.formatNaturalId(dto.type(), dto.number()),
+                                                        dto.reference(),
+                                                        dto.concept(),
+                                                        formatDecimalSafe(dto.debit()),
+                                                        formatDecimalSafe(dto.credit()),
+                                                        formatDecimalSafe(dto.total())
+                                                );
+                                            }
+                                    )
+                                    .toList()
+                    ));
+                }
+
+                @Override
+                protected void done() {
+                    hideLoadingCursor();
+                    btnGenerateReport.setEnabled(true);
+                    try {
+                        var url = get().toUri();
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                Util.openFile(new File(url));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                    showMessage("Libro diario creado correctamente!");
+                }
+            }.execute();
+        });
     }
 
     @Override

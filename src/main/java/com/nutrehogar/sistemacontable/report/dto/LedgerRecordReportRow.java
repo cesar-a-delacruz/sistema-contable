@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LedgerRecordReport {
+public class LedgerRecordReportRow {
     String account;
     String reference;
     String debit;

@@ -9,8 +9,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public record RecordTableEntity(
-        @NotNull LedgerRecord entity,
-        @NotNull BigDecimal total
+        @NotNull LedgerRecord entity
 ) implements RecordTableData {
     @Override
     public @NotNull String reference() {

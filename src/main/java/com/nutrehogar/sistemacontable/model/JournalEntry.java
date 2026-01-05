@@ -74,6 +74,10 @@ public class JournalEntry extends AuditableEntity {
         return JournalEntry.formatNumber(number);
     }
 
+    public @NotNull String getFormattedNaturalId() {
+        return JournalEntry.formatNaturalId(type, number);
+    }
+
     @NotNull
     public static String formatNumber(@NotNull Integer number) {
         var str = number.toString();
@@ -81,4 +85,9 @@ public class JournalEntry extends AuditableEntity {
         var toRepet = 3 - str.length();
         return "0".repeat(toRepet).concat(str);
     }
+    @NotNull
+    public  static String formatNaturalId(@NotNull DocumentType type, @NotNull Integer number) {
+        return type.getName() +" "+ formatNumber(number);
+    }
+
 }

@@ -2,9 +2,15 @@ package com.nutrehogar.sistemacontable.ui.business;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
+import com.nutrehogar.sistemacontable.config.Util;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
+import com.nutrehogar.sistemacontable.report.JournalReport;
+import com.nutrehogar.sistemacontable.report.TrialBalanceReport;
+import com.nutrehogar.sistemacontable.report.dto.JournalReportData;
+import com.nutrehogar.sistemacontable.report.dto.JournalReportRow;
+import com.nutrehogar.sistemacontable.report.dto.TrialBalanceReportRow;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
@@ -15,11 +21,16 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+import static com.nutrehogar.sistemacontable.config.Util.*;
 import static java.math.MathContext.DECIMAL128;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
@@ -90,6 +101,64 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
         cbxPeriod.addActionListener(_->loadData());
         spnMonth.addChangeListener(_ -> loadData());
         btnFilter.addActionListener(_ -> loadData());
+        btnGenerateReport.addActionListener(_->{
+            if(cbxModelPeriod.getSelectedItem() == null) {
+                showMessage("Selecione un periodo");
+                return;
+            }
+            btnGenerateReport.setEnabled(false);
+            showLoadingCursor();
+
+            var journalData = tblModel.getData();
+            var date = LocalDate.of(cbxModelPeriod.getSelectedItem().year(), spnModelMonth.getNumber().intValue(),1);
+
+            new SwingWorker<Path, Void>(){
+                @Override
+                protected Path doInBackground() {
+                    return TrialBalanceReport.generate(user, new JournalReportData<>(
+                            date,
+                            journalData
+                                    .stream()
+                                    .map(j ->
+                                            switch (j) {
+                                                case RowTotal(var debit, var credit, var total) ->
+                                                        new TrialBalanceReportRow(formatDecimalSafe(debit), formatDecimalSafe(credit), formatDecimalSafe(total));
+                                                case TrialBalanceData dto -> new TrialBalanceReportRow(
+                                                        dto.date().format(SMALL_DATE_FORMATTER),
+                                                        JournalEntry.formatNaturalId(dto.type(), dto.number()),
+                                                        Account.getFormattedNumber(dto.account().number()),
+                                                        dto.reference(),
+                                                        dto.concept(),
+                                                        formatDecimalSafe(dto.debit()),
+                                                        formatDecimalSafe(dto.credit()),
+                                                        formatDecimalSafe(dto.total())
+                                                );
+                                            }
+                                    )
+                                    .toList()
+                    ));
+                }
+
+                @Override
+                protected void done() {
+                    hideLoadingCursor();
+                    btnGenerateReport.setEnabled(true);
+                    try {
+                        var url = get().toUri();
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                Util.openFile(new File(url));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                    showMessage("Libro diario creado correctamente!");
+                }
+            }.execute();
+        });
     }
 
     @Override

@@ -10,12 +10,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-public class JournalReportDTO {
-    String entryDate;
-    String documentType;
-    String accountId;
-    String voucher;
+public class JournalReportRow {
+    String date;
+    String doc;
+    String account;
     String reference;
+    String concept;
     String debit;
     String credit;
 }

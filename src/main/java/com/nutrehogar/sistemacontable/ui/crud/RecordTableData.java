@@ -9,8 +9,4 @@ public sealed interface RecordTableData extends RecordTableRow permits RecordTab
     @NotNull String reference();
 
     @NotNull Account account();
-
-    @NotNull BigDecimal debit();
-
-    @NotNull BigDecimal credit();
 }

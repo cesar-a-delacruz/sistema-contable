@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -23,6 +25,7 @@ public class Util {
     public static final DateTimeFormatter SMALL_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy", LOCALE);
     public static final DateTimeFormatter FILE_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd", LOCALE);
     public static final DateTimeFormatter LARGE_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE d 'de' LLLL 'del' yyyy", LOCALE);
+    public static final DateTimeFormatter LARGE_MONTH_YEAR_FORMATTER = DateTimeFormatter.ofPattern("LLLL 'del' yyyy", LOCALE);
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.00");
 
     public static final String NA = "N/A";
@@ -46,8 +49,8 @@ public class Util {
     }
 
     // Maneja conversiones seguras de BigDecimal o Double usando DECIMAL_FORMAT
-    public static String formatDecimalSafe(Number number) {
-        return (number != null) ? DECIMAL_FORMAT.format(number) : "";
+    public static String formatDecimalSafe(BigDecimal number) {
+        return number != null && !number.setScale(0, RoundingMode.HALF_UP).equals(BigDecimal.ZERO) ? DECIMAL_FORMAT.format(number) : "";
     }
 
     public static void openFile(File file) throws UnsupportedOperationException, IOException, IllegalArgumentException {
