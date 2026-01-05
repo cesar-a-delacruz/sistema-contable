@@ -49,18 +49,21 @@ public class OperationPanel extends javax.swing.JPanel {
         setOpaque(false);
 
         btnDelete.setText("Eliminar");
+        btnDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblDelete.setText(LabelBuilder.build("Elimina la "+entityName+" seleccionada"));
         lblDelete.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblDelete.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnPrepareToEdit.setText("Editar");
+        btnPrepareToEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblEdit.setText(LabelBuilder.build("Prepara el formualrio para editar una "+ entityName));
         lblEdit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblEdit.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnPrepareToAdd.setText("Crear");
+        btnPrepareToAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblAdd.setText(LabelBuilder.build("Prepara el formualrio para crear una nueva "+ entityName));
         lblAdd.setVerticalAlignment(javax.swing.SwingConstants.TOP);

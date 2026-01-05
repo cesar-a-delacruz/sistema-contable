@@ -1,29 +1,21 @@
 package com.nutrehogar.sistemacontable.ui.crud;
 
-import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
 
-import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
-import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
-import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
-import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
-import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
-import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 
 
 import javax.swing.*;
-import java.awt.*;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 public class AccountingPeriodView extends SimpleView<AccountingPeriod> implements CRUDView<AccountingPeriod, AccountingPeriodFormData> {
@@ -67,7 +59,13 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         btnSave.addActionListener(_ -> save());
         btnUpdate.addActionListener(_ -> update());
         operationPanel.getBtnDelete().addActionListener(_ -> delete());
+        spnYear.addChangeListener(_ -> {
+            var year = spnModelYear.getNumber().intValue();
+            spnModelStartPeriod.setValue(spnModelStartPeriod.getValue().withYear(year));
+            spnModelEndPeriod.setValue(spnModelEndPeriod.getValue().withYear(year));
+        });
     }
+
     public void loadData() {
         tblData.setEmpty();
         prepareToAdd();
@@ -155,10 +153,14 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
 
     @Override
     public void save() {
-        try{
+        try {
             var dto = getDataFromForm();
             new InTransactionWorker(
-                session -> session.persist(new AccountingPeriod(dto.year(), dto.startDate(), dto.endDate(), dto.closed(), dto.username())),
+                    session -> {
+                        if (new AccountingPeriodQuery_(session).yearIsUsed(dto.year()))
+                            throw new InvalidFieldException("Ya existe un periodo para el año " + dto.year());
+                        session.persist(new AccountingPeriod(dto.year(), dto.startDate(), dto.endDate(), dto.closed(), dto.username()));
+                    },
                     this::loadData,
                     this::showError
             ).execute();
@@ -254,10 +256,12 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         lblType.setText("Año:");
 
         btnSave.setText("Guardar");
+        btnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         labelSection1.setText("Operaciones");
 
         btnUpdate.setText("Actualizar");
+        btnUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblSave.setLabelFor(btnSave);
         lblSave.setText("<html><p>Guarda el nuevo "+entityName+"</p></html>");

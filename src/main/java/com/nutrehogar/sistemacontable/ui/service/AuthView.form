@@ -116,6 +116,9 @@
         <Component class="javax.swing.JButton" name="btnOk">
           <Properties>
             <Property name="text" type="java.lang.String" value="OK"/>
+            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+              <Color id="Cursor de Mano"/>
+            </Property>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="getRootPane().setDefaultButton(btnOk);"/>
@@ -124,6 +127,9 @@
         <Component class="javax.swing.JButton" name="BtnCancel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Cancelar"/>
+            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+              <Color id="Cursor de Mano"/>
+            </Property>
           </Properties>
         </Component>
         <Container class="com.nutrehogar.sistemacontable.ui_2.component.ScrollPanel" name="scrollPanel1">

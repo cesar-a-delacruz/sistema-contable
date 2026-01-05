@@ -2,6 +2,7 @@ package com.nutrehogar.sistemacontable;
 
 import javax.swing.*;
 
+import com.nutrehogar.sistemacontable.model.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
@@ -28,29 +29,41 @@ public class HibernateUtil {
     private HibernateUtil() {
         throw new IllegalStateException("Utility class");
     }
-    @NotNull
-    @Getter
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+
+    private static SessionFactory sessionFactory;
+
+    public static synchronized SessionFactory getSessionFactory() {
+        if(sessionFactory == null) {
+            sessionFactory = buildSessionFactory();
+        }
+        return sessionFactory;
+    }
+
     /**
      * Construye el SessionFactory utilizando la configuración especificada en
      * hibernate.cfg.xml.
      *
      * @return SessionFactory construida
-     * @throws ExceptionInInitializerError
-     *                                     si la configuración falla
+     * @throws ExceptionInInitializerError si la configuración falla
      */
     private static SessionFactory buildSessionFactory() {
         log.info("Building Hibernate SessionFactory");
         try {
-            return new HibernatePersistenceConfiguration("sistema_contable", Main.class)
-                            .jdbcUrl("jdbc:hsqldb:file:./data/sistema_contable;shutdown=true")// "jdbc:sqlite:" + ConfigLoader.Props.DB_NAME.getPath().toString() + "?journal_mode=WAL"
-                            .jdbcDriver("org.hsqldb.jdbcDriver")
-                            .property("hibernate.dialect", "org.hibernate.dialect.HSQLDialect")
-                            .property("hibernate.connection.provider_class", "agroal")
-                            .jdbcPoolSize(1)
-                            .schemaToolingAction(Action.NONE)
-                            .showSql(true, true, true)
-                            .createEntityManagerFactory();
+            return new HibernatePersistenceConfiguration("sistema_contable")
+                    .managedClass(User.class)
+                    .managedClasses(Account.class)
+                    .managedClasses(AccountSubtype.class)
+                    .managedClasses(AccountingPeriod.class)
+                    .managedClasses(JournalEntry.class)
+                    .managedClasses(LedgerRecord.class)
+                    .jdbcUrl("jdbc:hsqldb:file:./data/sistema_contable;shutdown=true")// "jdbc:sqlite:" + ConfigLoader.Props.DB_NAME.getPath().toString() + "?journal_mode=WAL"
+                    .jdbcDriver("org.hsqldb.jdbcDriver")
+                    .property("hibernate.dialect", "org.hibernate.dialect.HSQLDialect")
+                    .property("hibernate.connection.provider_class", "agroal")
+                    .jdbcPoolSize(1)
+//                            .schemaToolingAction(Action.NONE)
+//                            .showSql(true, true, true)
+                    .createEntityManagerFactory();
         } catch (Exception e) {
             log.error("Error building SessionFactory", e);
 
@@ -63,6 +76,7 @@ public class HibernateUtil {
             return null;
         }
     }
+
     public static void shutdown() {
         sessionFactory.close();
     }

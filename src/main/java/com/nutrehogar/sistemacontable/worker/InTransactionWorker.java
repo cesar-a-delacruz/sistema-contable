@@ -1,16 +1,14 @@
-package com.nutrehogar.sistemacontable.service.worker;
+package com.nutrehogar.sistemacontable.worker;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
-import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * SwingWorker para ejecutar una operacion de base de datos mediante hibernate dentro de una transaccion

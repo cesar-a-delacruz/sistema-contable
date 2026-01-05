@@ -60,7 +60,7 @@
 	<parameter name="END_DATE" class="java.lang.String"/>
 	<parameter name="START_DATE" class="java.lang.String"/>
 	<parameter name="IMG_DIR" evaluationTime="Early" class="java.lang.String">
-		<defaultValueExpression><![CDATA["./img/"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["./../../../../package/resource/template/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="TABLE_DATA_SOURCE" evaluationTime="Early" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="ENTRY_ACCOUNT" class="java.lang.String"/>

@@ -10,8 +10,8 @@ import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
 
 import javax.swing.*;
 
-import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
-import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
@@ -374,12 +374,14 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
         jLabel1.setText("Subtipo de cuenta:");
 
         btnSave.setText("Guardar");
+        btnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         cbxSubtype.setModel(cbxModelAccountSubtype);
 
         labelSection1.setText("Operaciones");
 
         btnUpdate.setText("Actualizar");
+        btnUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblSave.setLabelFor(btnSave);
         lblSave.setText("<html><p>Guarda la nueva "+entityName+"</p></html>");

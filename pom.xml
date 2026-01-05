@@ -11,7 +11,7 @@
     <name>Sistema Contable</name>
     <url>https://github.com/TrotmanCH/Contabilidad-Nutre-Hogar</url>
     <description>
-        Este es un software de escritorio para la gestión contable de la Fundación Nutre Hogar. 
+        Este es un software de escritorio para la gestión contable de la Fundación Nutre Hogar.
         Permite el control de registros y cuentas contables, incluyendo la generación de reportes de libro diario,
         mayor general y balance de comprobación.
     </description>
@@ -117,11 +117,11 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-scan-jandex -->
         <!--    Escane y busca las clases el mismo-->
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-scan-jandex</artifactId>
-            <version>${currentHibernateVersion}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.hibernate.orm</groupId>-->
+<!--            <artifactId>hibernate-scan-jandex</artifactId>-->
+<!--            <version>${currentHibernateVersion}</version>-->
+<!--        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-agroal -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -171,7 +171,7 @@
             <artifactId>flatlaf-extras</artifactId>
             <version>3.4.1</version>
         </dependency>
-        
+
         <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf-fonts-roboto -->
         <dependency>
             <groupId>com.formdev</groupId>

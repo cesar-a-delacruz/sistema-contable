@@ -179,6 +179,9 @@
             <Component class="javax.swing.JButton" name="btnFilter">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Aplicar"/>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Cursor de Mano"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lblFilter">
@@ -196,6 +199,9 @@
             <Component class="javax.swing.JButton" name="btnEdit">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Editar"/>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Cursor de Mano"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lblEdit">
@@ -253,6 +259,9 @@
         <Component class="javax.swing.JButton" name="btnGenerateReport">
           <Properties>
             <Property name="text" type="java.lang.String" value="Generar Reporte"/>
+            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+              <Color id="Cursor de Mano"/>
+            </Property>
           </Properties>
         </Component>
       </SubComponents>

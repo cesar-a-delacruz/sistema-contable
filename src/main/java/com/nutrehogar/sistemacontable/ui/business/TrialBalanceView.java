@@ -5,27 +5,20 @@ import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
-import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
-import com.nutrehogar.sistemacontable.ui.crud.RecordTableData;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
-import com.nutrehogar.sistemacontable.ui_2.builder.CustomTable;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
-import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
 
-import com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.svg.SVGAnimatedRect;
 
 import javax.swing.*;
-import java.awt.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static java.math.MathContext.DECIMAL128;
 import static java.util.Comparator.comparing;
@@ -238,6 +231,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
         pnlOperations.setOpaque(false);
 
         btnFilter.setText("Aplicar");
+        btnFilter.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblFilter.setLabelFor(btnFilter);
         lblFilter.setText("<html><p>Muestra los datos de registros que coincidan con el período contable</p></html>");
@@ -245,6 +239,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
         lblFilter.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnEdit.setText("Editar");
+        btnEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblEdit.setLabelFor(btnEdit);
         lblEdit.setText("<html><p>Editar registro seleccionado</p></html>");
@@ -264,9 +259,9 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
         pnlOperationsLayout.setHorizontalGroup(
             pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlOperationsLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlOperationsLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -275,7 +270,6 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
                             .addComponent(btnFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
                             .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(pnlOperationsLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(pnlOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblEnd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -309,6 +303,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
         );
 
         btnGenerateReport.setText("Generar Reporte");
+        btnGenerateReport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);
@@ -346,7 +341,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))

@@ -7,8 +7,8 @@ import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
 
 import com.nutrehogar.sistemacontable.query.UserQuery_;
-import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
-import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
@@ -16,7 +16,6 @@ import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.Optional;
 
 @Getter
@@ -224,10 +223,12 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
         lblUsername.setText("Nombre de Usuario:");
 
         btnSave.setText("Guardar");
+        btnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         labelSection1.setText("Operaciones");
 
         btnUpdate.setText("Actualizar");
+        btnUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblSave.setLabelFor(btnSave);
         lblSave.setText("<html><p>Guarda el nuevo usuario registrado en la base de datos</p></html>");

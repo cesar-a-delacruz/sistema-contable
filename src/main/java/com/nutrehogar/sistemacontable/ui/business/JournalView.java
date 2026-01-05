@@ -2,35 +2,25 @@ package com.nutrehogar.sistemacontable.ui.business;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
-import com.nutrehogar.sistemacontable.exception.RepositoryException;
 import com.nutrehogar.sistemacontable.model.Account;
-import com.nutrehogar.sistemacontable.model.DocumentType;
 import com.nutrehogar.sistemacontable.model.JournalEntry;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
-import com.nutrehogar.sistemacontable.report.Journal;
-import com.nutrehogar.sistemacontable.report.ReportService;
-import com.nutrehogar.sistemacontable.report.dto.JournalReportDTO;
-import com.nutrehogar.sistemacontable.report.dto.SimpleReportDTO;
-import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
-import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
 
 import lombok.Getter;
-import net.sf.jasperreports.repo.RepositoryService;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
-import static com.nutrehogar.sistemacontable.config.Util.formatDecimalSafe;
 import static com.nutrehogar.sistemacontable.config.Util.toStringSafe;
 
 @Getter
@@ -79,31 +69,31 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
         cbxPeriod.addActionListener(_->loadData());
         spnMonth.addChangeListener(_ -> loadData());
         btnFilter.addActionListener(_ -> loadData());
-        ReportService.initializeReports();
-        btnGenerateReport.addActionListener(_ -> {
-            try {
-                var journalReportDTOs = new ArrayList<JournalReportDTO>(tblModel.getData().size());
-                for(var j : tblModel.getData()){
-                    journalReportDTOs.add(new JournalReportDTO(
-                            toStringSafe(j.date()),
-                            toStringSafe(j.type(), DocumentType::getName),
-                            toStringSafe(j.account().number(), Account::getFormattedNumber),
-                            toStringSafe(j.number()),
-                            toStringSafe(j.reference()),
-                            formatDecimalSafe(j.debit()),
-                            formatDecimalSafe(j.credit())
-                    ));
-                }
-                var simpleReportDTO = new SimpleReportDTO<>(
-                        LocalDate.now(),
-                        LocalDate.now(),
-                        journalReportDTOs.reversed());
-                new ReportService(user).generateReport(com.nutrehogar.sistemacontable.report.Journal.class, simpleReportDTO);
-                showMessage("Reporte generado!");
-            } catch (RepositoryException ex) {
-                showError("Error al crear el Reporte.", ex);
-            }
-        });
+//        ReportService.initializeReports();
+//        btnGenerateReport.addActionListener(_ -> {
+//            try {
+//                var journalReportDTOs = new ArrayList<JournalReportDTO>(tblModel.getData().size());
+//                for(var j : tblModel.getData()){
+//                    journalReportDTOs.add(new JournalReportDTO(
+//                            toStringSafe(j.date()),
+//                            toStringSafe(j.type(), DocumentType::getName),
+//                            toStringSafe(j.account().number(), Account::getFormattedNumber),
+//                            toStringSafe(j.number()),
+//                            toStringSafe(j.reference()),
+//                            formatDecimalSafe(j.debit()),
+//                            formatDecimalSafe(j.credit())
+//                    ));
+//                }
+//                var simpleReportDTO = new SimpleReportDTO<>(
+//                        LocalDate.now(),
+//                        LocalDate.now(),
+//                        journalReportDTOs.reversed());
+//                new ReportService(user).generateReport(com.nutrehogar.sistemacontable.report.Journal.class, simpleReportDTO);
+//                showMessage("Reporte generado!");
+//            } catch (RepositoryException ex) {
+//                showError("Error al crear el Reporte.", ex);
+//            }
+//        });
     }
     @Override
     public void load(){
@@ -193,6 +183,7 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
         pnlOperations.setOpaque(false);
 
         btnFilter.setText("Aplicar");
+        btnFilter.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblFilter.setLabelFor(btnFilter);
         lblFilter.setText("<html><p>Muestra los datos de registros que coincidan con el período contable</p></html>");
@@ -200,6 +191,7 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
         lblFilter.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnEdit.setText("Editar");
+        btnEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblEdit.setLabelFor(btnEdit);
         lblEdit.setText("<html><p>Editar registro seleccionado</p></html>");
@@ -263,6 +255,7 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
         );
 
         btnGenerateReport.setText("Generar Reporte");
+        btnGenerateReport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);
@@ -300,7 +293,7 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlAside, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))

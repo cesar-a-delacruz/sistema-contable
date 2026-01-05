@@ -49,8 +49,7 @@ public class ConfigLoader {
 
     public static void createDirectories() {
         for (Props prop : Props.values()) {
-            if (prop == Props.DB_NAME)
-                continue;
+            if (prop == Props.DB_NAME)continue;
             try {
                 Files.createDirectories(prop.getPath());
             } catch (IOException e) {

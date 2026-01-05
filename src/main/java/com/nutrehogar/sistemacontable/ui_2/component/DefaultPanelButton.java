@@ -16,6 +16,7 @@ public class DefaultPanelButton extends JButton {
         setFont(Theme.Typography.FONT_2XL);
         setForeground(Theme.Palette.OFFICE_GREEN);
         setIconTextGap(Theme.Spacing.GAP_MD);
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {

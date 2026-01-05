@@ -3,13 +3,12 @@ package com.nutrehogar.sistemacontable.ui.business;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.model.Account;
-import com.nutrehogar.sistemacontable.model.DocumentType;
 import com.nutrehogar.sistemacontable.model.JournalEntry;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.AccountQuery_;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
-import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.*;
@@ -276,6 +275,7 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
         pnlOperations.setOpaque(false);
 
         btnFilter.setText("Aplicar");
+        btnFilter.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblFilter.setLabelFor(btnFilter);
         lblFilter.setText("<html><p>Muestra los datos de registros que coincidan con el período contable</p></html>");
@@ -283,6 +283,7 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
         lblFilter.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnEdit.setText("Editar");
+        btnEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblEdit.setLabelFor(btnEdit);
         lblEdit.setText("<html><p>Editar registro seleccionado</p></html>");
@@ -351,6 +352,7 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
         );
 
         btnGenerateReport.setText("Generar Reporte");
+        btnGenerateReport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout pnlAsideLayout = new javax.swing.GroupLayout(pnlAside);
         pnlAside.setLayout(pnlAsideLayout);

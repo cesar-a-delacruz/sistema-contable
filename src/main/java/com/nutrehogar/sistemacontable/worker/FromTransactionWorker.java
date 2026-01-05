@@ -1,4 +1,4 @@
-package com.nutrehogar.sistemacontable.service.worker;
+package com.nutrehogar.sistemacontable.worker;
 
 import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;

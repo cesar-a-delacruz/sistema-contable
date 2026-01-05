@@ -1,20 +1,17 @@
 package com.nutrehogar.sistemacontable.ui.service;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.nutrehogar.sistemacontable.HibernateUtil;
 import com.nutrehogar.sistemacontable.config.PasswordHasher;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.UserQuery_;
-import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui_2.builder.UserListCellRenderer;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +37,8 @@ public class AuthView extends JDialog {
         this.adminUser = adminUser;
         this.userListModel = new DefaultListModel<>();
         initComponents();
+        btnOk.setEnabled(false);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         new FromTransactionWorker<>(
                 session -> new UserQuery_(session).findAllEnables(),
                 users -> {
@@ -50,6 +49,8 @@ public class AuthView extends JDialog {
                         lstUser.setSelectedIndex(0);
                         btnOk.setEnabled(true);
                     }
+                    setCursor(Cursor.getDefaultCursor());
+                    btnOk.setEnabled(true);
                 },
                 this::showError
         ).execute();
@@ -87,6 +88,8 @@ public class AuthView extends JDialog {
             if(selectedUser == null) return;
 
             var insertPass = String.valueOf(txtPing.getPassword());
+
+            if(insertPass.isEmpty()) return;
 
             if(selectedUser.isAdmin()
                     && selectedUser.getUsername().equals(adminUser.getUsername())) {
@@ -154,8 +157,10 @@ public class AuthView extends JDialog {
         background1.setFundType(com.nutrehogar.sistemacontable.ui_2.component.Background.FundType.LINEAL);
 
         btnOk.setText("OK");
+        btnOk.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         BtnCancel.setText("Cancelar");
+        BtnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lstUser.setModel(userListModel);
         lstUser.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);

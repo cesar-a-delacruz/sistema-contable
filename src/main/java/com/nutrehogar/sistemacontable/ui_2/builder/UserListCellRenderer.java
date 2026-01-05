@@ -18,6 +18,7 @@ public class UserListCellRenderer extends DefaultListCellRenderer {
             boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value instanceof User user) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             setText(user.getUsername());
             setIcon(user.getEnabled() ? userIcon : userDisableIcon);
             setForeground(user.getEnabled() ? Theme.Palette.OFFICE_GREEN : Theme.Palette.PLATINUM);

@@ -1,65 +1,64 @@
 package com.nutrehogar.sistemacontable.report;
 
+import com.nutrehogar.sistemacontable.config.ConfigLoader;
 import com.nutrehogar.sistemacontable.exception.ReportException;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import com.nutrehogar.sistemacontable.model.User;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
+import org.jetbrains.annotations.NotNull;
 
 import static com.nutrehogar.sistemacontable.config.Util.LOCALE;
 
 @Slf4j
-@Getter
 public abstract class Report<T> {
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d 'de' MMMM 'de' yyyy", LOCALE);
-    public static final DateTimeFormatter FILE_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd", LOCALE);
     protected static final String TEMPLATE_PATH = "/template/";
-    protected String name;
-    protected String templateName;
-    protected Path dirPath;
-    protected JasperReport jasperReport;
+    protected static final String imgDir = ConfigLoader.Props.DIR_REPORTS_TEMPLATE_NAME.getPath().toString() + File.separator;
+    protected final String name;
+    protected final String templateName;
+    protected final Path dirPath;
+    protected final JasperReport jasperReport;
 
-    public Report(String name, String templateName, Path dirPath) throws ReportException {
+    protected Report(String name, String templateName, Path dirPath) throws ReportException {
         this.name = name;
         this.templateName = templateName;
         this.dirPath = dirPath;
-        initializeJasperReport();
-    }
-
-    private void initializeJasperReport() throws ReportException {
         try {
-            InputStream templateStream = Report.class.getResourceAsStream(TEMPLATE_PATH + getTemplateName());
-            if (templateStream == null) {
-                throw new ReportException("Template not found: " + TEMPLATE_PATH + getTemplateName());
-            }
+            InputStream templateStream = Report.class.getResourceAsStream(TEMPLATE_PATH + templateName);
+            if (templateStream == null)
+                throw new ReportException("Template not found: " + TEMPLATE_PATH + templateName);
             this.jasperReport = JasperCompileManager.compileReport(templateStream);
         } catch (JRException e) {
             throw new ReportException("Failed to compile report template: " + e.getMessage(), e);
         }
     }
 
-    public void generateReport(Map<String, Object> parameters, T dto) throws ReportException {
-        setProps(parameters, dto);
+    public @NotNull Path generateReport(@NotNull User user, @NotNull T dto) throws ReportException {
+        Map<String, Object> params = new HashMap<>();
+        params.put("MANAGER_NAME", user.getUsername());
+        params.put("IMG_DIR", imgDir);
+        setProps(params, dto);
         try {
-            JasperPrint print = generate(parameters);
-            JasperExportManager.exportReportToPdfFile(print, getDirReportPath(dto));
+            var print = JasperFillManager.fillReport(jasperReport, params, new JREmptyDataSource());
+            var path = getDirReportPath(dto);
+            JasperExportManager.exportReportToPdfFile(print, path.toString());
+            return path;
         } catch (Exception e) {
             throw new ReportException(e.getMessage(), e);
         }
     }
 
-    protected abstract void setProps(Map<String, Object> parameters, T dto);
+    protected abstract void setProps(@NotNull Map<String, Object> params, @NotNull T dto);
 
-    protected JasperPrint generate(Map<String, Object> parameters) throws JRException {
-        return JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
-    }
-
-    protected abstract String getDirReportPath(T dto);
+    protected abstract @NotNull Path getDirReportPath(@NotNull T dto);
 
 }

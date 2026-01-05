@@ -2,35 +2,37 @@ package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
+import com.nutrehogar.sistemacontable.config.Util;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.query.*;
-import com.nutrehogar.sistemacontable.service.worker.FromTransactionWorker;
-import com.nutrehogar.sistemacontable.service.worker.InTransactionWorker;
-import com.nutrehogar.sistemacontable.ui.Period;
+import com.nutrehogar.sistemacontable.report.PaymentVoucherReport;
+import com.nutrehogar.sistemacontable.report.dto.JournalEntryReport;
+import com.nutrehogar.sistemacontable.report.dto.LedgerRecordReport;
+import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
+import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.View;
 
 import com.nutrehogar.sistemacontable.ui_2.builder.*;
-import com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel;
-import com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner;
-import com.nutrehogar.sistemacontable.ui_2.component.OperationPanel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static com.nutrehogar.sistemacontable.config.Util.AUDITABLE_DATE_FORMATTER;
-import static com.nutrehogar.sistemacontable.config.Util.NA;
-import static com.nutrehogar.sistemacontable.config.Util.toStringSafe;
+import static com.nutrehogar.sistemacontable.config.Util.*;
 import static java.math.MathContext.DECIMAL128;
 
 @Slf4j
@@ -90,6 +92,66 @@ public class AccountingEntryView extends View{
             prepareToAdd();
         });
         btnJDelete.addActionListener(_ -> delete());
+        btnGeneratePaymentVoucher.addActionListener(_ -> {
+            if(journalEntry.isEmpty())
+                return;
+            showLoadingCursor();
+            var jr = journalEntry.get();
+
+            List<RecordTableEntity> tableEntities = new ArrayList<>();
+            for(var r : recordController.tblModelRecord.getData())
+                if(r instanceof RecordTableEntity re)
+                    tableEntities.add(re);
+
+           new SwingWorker<Path, Void>(){
+               @Override
+               protected Path doInBackground() {
+                   StringBuilder checkNumber = new StringBuilder();
+                   for (var check : jr.getCheckNumber().split(";")) {
+                       checkNumber.append(check.trim());
+                       checkNumber.append("\n");
+                   }
+                   var dto = new JournalEntryReport(
+                           jr.getType().getName() + "-" + jr.getFormattedNumber(),
+                           checkNumber.toString(),
+                           jr.getDate(),
+                           jr.getName(),
+                           jr.getConcept(),
+                           "",
+                           tableEntities
+                                   .stream()
+                                   .map(r ->
+                                           new LedgerRecordReport(
+                                                   r.account().getName(),
+                                                   r.reference(),
+                                                   r.debit().equals(BigDecimal.ZERO) ? "" : DECIMAL_FORMAT.format(r.debit()),
+                                                   r.credit().equals(BigDecimal.ZERO) ? "" : DECIMAL_FORMAT.format(r.credit())
+                                           )
+                                   )
+                                   .toList()
+                   );
+                   return PaymentVoucherReport.getInstance().generateReport(user, dto);
+               }
+
+               @Override
+               protected void done() {
+                   hideLoadingCursor();
+                   try {
+                       var url = get().toUri();
+                       SwingUtilities.invokeLater(() -> {
+                           try {
+                               Util.openFile(new File(url));
+                           } catch (IOException e) {
+                               throw new RuntimeException(e);
+                           }
+                       });
+                   } catch (InterruptedException | ExecutionException e) {
+                       throw new RuntimeException(e);
+                   }
+                   showMessage("Comprobante de pago creado correctamente!");
+               }
+           }.execute();
+        });
         prepareToAdd();
     }
 
@@ -656,10 +718,12 @@ public class AccountingEntryView extends View{
         lblRecordAccount.setText("Cuenta:");
 
         btnRSave.setText("Guardar");
+        btnRSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         cbxRAccount.setModel(recordController.cbxModelRAccount);
 
         btnRUpdate.setText("Actualizar");
+        btnRUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblSave.setLabelFor(btnRSave);
         lblSave.setText("<html><p>Agrega el nuevo registro a la entrada</p></html>");
@@ -827,18 +891,22 @@ public class AccountingEntryView extends View{
 
         btnJSave.setText("Guardar");
         btnJSave.setToolTipText("");
+        btnJSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnJSave.setMaximumSize(new java.awt.Dimension(82, 23));
         btnJSave.setMinimumSize(new java.awt.Dimension(82, 23));
         btnJSave.setPreferredSize(new java.awt.Dimension(82, 23));
 
         btnJUpdate.setText("Actualizar");
+        btnJUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnJUpdate.setMaximumSize(new java.awt.Dimension(73, 23));
         btnJUpdate.setMinimumSize(new java.awt.Dimension(73, 23));
         btnJUpdate.setPreferredSize(new java.awt.Dimension(73, 23));
 
         btnJDelete.setText("Eliminar");
+        btnJDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         btnJAdd.setText("Nuevo");
+        btnJAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         cbxJDocType.setToolTipText("Tipo de Documento");
         cbxJDocType.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -934,8 +1002,10 @@ public class AccountingEntryView extends View{
         pnlSourceDocuments.setOpaque(false);
 
         btnGeneratePaymentVoucher.setText("Comprobante");
+        btnGeneratePaymentVoucher.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         btnGenerateRegistrationForm.setText("Formulario");
+        btnGenerateRegistrationForm.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblCreateBy.setText("N/A");
 

@@ -5,10 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LedgerRecordReportDTO {
-    String documentType;
-    String voucher;
-    String accountId;
+public class LedgerRecordReport {
+    String account;
     String reference;
     String debit;
     String credit;
