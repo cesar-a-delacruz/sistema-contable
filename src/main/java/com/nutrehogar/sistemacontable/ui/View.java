@@ -2,6 +2,7 @@ package com.nutrehogar.sistemacontable.ui;
 
 import com.nutrehogar.sistemacontable.exception.AppException;
 import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
+import com.nutrehogar.sistemacontable.exception.ReportException;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import lombok.extern.slf4j.Slf4j;
@@ -64,10 +65,17 @@ public abstract class View extends JPanel {
             showWarning(i);
             return;
         }
+        if (cause instanceof ReportException i) {
+            showWarning(i);
+            return;
+        }
         showError(cause.getMessage(), cause);
     }
 
     public void showWarning(@NotNull InvalidFieldException cause) {
+        JOptionPane.showMessageDialog(this, cause.getMessage(), "Advertencia!", JOptionPane.INFORMATION_MESSAGE);
+    }
+    public void showWarning(@NotNull ReportException cause) {
         JOptionPane.showMessageDialog(this, cause.getMessage(), "Advertencia!", JOptionPane.INFORMATION_MESSAGE);
     }
 

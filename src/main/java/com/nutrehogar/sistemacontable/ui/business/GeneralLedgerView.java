@@ -1,5 +1,6 @@
 package com.nutrehogar.sistemacontable.ui.business;
 
+import com.nutrehogar.sistemacontable.Main;
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.config.Util;
@@ -15,11 +16,13 @@ import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportData;
 import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportRow;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportData;
 import com.nutrehogar.sistemacontable.report.dto.TrialBalanceReportRow;
+import com.nutrehogar.sistemacontable.ui_2.component.ReportResponseDialog;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.*;
 
+import com.nutrehogar.sistemacontable.worker.ReportWorker;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -124,13 +127,15 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
         spnAccountNumber.addChangeListener(_ -> filterAccounts());
         btnGenerateReport.addActionListener(_->{
             if(cbxModelPeriod.getSelectedItem() == null) {
-                showMessage("Selecione un periodo");
+                showMessage("Seleccione un periodo");
                 return;
             }
+
             if(cbxModelAccount.getSelectedItem() == null) {
-                showMessage("Selecione una cuenta");
+                showMessage("Seleccione una cuenta");
                 return;
             }
+
             btnGenerateReport.setEnabled(false);
             showLoadingCursor();
 
@@ -138,10 +143,8 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
             var period = String.valueOf(cbxModelPeriod.getSelectedItem().year());
             var account = cbxModelAccount.getSelectedItem();
 
-            new SwingWorker<Path, Void>() {
-                @Override
-                protected Path doInBackground() {
-                    return GeneralLedgerReport.generate(user, new GeneralLedgerReportData(
+            new ReportWorker(
+                    ()-> GeneralLedgerReport.generate(user, new GeneralLedgerReportData(
                             period,
                             account.getFormattedNumber() + " " + account.getName(),
                             journalData
@@ -169,28 +172,14 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
                                             }
                                     )
                                     .toList()
-                    ));
-                }
-
-                @Override
-                protected void done() {
-                    hideLoadingCursor();
-                    btnGenerateReport.setEnabled(true);
-                    try {
-                        var url = get().toUri();
-                        SwingUtilities.invokeLater(() -> {
-                            try {
-                                Util.openFile(new File(url));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-                    showMessage("Libro diario creado correctamente!");
-                }
-            }.execute();
+                    )),
+                    path -> {
+                        hideLoadingCursor();
+                        btnGenerateReport.setEnabled(true);
+                        ReportResponseDialog.showMessage(this, path);
+                    },
+                    this::showError
+            ).execute();
         });
     }
 

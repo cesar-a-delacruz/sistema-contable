@@ -8,15 +8,20 @@ import com.nutrehogar.sistemacontable.model.JournalEntry;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
+import com.nutrehogar.sistemacontable.report.GeneralLedgerReport;
 import com.nutrehogar.sistemacontable.report.JournalReport;
+import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportData;
+import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportRow;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportData;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportRow;
+import com.nutrehogar.sistemacontable.ui_2.component.ReportResponseDialog;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 
+import com.nutrehogar.sistemacontable.worker.ReportWorker;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +29,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.concurrent.ExecutionException;
@@ -79,19 +85,15 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
         btnFilter.addActionListener(_ -> loadData());
         btnGenerateReport.addActionListener(_->{
             if(cbxModelPeriod.getSelectedItem() == null) {
-                showMessage("Selecione un periodo");
+                showMessage("Seleccione un periodo");
                 return;
             }
             btnGenerateReport.setEnabled(false);
             showLoadingCursor();
-
             var journalData = tblModel.getData();
-            var date = LocalDate.of(cbxModelPeriod.getSelectedItem().year(), spnModelMonth.getNumber().intValue(),1);
-
-            new SwingWorker<Path, Void>(){
-                @Override
-                protected Path doInBackground() {
-                    var dto = new JournalReportData<>(
+            var date = LocalDate.of(cbxModelPeriod.getSelectedItem().year(), spnModelMonth.getNumber().intValue(), 1);
+            new ReportWorker(
+                    () -> JournalReport.generate(user, new JournalReportData<>(
                             date,
                             journalData
                                     .stream()
@@ -107,29 +109,14 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
                                             )
                                     )
                                     .toList()
-                    );
-                    return JournalReport.generate(user, dto);
-                }
-
-                @Override
-                protected void done() {
-                    hideLoadingCursor();
-                    btnGenerateReport.setEnabled(true);
-                    try {
-                        var url = get().toUri();
-                        SwingUtilities.invokeLater(() -> {
-                            try {
-                                Util.openFile(new File(url));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-                    showMessage("Libro diario creado correctamente!");
-                }
-            }.execute();
+                    )),
+                    path -> {
+                        hideLoadingCursor();
+                        btnGenerateReport.setEnabled(true);
+                        ReportResponseDialog.showMessage(this, path);
+                    },
+                    this::showError
+            ).execute();
         });
     }
     @Override

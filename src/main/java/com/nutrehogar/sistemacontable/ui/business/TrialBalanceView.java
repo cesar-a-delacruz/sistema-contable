@@ -11,12 +11,14 @@ import com.nutrehogar.sistemacontable.report.TrialBalanceReport;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportData;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportRow;
 import com.nutrehogar.sistemacontable.report.dto.TrialBalanceReportRow;
+import com.nutrehogar.sistemacontable.ui_2.component.ReportResponseDialog;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 
+import com.nutrehogar.sistemacontable.worker.ReportWorker;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +60,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
                     };
                     case TrialBalanceData dto -> switch (columnIndex) {
                         case 0 -> dto.date();
-                        case 1 -> dto.type().getName() + "-" + JournalEntry.formatNumber(dto.number());
+                        case 1 -> JournalEntry.formatNaturalId(dto.type(), dto.number());
                         case 2 -> dto.account();
                         case 3 -> dto.reference();
                         case 4 -> dto.concept();
@@ -103,19 +105,16 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
         btnFilter.addActionListener(_ -> loadData());
         btnGenerateReport.addActionListener(_->{
             if(cbxModelPeriod.getSelectedItem() == null) {
-                showMessage("Selecione un periodo");
+                showMessage("Seleccione un periodo");
                 return;
             }
             btnGenerateReport.setEnabled(false);
             showLoadingCursor();
 
             var journalData = tblModel.getData();
-            var date = LocalDate.of(cbxModelPeriod.getSelectedItem().year(), spnModelMonth.getNumber().intValue(),1);
-
-            new SwingWorker<Path, Void>(){
-                @Override
-                protected Path doInBackground() {
-                    return TrialBalanceReport.generate(user, new JournalReportData<>(
+            var date = LocalDate.of(cbxModelPeriod.getSelectedItem().year(), spnModelMonth.getNumber().intValue(), 1);
+            new ReportWorker(
+                    () -> TrialBalanceReport.generate(user, new JournalReportData<>(
                             date,
                             journalData
                                     .stream()
@@ -136,34 +135,20 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
                                             }
                                     )
                                     .toList()
-                    ));
-                }
-
-                @Override
-                protected void done() {
-                    hideLoadingCursor();
-                    btnGenerateReport.setEnabled(true);
-                    try {
-                        var url = get().toUri();
-                        SwingUtilities.invokeLater(() -> {
-                            try {
-                                Util.openFile(new File(url));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-                    showMessage("Libro diario creado correctamente!");
-                }
-            }.execute();
+                    )),
+                    path -> {
+                        hideLoadingCursor();
+                        btnGenerateReport.setEnabled(true);
+                        ReportResponseDialog.showMessage(this, path);
+                    },
+                    this::showError
+            ).execute();
         });
     }
 
     @Override
     public void load() {
-        showLoadingCursor();
+
         new FromTransactionWorker<>(
                 session -> new AccountingPeriodQuery_(session).findAllMinData(),
                 periods -> {
@@ -177,7 +162,6 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
                     for (var period : periods)
                         if (period.year() == thisYear)
                             cbxModelPeriod.setSelectedItem(period);
-                    hideLoadingCursor();
                 },
                 this::showError
         ).execute();
@@ -192,7 +176,6 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
             return;
         }
         var month = getSpnModelMonth().getNumber().intValue();
-        showLoadingCursor();
         new FromTransactionWorker<>(
                 session -> {
                     var journal = new BussinessQuery_(session).findJournalByPeriodIdAndMonth(period.id(), month);
@@ -239,7 +222,6 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
                     return trialBalance;
                 },
                 rest -> {
-                    hideLoadingCursor();
                     tblModel.setData(rest);
                 },
                 this::showError

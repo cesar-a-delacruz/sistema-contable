@@ -2,34 +2,32 @@ package com.nutrehogar.sistemacontable.ui.crud;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
-import com.nutrehogar.sistemacontable.config.Util;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.exception.InvalidFieldException;
 import com.nutrehogar.sistemacontable.model.*;
 import com.nutrehogar.sistemacontable.query.*;
+import com.nutrehogar.sistemacontable.report.EntryFormReport;
+import com.nutrehogar.sistemacontable.report.EntryFormReportType;
 import com.nutrehogar.sistemacontable.report.PaymentVoucherReport;
 import com.nutrehogar.sistemacontable.report.dto.JournalEntryReportData;
 import com.nutrehogar.sistemacontable.report.dto.LedgerRecordReportRow;
+import com.nutrehogar.sistemacontable.ui_2.component.ReportResponseDialog;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.View;
 
 import com.nutrehogar.sistemacontable.ui_2.builder.*;
+import com.nutrehogar.sistemacontable.worker.ReportWorker;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static com.nutrehogar.sistemacontable.config.Util.*;
@@ -92,73 +90,63 @@ public class AccountingEntryView extends View{
             prepareToAdd();
         });
         btnJDelete.addActionListener(_ -> delete());
-        btnGeneratePaymentVoucher.addActionListener(_ -> {
+        btnGeneratePaymentVoucher.addActionListener(_ -> generateReport(EntryFormReportType.PAYMENT_VOUCHER));
+        btnGenerateRegistrationForm.addActionListener(_ -> generateReport(EntryFormReportType.REGISTRATION_FORM));
+        prepareToAdd();
+    }
+    private void generateReport(@NotNull EntryFormReportType type) {
+        {
             if(journalEntry.isEmpty())
                 return;
+
             btnGeneratePaymentVoucher.setEnabled(false);
             btnGenerateRegistrationForm.setEnabled(false);
             showLoadingCursor();
-            var jr = journalEntry.get();
 
+            var jr = journalEntry.get();
             List<RecordTableEntity> tableEntities = new ArrayList<>();
             for(var r : recordController.tblModelRecord.getData())
                 if(r instanceof RecordTableEntity re)
                     tableEntities.add(re);
 
             var amount = recordController.tblModelRecord.getData().getLast().debit();
+            new ReportWorker(
+                    () -> {
+                        StringBuilder checkNumber = new StringBuilder();
+                        for (var check : jr.getCheckNumber().split(";")) {
+                            checkNumber.append(check.trim());
+                            checkNumber.append("\n");
+                        }
 
-           new SwingWorker<Path, Void>(){
-               @Override
-               protected Path doInBackground() {
-                   StringBuilder checkNumber = new StringBuilder();
-                   for (var check : jr.getCheckNumber().split(";")) {
-                       checkNumber.append(check.trim());
-                       checkNumber.append("\n");
-                   }
-
-                   var dto = new JournalEntryReportData(
-                           jr.getFormattedNaturalId(),
-                           checkNumber.toString(),
-                           jr.getDate(),
-                           jr.getName(),
-                           jr.getConcept(),
-                           formatDecimalSafe(amount),
-                           tableEntities.stream()
-                                   .map(r ->
-                                           new LedgerRecordReportRow(
-                                                   r.account().getName(),
-                                                   r.reference(),
-                                                   formatDecimalSafe(r.debit()),
-                                                   formatDecimalSafe(r.credit())
-                                           )
-                                   )
-                                   .toList()
-                   );
-                   return PaymentVoucherReport.generate(user, dto);
-               }
-
-               @Override
-               protected void done() {
-                   hideLoadingCursor();
-                   btnGeneratePaymentVoucher.setEnabled(true);
-                   btnGenerateRegistrationForm.setEnabled(true);
-                   try {
-                       var url = get().toUri();
-                       SwingUtilities.invokeLater(() -> {
-                           try {
-                               Util.openFile(new File(url));
-                           } catch (IOException e) {
-                               throw new RuntimeException(e);
-                           }
-                       });
-                   } catch (InterruptedException | ExecutionException e) {
-                       throw new RuntimeException(e);
-                   }
-                   showMessage("Comprobante de pago creado correctamente!");
-               }
-           }.execute();
-        });
-        prepareToAdd();
+                        var dto = new JournalEntryReportData(
+                                jr.getFormattedNaturalId(),
+                                checkNumber.toString(),
+                                jr.getDate(),
+                                jr.getName(),
+                                jr.getConcept(),
+                                formatDecimalSafe(amount),
+                                tableEntities.stream()
+                                        .map(r ->
+                                                new LedgerRecordReportRow(
+                                                        r.account().getName(),
+                                                        r.reference(),
+                                                        formatDecimalSafe(r.debit()),
+                                                        formatDecimalSafe(r.credit())
+                                                )
+                                        )
+                                        .toList()
+                        );
+                        return type.generate(user, dto);
+                    },
+                    path -> {
+                        hideLoadingCursor();
+                        btnGeneratePaymentVoucher.setEnabled(true);
+                        btnGenerateRegistrationForm.setEnabled(true);
+                        ReportResponseDialog.showMessage(this, path);
+                    },
+                    this::showError
+            ).execute();
+        }
     }
 
     public void findNexNumber() {

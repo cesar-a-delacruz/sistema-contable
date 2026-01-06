@@ -11,6 +11,7 @@ import net.sf.jasperreports.engine.*;
 import javax.swing.*;
 
 public class Main {
+    public static JFrame frame;
     void main() {
         ConfigLoader.createDirectories();
         System.setProperty("LOG_DIR", ConfigLoader.Props.DIR_LOG_NAME.getPath().toString());
@@ -18,14 +19,6 @@ public class Main {
 
         var adminUser = new User("0922", "Root", true, Permission.ADMIN, "Roo");
 
-        new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                HibernateUtil
-                        .getSessionFactory();
-                return null;
-            }
-        }.execute();
 
         Thread.startVirtualThread(() -> Runtime.getRuntime().addShutdownHook(new Thread(HibernateUtil::shutdown)));
 
@@ -119,7 +112,7 @@ public class Main {
 //        System.out.println("Hibernate init: " + (System.currentTimeMillis() - t0));
 
 
-        var frame = new JFrame();
+        frame = new JFrame();
         frame.setIconImage(new FlatSVGIcon("svgs/SistemaContableLogo.svg", 250, 250).getImage());
         frame.setTitle("Sistema Contable");
         frame.setSize(1300, 600);
