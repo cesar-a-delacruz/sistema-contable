@@ -46,14 +46,14 @@ public class HomeView extends javax.swing.JPanel {
 
         pnlHome = new javax.swing.JPanel();
         pnlGroupBtn = new javax.swing.JPanel();
-        btnForm = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnAccount = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnTrialBalance = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnAccountSubtype = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnGeneralLedger = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnJournal = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnUser = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnAccountingPeriod = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnForm = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
+        btnAccount = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
+        btnTrialBalance = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
+        btnAccountSubtype = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
+        btnGeneralLedger = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
+        btnJournal = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
+        btnUser = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
+        btnAccountingPeriod = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
 
         setOpaque(false);
 
@@ -61,30 +61,30 @@ public class HomeView extends javax.swing.JPanel {
 
         pnlGroupBtn.setOpaque(false);
 
-        btnForm.setIcon(Theme.SVGs.FORM.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnForm.setText("Formulario");
+        btnForm.setIcon(UIEntityInfo.ENTRY_FORM.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
+        btnForm.setText(UIEntityInfo.ENTRY_FORM.getPlural());
 
-        btnAccount.setIcon(Theme.SVGs.ACCOUNT.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnAccount.setText("Cuentas");
+        btnAccount.setIcon(UIEntityInfo.ACCOUNT.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
+        btnAccount.setText(UIEntityInfo.ACCOUNT.getPlural());
 
-        btnTrialBalance.setIcon(Theme.SVGs.TRIAL_BALANCE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnTrialBalance.setText("Balance de Comprobación");
+        btnTrialBalance.setIcon(UIEntityInfo.TRIAL_BALANCE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
+        btnTrialBalance.setText(UIEntityInfo.TRIAL_BALANCE.getPlural());
 
-        btnAccountSubtype.setIcon(Theme.SVGs.ACCOUNT_SUBTYPE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnAccountSubtype.setText("Subtipos de Cuentas");
+        btnAccountSubtype.setIcon(UIEntityInfo.ACCOUNT_SUBTYPE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
+        btnAccountSubtype.setText(UIEntityInfo.ACCOUNT_SUBTYPE.getPlural());
         btnAccountSubtype.setToolTipText("");
 
-        btnGeneralLedger.setIcon(Theme.SVGs.GENERAL_LEDGER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnGeneralLedger.setText("Mayor General");
+        btnGeneralLedger.setIcon(UIEntityInfo.GENERAL_LEDGER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
+        btnGeneralLedger.setText(UIEntityInfo.GENERAL_LEDGER.getPlural());
 
-        btnJournal.setIcon(Theme.SVGs.JOURNAL.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnJournal.setText("Libro Diario");
+        btnJournal.setIcon(UIEntityInfo.JOURNAL.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
+        btnJournal.setText(UIEntityInfo.JOURNAL.getPlural());
 
-        btnUser.setIcon(Theme.SVGs.USER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnUser.setText("Usuarios");
+        btnUser.setIcon(UIEntityInfo.USER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
+        btnUser.setText(UIEntityInfo.USER.getPlural());
 
-        btnAccountingPeriod.setIcon(Theme.SVGs.ACCOUNTING_PERIOD.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
-        btnAccountingPeriod.setText("Periodos Contables");
+        btnAccountingPeriod.setIcon(UIEntityInfo.ACCOUNTING_PERIOD.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG));
+        btnAccountingPeriod.setText(UIEntityInfo.ACCOUNTING_PERIOD.getPlural());
 
         javax.swing.GroupLayout pnlGroupBtnLayout = new javax.swing.GroupLayout(pnlGroupBtn);
         pnlGroupBtn.setLayout(pnlGroupBtnLayout);
@@ -147,30 +147,24 @@ public class HomeView extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlHome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(pnlHome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlHome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(pnlHome, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnAccount;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnAccountSubtype;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnAccountingPeriod;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnForm;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnGeneralLedger;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnJournal;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnTrialBalance;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnUser;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnAccount;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnAccountSubtype;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnAccountingPeriod;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnForm;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnGeneralLedger;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnJournal;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnTrialBalance;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnUser;
     private javax.swing.JPanel pnlGroupBtn;
     private javax.swing.JPanel pnlHome;
     // End of variables declaration//GEN-END:variables

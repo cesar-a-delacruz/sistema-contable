@@ -9,6 +9,7 @@ import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.LocalDateSpinnerModel;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
     private final SpinnerNumberModel spnModelYear;
 
     public AccountingPeriodView(User user) {
-        super(user, "Periodo Contable");
+        super(user,  UIEntityInfo.ACCOUNTING_PERIOD);
         var currentYear = LocalDate.now().getYear();
         this.spnModelStartPeriod = new LocalDateSpinnerModel(LocalDate.of(currentYear, 1, 1));
         this.spnModelEndPeriod = new LocalDateSpinnerModel(LocalDate.of(currentYear, 12, 31));
@@ -229,10 +230,10 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
         spnYear = new javax.swing.JSpinner();
         chkClosed = new javax.swing.JCheckBox();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
+        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityInfo);
         lblTitle = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
+        tblData = new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(tblModel);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -380,8 +381,8 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
-        lblTitle.setIcon(Theme.SVGs.ACCOUNTING_PERIOD.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
-        lblTitle.setText(LabelBuilder.build("Periodos Contables"));
+        lblTitle.setIcon(entityInfo.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
+        lblTitle.setText(entityInfo.getPlural());
 
         jScrollPane2.setViewportView(tblData);
 
@@ -432,7 +433,7 @@ public class AccountingPeriodView extends SimpleView<AccountingPeriod> implement
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnEnd;
     private com.nutrehogar.sistemacontable.ui_2.component.LocalDateSpinner spnStart;
     private javax.swing.JSpinner spnYear;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<AccountingPeriod> tblData;
+    private com.nutrehogar.sistemacontable.ui_2.component.CustomTable<AccountingPeriod> tblData;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.nutrehogar.sistemacontable.config.Util.*;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import static java.math.MathContext.DECIMAL128;
 
 @Slf4j
@@ -645,7 +646,7 @@ public class AccountingEntryView extends View{
         spnRAmount = new javax.swing.JSpinner(recordController.spnModelRAmount);
         spnRAccountNumber = new javax.swing.JSpinner(recordController.spnModelRAccountNumber);
         ApRecord = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        OpRecord = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(recordController.entityName);
+        OpRecord = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel("Registro", false);
         pnlEntryForm = new javax.swing.JPanel();
         lblEntryName = new javax.swing.JLabel();
         txtJName = new javax.swing.JTextField();
@@ -679,7 +680,7 @@ public class AccountingEntryView extends View{
         jLabel5 = new javax.swing.JLabel();
         lblVersion = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        tblRecord = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(recordController.tblModelRecord);
+        tblRecord = new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(recordController.tblModelRecord);
         lblTitle = new javax.swing.JLabel();
 
         setOpaque(false);
@@ -1069,8 +1070,8 @@ public class AccountingEntryView extends View{
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
-        lblTitle.setIcon(Theme.SVGs.FORM.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
-        lblTitle.setText(LabelBuilder.build("Formulario de Entrada"));
+        lblTitle.setIcon(UIEntityInfo.ENTRY_FORM.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
+        lblTitle.setText(UIEntityInfo.ENTRY_FORM.getPlural());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -1156,7 +1157,7 @@ public class AccountingEntryView extends View{
     private javax.swing.JSpinner spnRAccountNumber;
     private javax.swing.JSpinner spnRAmount;
     private javax.swing.JTextArea taJConcept;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<RecordTableRow> tblRecord;
+    private com.nutrehogar.sistemacontable.ui_2.component.CustomTable<RecordTableRow> tblRecord;
     private javax.swing.JTextField txtJCheckNumber;
     private javax.swing.JTextField txtJName;
     private javax.swing.JTextField txtRReference;

@@ -14,6 +14,7 @@ import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportData;
 import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportRow;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportData;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportRow;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import com.nutrehogar.sistemacontable.ui_2.component.ReportResponseDialog;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
@@ -45,7 +46,7 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
     private final SpinnerNumberModel spnModelMonth;
 
     public JournalView(@NotNull User user, @NotNull Consumer<Long> editJournal) {
-        super(user, "Libro Diario");
+        super(user, UIEntityInfo.JOURNAL);
         this.cbxModelPeriod = new CustomComboBoxModel<>();
         this.spnModelMonth = new SpinnerNumberModel(LocalDate.now().getMonthValue(), 1, 12, 1);
         this.tblModel = new CustomTableModel<>("Fecha", "Doc", "Cuenta", "Referencia","Concepto", "Débito", "Crédito") {
@@ -184,7 +185,7 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
         lblStart = new javax.swing.JLabel();
         btnGenerateReport = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
+        tblData = new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(tblModel);
         lblTitle = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -307,8 +308,8 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
-        lblTitle.setIcon(Theme.SVGs.JOURNAL.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
-        lblTitle.setText(LabelBuilder.build("Libro Diario"));
+        lblTitle.setIcon(entityInfo.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
+        lblTitle.setText(entityInfo.getPlural());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -351,6 +352,6 @@ public class JournalView extends SimpleView<JournalData> implements BusinessView
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlOperations;
     private javax.swing.JSpinner spnMonth;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<JournalData> tblData;
+    private com.nutrehogar.sistemacontable.ui_2.component.CustomTable<JournalData> tblData;
     // End of variables declaration//GEN-END:variables
 }

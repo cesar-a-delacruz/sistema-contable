@@ -261,9 +261,9 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="com.nutrehogar.sistemacontable.ui_2.builder.CustomTable" name="tblData">
+        <Component class="com.nutrehogar.sistemacontable.ui_2.component.CustomTable" name="tblData">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(tblModel)"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;JournalData&gt;"/>
           </AuxValues>
         </Component>
@@ -280,10 +280,10 @@
           <Connection code="Theme.Palette.OFFICE_GREEN" type="code"/>
         </Property>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="Theme.SVGs.JOURNAL.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD)" type="code"/>
+          <Connection code="entityInfo.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD)" type="code"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="LabelBuilder.build(&quot;Libro Diario&quot;)" type="code"/>
+          <Connection code="entityInfo.getPlural()" type="code"/>
         </Property>
       </Properties>
     </Component>

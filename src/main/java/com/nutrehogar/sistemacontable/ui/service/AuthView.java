@@ -6,6 +6,7 @@ import com.nutrehogar.sistemacontable.config.Theme;
 import com.nutrehogar.sistemacontable.exception.ApplicationException;
 import com.nutrehogar.sistemacontable.model.User;
 import com.nutrehogar.sistemacontable.query.UserQuery_;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui_2.builder.UserListCellRenderer;
 
@@ -169,7 +170,7 @@ public class AuthView extends JDialog {
         scrollPanel1.setViewportView(lstUser);
 
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTitle.setText("Usuarios");
+        lblTitle.setText(UIEntityInfo.USER.getPlural());
 
         lblPing.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblPing.setIcon(Theme.SVGs.KEY.getIcon());

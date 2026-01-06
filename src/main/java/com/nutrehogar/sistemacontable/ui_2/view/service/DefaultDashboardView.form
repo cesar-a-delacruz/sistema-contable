@@ -139,38 +139,38 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowFormView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnShowFormView">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Formulario"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowAccountView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnShowAccountView">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Cuentas"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowTrialBalanceView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnShowTrialBalanceView">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Balance de Comprobaci&#xf3;n"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowAccountSubtypeView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnShowAccountSubtypeView">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Subtipos de Cuentas"/>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowGeneralLedgerView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnShowGeneralLedgerView">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Mayor General"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowJournalView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnShowJournalView">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Libro Diario"/>
                   </Properties>
                 </Component>
-                <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowUserView">
+                <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnShowUserView">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Usuarios"/>
                   </Properties>
@@ -212,14 +212,14 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnShowBackupView">
+        <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnShowBackupView">
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="0"/>
           </Properties>
         </Component>
-        <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnHome">
+        <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnHome">
           <Properties>
             <Property name="text" type="java.lang.String" value="Inicio"/>
             <Property name="verticalTextPosition" type="int" value="0"/>

@@ -19,20 +19,12 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="pnlHome" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
+          <Component id="pnlHome" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="pnlHome" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
+          <Component id="pnlHome" alignment="1" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -118,69 +110,85 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnForm">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnForm">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="Theme.SVGs.FORM.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
+                  <Connection code="UIEntityInfo.ENTRY_FORM.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Formulario"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="UIEntityInfo.ENTRY_FORM.getPlural()" type="code"/>
+                </Property>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnAccount">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnAccount">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="Theme.SVGs.ACCOUNT.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
+                  <Connection code="UIEntityInfo.ACCOUNT.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Cuentas"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="UIEntityInfo.ACCOUNT.getPlural()" type="code"/>
+                </Property>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnTrialBalance">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnTrialBalance">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="Theme.SVGs.TRIAL_BALANCE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
+                  <Connection code="UIEntityInfo.TRIAL_BALANCE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Balance de Comprobaci&#xf3;n"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="UIEntityInfo.TRIAL_BALANCE.getPlural()" type="code"/>
+                </Property>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnAccountSubtype">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnAccountSubtype">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="Theme.SVGs.ACCOUNT_SUBTYPE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
+                  <Connection code="UIEntityInfo.ACCOUNT_SUBTYPE.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Subtipos de Cuentas"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="UIEntityInfo.ACCOUNT_SUBTYPE.getPlural()" type="code"/>
+                </Property>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnGeneralLedger">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnGeneralLedger">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="Theme.SVGs.GENERAL_LEDGER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
+                  <Connection code="UIEntityInfo.GENERAL_LEDGER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Mayor General"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="UIEntityInfo.GENERAL_LEDGER.getPlural()" type="code"/>
+                </Property>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnJournal">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnJournal">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="Theme.SVGs.JOURNAL.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
+                  <Connection code="UIEntityInfo.JOURNAL.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Libro Diario"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="UIEntityInfo.JOURNAL.getPlural()" type="code"/>
+                </Property>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnUser">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnUser">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="Theme.SVGs.USER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
+                  <Connection code="UIEntityInfo.USER.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Usuarios"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="UIEntityInfo.USER.getPlural()" type="code"/>
+                </Property>
               </Properties>
             </Component>
-            <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnAccountingPeriod">
+            <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnAccountingPeriod">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="Theme.SVGs.ACCOUNTING_PERIOD.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
+                  <Connection code="UIEntityInfo.ACCOUNTING_PERIOD.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Periodos Contables"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="UIEntityInfo.ACCOUNTING_PERIOD.getPlural()" type="code"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>

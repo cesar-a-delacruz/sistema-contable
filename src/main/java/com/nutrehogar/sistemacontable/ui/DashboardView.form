@@ -101,7 +101,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnBackup">
+        <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnBackup">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="Theme.SVGs.BACKUP.getIcon().derive(Theme.ICON_LG, Theme.ICON_LG)" type="code"/>
@@ -111,7 +111,7 @@
             <Property name="verticalTextPosition" type="int" value="0"/>
           </Properties>
         </Component>
-        <Component class="com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton" name="btnHome">
+        <Component class="com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton" name="btnHome">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="Theme.SVGs.HOME.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD)" type="code"/>

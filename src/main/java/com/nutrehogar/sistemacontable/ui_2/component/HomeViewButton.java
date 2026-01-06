@@ -7,10 +7,10 @@ import javax.swing.*;
 
 import com.nutrehogar.sistemacontable.config.Theme;
 
-public class DefaultPanelButton extends JButton {
+public class HomeViewButton extends JButton {
     {
         setBorderPainted(false);
-        setVerticalTextPosition(SwingConstants.TOP);
+        setVerticalTextPosition(SwingConstants.CENTER);
         setHorizontalAlignment(SwingConstants.LEADING);
         setMargin(new Insets(4, 6, 3, 14));
         setFont(Theme.Typography.FONT_2XL);
@@ -30,9 +30,9 @@ public class DefaultPanelButton extends JButton {
         });
     }
 
-    public DefaultPanelButton() {}
+    public HomeViewButton() {}
 
-    public DefaultPanelButton(String text) {
+    public HomeViewButton(String text) {
         super(text);
     }
 }

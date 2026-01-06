@@ -336,7 +336,7 @@
         </Component>
         <Component class="com.nutrehogar.sistemacontable.ui_2.component.OperationPanel" name="OpRecord">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(recordController.entityName)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(&quot;Registro&quot;, false)"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -772,9 +772,9 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="com.nutrehogar.sistemacontable.ui_2.builder.CustomTable" name="tblRecord">
+        <Component class="com.nutrehogar.sistemacontable.ui_2.component.CustomTable" name="tblRecord">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(recordController.tblModelRecord)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(recordController.tblModelRecord)"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;RecordTableRow&gt;"/>
           </AuxValues>
         </Component>
@@ -791,10 +791,10 @@
           <Connection code="Theme.Palette.OFFICE_GREEN" type="code"/>
         </Property>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="Theme.SVGs.FORM.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD)" type="code"/>
+          <Connection code="UIEntityInfo.ENTRY_FORM.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD)" type="code"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="LabelBuilder.build(&quot;Formulario de Entrada&quot;)" type="code"/>
+          <Connection code="UIEntityInfo.ENTRY_FORM.getPlural()" type="code"/>
         </Property>
       </Properties>
     </Component>

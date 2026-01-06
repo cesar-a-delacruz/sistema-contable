@@ -11,6 +11,7 @@ import com.nutrehogar.sistemacontable.report.TrialBalanceReport;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportData;
 import com.nutrehogar.sistemacontable.report.dto.JournalReportRow;
 import com.nutrehogar.sistemacontable.report.dto.TrialBalanceReportRow;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import com.nutrehogar.sistemacontable.ui_2.component.ReportResponseDialog;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
@@ -44,7 +45,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
     @NotNull
     private final SpinnerNumberModel spnModelMonth;
     public TrialBalanceView(@NotNull User user, @NotNull Consumer<Long> editJournal) {
-        super(user, "Libro Diario");
+        super(user, UIEntityInfo.TRIAL_BALANCE);
         this.cbxModelPeriod = new CustomComboBoxModel<>();
         this.spnModelMonth = new SpinnerNumberModel(LocalDate.now().getMonthValue(), 1, 12, 1);
         this.tblModel = new CustomTableModel<>("Fecha", "Doc", "Cuenta", "Referencia", "Concepto", "Débito", "Crédito", "Saldo") {
@@ -259,7 +260,7 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
         lblEnd = new javax.swing.JLabel();
         btnGenerateReport = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
+        tblData = new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(tblModel);
         lblTitle = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -382,8 +383,8 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
-        lblTitle.setIcon(Theme.SVGs.TRIAL_BALANCE.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
-        lblTitle.setText(LabelBuilder.build("Balance de comprobacion"));
+        lblTitle.setIcon(entityInfo.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
+        lblTitle.setText(entityInfo.getPlural());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -426,6 +427,6 @@ public class TrialBalanceView extends SimpleView<TrialBalanceRow> implements Bus
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlOperations;
     private javax.swing.JSpinner spnMonth;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<TrialBalanceRow> tblData;
+    private com.nutrehogar.sistemacontable.ui_2.component.CustomTable<TrialBalanceRow> tblData;
     // End of variables declaration//GEN-END:variables
 }

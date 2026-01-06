@@ -10,6 +10,7 @@ import com.nutrehogar.sistemacontable.query.UserQuery_;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
@@ -23,7 +24,7 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
 
     private final CustomComboBoxModel<Permission> cbxModelPermision;
     public UserView(User user) {
-        super(user,"Subtipo de Cuenta");
+        super(user, UIEntityInfo.USER);
         this.cbxModelPermision = new CustomComboBoxModel<>(Permission.values());
         this.tblModel = new CustomTableModel<>("Nombre", "Contraseña", "Estado", "Permiso") {
             @Override
@@ -206,10 +207,10 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
         cbxPermissions = new javax.swing.JComboBox<>();
         lblUserPasswod1 = new javax.swing.JLabel();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
+        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityInfo);
         lblTitle = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
+        tblData = new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(tblModel);
 
         setOpaque(false);
 
@@ -342,9 +343,8 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
-        lblTitle.setIcon(Theme.SVGs.USER.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
-        lblTitle.setText(LabelBuilder.build("Usuarios")
-        );
+        lblTitle.setIcon(entityInfo.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
+        lblTitle.setText(entityInfo.getPlural());
 
         jScrollPane2.setViewportView(tblData);
 
@@ -393,7 +393,7 @@ public class UserView extends SimpleView<User> implements CRUDView<User,UserForm
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlForm;
     private javax.swing.JSeparator sepaSection1;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<User> tblData;
+    private com.nutrehogar.sistemacontable.ui_2.component.CustomTable<User> tblData;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtPassword;
     // End of variables declaration//GEN-END:variables

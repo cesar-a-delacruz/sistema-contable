@@ -12,6 +12,7 @@ import com.nutrehogar.sistemacontable.query.AccountSubtypeQuery_;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
@@ -25,7 +26,7 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
     private final CustomComboBoxModel<AccountType> cbxModelAccountType;
     private final SpinnerNumberModel spnModelNumber;
     public AccountSubtypeView(User user) {
-        super(user,"Subtipo de Cuenta");
+        super(user,UIEntityInfo.ACCOUNT_SUBTYPE);
         this.cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
         this.spnModelNumber = new SpinnerNumberModel(0, 0,9999,1);
         this.tblModel = new CustomTableModel<>("Numero de Cuenta", "Nombre", "Tipo de Cuenta") {
@@ -216,10 +217,10 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
         lblUpdate = new javax.swing.JLabel();
         spnNumber = new javax.swing.JSpinner();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
+        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityInfo);
         lblTitle = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
+        tblData = new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(tblModel);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -370,8 +371,8 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
-        lblTitle.setIcon(Theme.SVGs.ACCOUNT_SUBTYPE.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
-        lblTitle.setText(LabelBuilder.build("Subtipos de Cuentas"));
+        lblTitle.setIcon(entityInfo.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
+        lblTitle.setText(entityInfo.getPlural());
 
         jScrollPane2.setViewportView(tblData);
 
@@ -421,7 +422,7 @@ public class AccountSubtypeView extends SimpleView<AccountSubtype> implements CR
     private javax.swing.JPanel pnlForm;
     private javax.swing.JSeparator sepaSection1;
     private javax.swing.JSpinner spnNumber;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<AccountSubtype> tblData;
+    private com.nutrehogar.sistemacontable.ui_2.component.CustomTable<AccountSubtype> tblData;
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 

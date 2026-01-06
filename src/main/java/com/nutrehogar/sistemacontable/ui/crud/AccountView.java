@@ -13,6 +13,7 @@ import javax.swing.*;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.worker.InTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.SimpleView;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomComboBoxModel;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomListCellRenderer;
 import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
@@ -32,7 +33,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     private final SpinnerNumberModel spnModelNumber;
 
     public AccountView(User user) {
-        super(user, "Cuenta");
+        super(user,  UIEntityInfo.ACCOUNT);
         this.cbxModelAccountType = new CustomComboBoxModel<>(AccountType.values());
         this.cbxModelAccountSubtype = new CustomComboBoxModel<>(List.of());
         this.spnModelNumber = new SpinnerNumberModel(0, 0,9999,1);
@@ -337,10 +338,10 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
         rbAddSubtype = new javax.swing.JRadioButton();
         spnNumber = new javax.swing.JSpinner();
         auditablePanel = new com.nutrehogar.sistemacontable.ui_2.component.AuditablePanel();
-        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityName);
+        operationPanel = new com.nutrehogar.sistemacontable.ui_2.component.OperationPanel(entityInfo);
         lblTitle = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
+        tblData = new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(tblModel);
 
         setOpaque(false);
         setPreferredSize(new java.awt.Dimension(524, 664));
@@ -499,8 +500,8 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
-        lblTitle.setIcon(Theme.SVGs.ACCOUNT.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
-        lblTitle.setText(LabelBuilder.build("Cuentas"));
+        lblTitle.setIcon(entityInfo.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
+        lblTitle.setText(entityInfo.getPlural());
 
         jScrollPane2.setViewportView(tblData);
 
@@ -521,7 +522,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, 695, Short.MAX_VALUE)
+                    .addComponent(pnlAside, javax.swing.GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -552,7 +553,7 @@ public class AccountView extends SimpleView<AccountData> implements CRUDView<Acc
     private javax.swing.JRadioButton rbAddSubtype;
     private javax.swing.JSeparator sepaSection1;
     private javax.swing.JSpinner spnNumber;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<AccountData> tblData;
+    private com.nutrehogar.sistemacontable.ui_2.component.CustomTable<AccountData> tblData;
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 

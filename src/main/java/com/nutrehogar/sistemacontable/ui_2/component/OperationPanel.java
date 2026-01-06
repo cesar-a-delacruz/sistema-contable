@@ -5,6 +5,7 @@
 package com.nutrehogar.sistemacontable.ui_2.component;
 
 import com.nutrehogar.sistemacontable.config.LabelBuilder;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,17 +15,23 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 public class OperationPanel extends javax.swing.JPanel {
-    @NotNull
-    private final  String entityName;
-    /**
-     * Creates new form OperationPanel
-     */
-    public OperationPanel(@NotNull String entityName) {
-        this.entityName = entityName;
+
+    public OperationPanel(@NotNull String name, boolean female) {
         initComponents();
+        setLabels(name, female);
     }
+
+    public OperationPanel(@NotNull UIEntityInfo entityInfo) {
+        initComponents();
+        setLabels(entityInfo.getName().toLowerCase(), entityInfo.isFemale());
+    }
+    private void setLabels(@NotNull String name, boolean female){
+        lblDelete.setText(LabelBuilder.build("Elimina ".concat(female ? "la" : "el").concat(" ").concat(name).concat(" ").concat(female ? "seleccionada" : "seleccionado")));
+        lblEdit.setText(LabelBuilder.build("Prepara el formulario para editar ".concat(female ? "la" : "el").concat(" ").concat(name).concat(" ").concat(female ? "seleccionada" : "seleccionado")));
+        lblAdd.setText(LabelBuilder.build("Prepara el formulario para crear ".concat(female ? "una nueva" : "un nuevo").concat(" ").concat(name)));
+    }
+
     public OperationPanel() {
-        this.entityName = "N/A";
         initComponents();
     }
 
@@ -51,21 +58,18 @@ public class OperationPanel extends javax.swing.JPanel {
         btnDelete.setText("Eliminar");
         btnDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        lblDelete.setText(LabelBuilder.build("Elimina la "+entityName+" seleccionada"));
         lblDelete.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblDelete.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnPrepareToEdit.setText("Editar");
         btnPrepareToEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        lblEdit.setText(LabelBuilder.build("Prepara el formualrio para editar una "+ entityName));
         lblEdit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblEdit.setPreferredSize(new java.awt.Dimension(250, 40));
 
         btnPrepareToAdd.setText("Crear");
         btnPrepareToAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        lblAdd.setText(LabelBuilder.build("Prepara el formualrio para crear una nueva "+ entityName));
         lblAdd.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblAdd.setPreferredSize(new java.awt.Dimension(250, 40));
 

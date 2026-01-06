@@ -85,8 +85,8 @@ public class DashboardView extends Background {
 
         pnlContent = new javax.swing.JPanel();
         pnlNav = new javax.swing.JPanel();
-        btnBackup = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
-        btnHome = new com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton();
+        btnBackup = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
+        btnHome = new com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setColor1(new java.awt.Color(184, 255, 255));
@@ -158,8 +158,8 @@ public class DashboardView extends Background {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnBackup;
-    private com.nutrehogar.sistemacontable.ui_2.component.DefaultPanelButton btnHome;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnBackup;
+    private com.nutrehogar.sistemacontable.ui_2.component.HomeViewButton btnHome;
     private javax.swing.JPanel pnlContent;
     private javax.swing.JPanel pnlNav;
     // End of variables declaration//GEN-END:variables

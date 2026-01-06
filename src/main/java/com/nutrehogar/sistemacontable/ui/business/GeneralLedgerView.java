@@ -1,9 +1,6 @@
 package com.nutrehogar.sistemacontable.ui.business;
 
-import com.nutrehogar.sistemacontable.Main;
-import com.nutrehogar.sistemacontable.config.LabelBuilder;
 import com.nutrehogar.sistemacontable.config.Theme;
-import com.nutrehogar.sistemacontable.config.Util;
 import com.nutrehogar.sistemacontable.model.Account;
 import com.nutrehogar.sistemacontable.model.JournalEntry;
 import com.nutrehogar.sistemacontable.model.User;
@@ -11,11 +8,8 @@ import com.nutrehogar.sistemacontable.query.AccountQuery_;
 import com.nutrehogar.sistemacontable.query.AccountingPeriodQuery_;
 import com.nutrehogar.sistemacontable.query.BussinessQuery_;
 import com.nutrehogar.sistemacontable.report.GeneralLedgerReport;
-import com.nutrehogar.sistemacontable.report.TrialBalanceReport;
 import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportData;
 import com.nutrehogar.sistemacontable.report.dto.GeneralLedgerReportRow;
-import com.nutrehogar.sistemacontable.report.dto.JournalReportData;
-import com.nutrehogar.sistemacontable.report.dto.TrialBalanceReportRow;
 import com.nutrehogar.sistemacontable.ui_2.component.ReportResponseDialog;
 import com.nutrehogar.sistemacontable.worker.FromTransactionWorker;
 import com.nutrehogar.sistemacontable.ui.Period;
@@ -27,21 +21,17 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import static com.nutrehogar.sistemacontable.config.Util.SMALL_DATE_FORMATTER;
 import static com.nutrehogar.sistemacontable.config.Util.formatDecimalSafe;
+import com.nutrehogar.sistemacontable.ui.UIEntityInfo;
 import static java.math.MathContext.DECIMAL128;
-import static java.util.Comparator.comparing;
 
 @Getter
 public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements BusinessView {
@@ -55,7 +45,7 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
     private final List<Account> accounts;
 
     public GeneralLedgerView(@NotNull User user, @NotNull Consumer<Long> editJournal) {
-        super(user, "Libro Diario");
+        super(user, UIEntityInfo.GENERAL_LEDGER);
         this.cbxModelPeriod = new CustomComboBoxModel<>();
         this.cbxModelAccount = new CustomComboBoxModel<>();
         this.accounts = new ArrayList<>();
@@ -324,7 +314,7 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
         lblRecordAccount = new javax.swing.JLabel();
         btnGenerateReport = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblData = new com.nutrehogar.sistemacontable.ui_2.builder.CustomTable(tblModel);
+        tblData = new com.nutrehogar.sistemacontable.ui_2.component.CustomTable(tblModel);
         lblTitle = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -452,8 +442,8 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
 
         lblTitle.setFont(lblTitle.getFont().deriveFont((float)30));
         lblTitle.setForeground(Theme.Palette.OFFICE_GREEN);
-        lblTitle.setIcon(Theme.SVGs.GENERAL_LEDGER.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
-        lblTitle.setText(LabelBuilder.build("Mayor general"));
+        lblTitle.setIcon(entityInfo.getIcon().derive(Theme.ICON_MD, Theme.ICON_MD));
+        lblTitle.setText(entityInfo.getPlural());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -497,7 +487,7 @@ public class GeneralLedgerView extends SimpleView<GeneralLedgerRow> implements B
     private javax.swing.JPanel pnlAside;
     private javax.swing.JPanel pnlOperations;
     private javax.swing.JSpinner spnAccountNumber;
-    private com.nutrehogar.sistemacontable.ui_2.builder.CustomTable<GeneralLedgerRow> tblData;
+    private com.nutrehogar.sistemacontable.ui_2.component.CustomTable<GeneralLedgerRow> tblData;
     // End of variables declaration//GEN-END:variables
 
 }

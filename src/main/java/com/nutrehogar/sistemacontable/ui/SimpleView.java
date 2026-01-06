@@ -16,14 +16,15 @@ public abstract class SimpleView<Entity> extends View {
      * Modelo que se usara en la Tabla
      */
     protected CustomTableModel<Entity> tblModel;
-    /**
-     * Nombre de la entidad, se usara para mostrar en la UI
-     */
+
+    @NotNull
+    protected final UIEntityInfo entityInfo;
     @NotNull
     protected final String entityName;
-    public SimpleView(@NotNull User user, @NotNull String entityName) {
+    protected SimpleView(@NotNull User user, @NotNull UIEntityInfo entityInfo) {
         super(user);
-        this.entityName = entityName;
+        this.entityInfo = entityInfo;
+        this.entityName = entityInfo.getName().toLowerCase();
     }
 
 }

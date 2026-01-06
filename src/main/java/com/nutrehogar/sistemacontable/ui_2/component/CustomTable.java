@@ -1,5 +1,7 @@
-package com.nutrehogar.sistemacontable.ui_2.builder;
+package com.nutrehogar.sistemacontable.ui_2.component;
 
+import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableCellRenderer;
+import com.nutrehogar.sistemacontable.ui_2.builder.CustomTableModel;
 import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.Setter;
